@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birth Preferences Builder — Greater Toronto Doulas</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Brittany Signature';
+  src: url('BrittanySignature.ttf') format('truetype');
+}
+:root {
+  --navy: #1C3A5E;
+  --navy-mid: #2B5C8A;
+  --navy-light: #4A84BE;
+  --navy-pale: #E8F0F8;
+  --sage: #6B8F71;
+  --sage-light: #EAF1EB;
+  --rose: #7B3F3F;
+  --rose-light: #F5EDED;
+  --cream: #FAF7F2;
+  --warm: #F5EFE8;
+  --text: #1E1E1E;
+  --muted: #6B7280;
+  --border: #D8E4EF;
+  --white: #FFFFFF;
+  --step-active: var(--navy-mid);
+  --step-done: var(--sage);
+  --step-future: #CBD5E1;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(28,58,94,0.10), 0 1px 4px rgba(0,0,0,0.04);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 10% 20%, rgba(74,132,190,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(107,143,113,0.07) 0%, transparent 50%),
+    linear-gradient(160deg, #EEF4FA 0%, #FAF7F2 50%, #F0EDE8 100%);
+  z-index: -1;
+}
+.site-header {
+  text-align: center;
+  padding: 3.5rem 1.5rem 2.5rem;
+  position: relative;
+}
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 80px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--navy-light), transparent);
+}
+.brand-tag {
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--navy-light);
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+.site-header h1 {
+  font-family: 'Brittany Signature', 'Dancing Script', cursive;
+  font-size: clamp(2.6rem, 6vw, 4rem);
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 0.8rem;
+}
+.site-header p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 300;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.7;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
+.progress-wrap {
+  max-width: 700px;
+  margin: 2.5rem auto 0;
+  padding: 0 1.5rem;
+}
+.progress-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+}
+.progress-step::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: calc(-50% + 14px);
+  right: calc(50% + 14px);
+  height: 2px;
+  background: var(--step-future);
+  transition: background 0.4s;
+  z-index: 0;
+}
+.progress-step:first-child::before { display: none; }
+.progress-step.done::before { background: var(--step-done); }
+.progress-step.active::before { background: linear-gradient(to right, var(--step-done), var(--step-active)); }
+.step-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--step-future);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s;
+  position: relative; z-index: 1;
+  flex-shrink: 0;
+}
+.progress-step.active .step-dot { background: var(--step-active); box-shadow: 0 0 0 4px rgba(74,132,190,0.2); }
+.progress-step.done .step-dot { background: var(--step-done); }
+.step-label-text {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--step-future);
+  font-weight: 500;
+  text-align: center;
+  transition: color 0.3s;
+  white-space: nowrap;
+}
+.progress-step.active .step-label-text { color: var(--step-active); }
+.progress-step.done .step-label-text { color: var(--step-done); }
+@media (max-width: 600px) { .step-label-text { display: none; } }
+.wizard-outer {
+  max-width: 780px;
+  margin: 2.5rem auto 5rem;
+  padding: 0 1.2rem;
+}
+.wizard-step { display: none; animation: fadeSlide 0.35s ease both; }
+.wizard-step.active { display: block; }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.section-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,0.9);
+  overflow: hidden;
+  margin-bottom: 1.6rem;
+}
+.section-head {
+  padding: 1.6rem 2rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--navy-pale) 0%, white 100%);
+}
+.section-step-tag {
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--navy-light);
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.2;
+}
+.section-intro {
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.7;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
+.section-body { padding: 1.8rem 2rem; }
+.field { margin-bottom: 1.4rem; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.field-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-family: 'Jost', sans-serif;
+  margin-bottom: 0.5rem;
+  line-height: 1.55;
+}
+input[type="text"], input[type="date"], textarea, select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text);
+  background: var(--cream);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+input[type="text"]:focus, input[type="date"]:focus, textarea:focus, select:focus {
+  border-color: var(--navy-light);
+  box-shadow: 0 0 0 3px rgba(74,132,190,0.14);
+  background: white;
+}
+textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 540px) { .input-row { grid-template-columns: 1fr; } }
+.options-group { display: flex; flex-direction: column; gap: 0.7rem; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+@media (max-width: 540px) { .options-grid { grid-template-columns: 1fr; } }
+.option-card {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--cream);
+  user-select: none;
+}
+.option-card:hover { border-color: var(--navy-light); background: var(--navy-pale); }
+.option-card.selected {
+  border-color: var(--navy-mid);
+  background: var(--navy-pale);
+  box-shadow: 0 0 0 3px rgba(74,132,190,0.15);
+}
+.option-header { display: flex; align-items: flex-start; gap: 0.7rem; }
+.option-check {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  font-size: 0.7rem;
+  color: white;
+}
+.option-card.selected .option-check { background: var(--navy-mid); border-color: var(--navy-mid); }
+.option-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.3;
+  flex: 1;
+}
+.option-desc {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 0.45rem;
+  font-weight: 400;
+}
+.option-card.selected .option-desc { color: #4B5563; }
+.chip-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
+.chip {
+  padding: 0.45rem 1rem;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.chip:hover { border-color: var(--navy-light); color: var(--navy); }
+.chip.selected { background: var(--navy-mid); border-color: var(--navy-mid); color: white; }
+.other-input-wrap { margin-top: 0.8rem; display: none; }
+.other-input-wrap.visible { display: block; }
+.subsection { margin-bottom: 2rem; }
+.subsection:last-child { margin-bottom: 0; }
+.subsection-title { font-size:0.68rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:white; background:var(--navy-mid); display:inline-block; padding:0.32rem 0.9rem; border-radius:6px; margin-bottom:0.6rem; }
+.subsection-title.alt { background: var(--sage); }
+.subsection-title.rose { background: var(--rose); }
+.subsection-intro {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 1rem;
+}
+.brain-box {
+  background: linear-gradient(135deg, var(--navy-pale), #F0F6FF);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1.4rem;
+}
+.brain-box-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--navy-mid);
+  margin-bottom: 0.7rem;
+}
+.brain-item { display: flex; gap: 0.7rem; margin-bottom: 0.45rem; font-size: 0.82rem; align-items: flex-start; }
+.brain-letter {
+  width: 22px; height: 22px;
+  background: var(--navy-mid); color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+}
+.brain-text { color: var(--text); line-height: 1.5; padding-top: 2px; }
+.wizard-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.4rem;
+  gap: 1rem;
+}
+.btn-back {
+  background: white; border: 1.5px solid var(--border);
+  color: var(--muted); border-radius: 50px;
+  padding: 0.85rem 2rem;
+  font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--navy-light); color: var(--navy); }
+.btn-next {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white; border: none; border-radius: 50px;
+  padding: 0.85rem 2.5rem;
+  font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(28,58,94,0.28);
+  transition: all 0.2s;
+  margin-left: auto;
+}
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(28,58,94,0.35); }
+.btn-next:active { transform: translateY(0); }
+.step-counter { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+.inner-divider { height: 1px; background: var(--border); margin: 1.8rem 0; }
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  justify-content: center; align-items: center; padding: 1rem;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: white; border-radius: 20px;
+  max-width: 700px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { transform: scale(0.94) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.modal-header {
+  padding: 1.4rem 1.8rem; border-bottom: 1px solid #EEE;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.modal-header h3 { font-family: 'Cormorant Garamond',serif; font-size: 1.2rem; font-weight: 600; color: var(--navy); }
+.close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; transition: color 0.15s; }
+.close-btn:hover { color: #333; }
+#pdf-preview { padding: 2rem 2.4rem; }
+.modal-actions {
+  padding: 1rem 1.8rem 1.4rem; border-top: 1px solid #EEE;
+  display: flex; gap: 0.8rem; justify-content: flex-end;
+}
+.btn-modal-secondary {
+  background: #F3F4F6; border: 1px solid #E5E7EB; color: #374151; border-radius: 10px;
+  padding: 0.7rem 1.4rem;
+  font-family: 'Jost',sans-serif; font-size: 0.9rem; font-weight: 500;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-modal-secondary:hover { background: #E5E7EB; }
+.btn-modal-primary {
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: white; border: none; border-radius: 10px;
+  padding: 0.7rem 1.6rem;
+  font-family: 'Jost',sans-serif; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; box-shadow: 0 4px 14px rgba(28,58,94,0.3);
+  transition: all 0.15s;
+}
+.btn-modal-primary:hover { transform: translateY(-1px); }
+.btn-modal-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+/* Preview styles */
+.preview-header { text-align: center; margin-bottom: 1.2rem; }
+.preview-tag-small { font-family:'Jost',sans-serif; font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--navy-mid); font-weight:600; }
+.preview-big-name { font-family:'Brittany Signature','Dancing Script',cursive; font-size:clamp(1.6rem,4vw,2.4rem); color:var(--navy); line-height:1; margin-top:0.3rem; }
+.preview-sub { font-size:0.72rem; color:var(--muted); font-family:'Jost',sans-serif; letter-spacing:0.12em; margin-top:0.4rem; }
+.preview-health-pills { display:flex; flex-wrap:wrap; gap:0.4rem; justify-content:center; margin:0.6rem 0 1rem; }
+.preview-health-pill { background:var(--navy-pale); color:var(--navy-mid); font-size:0.72rem; font-weight:500; font-family:'Jost',sans-serif; padding:0.25rem 0.8rem; border-radius:50px; border:1px solid var(--border); }
+.preview-divider { height:2px; background:linear-gradient(to right,var(--navy),var(--navy-light),transparent); margin:1rem 0; border-radius:2px; }
+.preview-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+.preview-section-title { font-family:'Jost',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; background:var(--navy-mid); color:white; padding:0.32rem 0.8rem; border-radius:5px; display:inline-block; margin-bottom:0.5rem; }
+.preview-section-title.alt { background:var(--sage); }
+.preview-section-title.rose-bg { background:var(--rose); }
+.preview-item-small { display:flex; gap:0.45rem; font-size:0.75rem; margin-bottom:0.25rem; align-items:flex-start; color:#333; }
+.preview-item-small .dot { color:var(--navy-mid); flex-shrink:0; }
+.preview-story-text { font-family:'Cormorant Garamond',serif; font-size:0.82rem; line-height:1.7; color:#333; }
+.preview-greeting { display:inline-block; background:var(--navy-pale); color:var(--navy-mid); font-family:'Jost',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; padding:0.3rem 0.7rem; border-radius:5px; margin-bottom:0.8rem; }
+.preview-footer { margin-top:1.2rem; padding-top:0.8rem; border-top:1px solid #EEE; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.78rem; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand-tag">Greater Toronto Doulas</div>
+  <h1>Birth Preferences Builder</h1>
+  <p>A guided journey to create your personalised birth plan — with everything you need to make informed, confident decisions.</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-steps" id="progressSteps">
+    <div class="progress-step active" data-step="0" onclick="goToStep(0)">
+      <div class="step-dot">1</div>
+      <div class="step-label-text">About You</div>
+    </div>
+    <div class="progress-step" data-step="1" onclick="goToStep(1)">
+      <div class="step-dot">2</div>
+      <div class="step-label-text">Values</div>
+    </div>
+    <div class="progress-step" data-step="2" onclick="goToStep(2)">
+      <div class="step-dot">3</div>
+      <div class="step-label-text">Comfort</div>
+    </div>
+    <div class="progress-step" data-step="3" onclick="goToStep(3)">
+      <div class="step-dot">4</div>
+      <div class="step-label-text">Labor</div>
+    </div>
+    <div class="progress-step" data-step="4" onclick="goToStep(4)">
+      <div class="step-dot">5</div>
+      <div class="step-label-text">Golden Hour</div>
+    </div>
+    <div class="progress-step" data-step="5" onclick="goToStep(5)">
+      <div class="step-dot">6</div>
+      <div class="step-label-text">Personal Care</div>
+    </div>
+    <div class="progress-step" data-step="6">
+      <div class="step-dot">✓</div>
+      <div class="step-label-text">Preview</div>
+    </div>
+  </div>
+</div>
+
+<div class="wizard-outer">
+
+  <!-- STEP 1 — ABOUT YOU -->
+  <div class="wizard-step active" id="step-0">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-step-tag">Step 1 of 6</div>
+        <div class="section-title">About You</div>
+        <div class="section-intro">Let's start with the basics — this information will appear on your birth preferences document.</div>
+      </div>
+      <div class="section-body">
+        <div class="input-row">
+          <div class="field">
+            <label class="field-label">Your Name</label>
+            <input type="text" id="name" placeholder="Your full name">
+          </div>
+          <div class="field">
+            <label class="field-label">Estimated Due Date</label>
+            <input type="date" id="due-date">
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="field">
+            <label class="field-label">Birth Location</label>
+            <div class="chip-group" id="birth-location-chips">
+              <div class="chip" data-val="Hospital" onclick="toggleChipSingle(this,'birth-location-chips')">Hospital</div>
+              <div class="chip" data-val="Birth Center" onclick="toggleChipSingle(this,'birth-location-chips')">Birth Center</div>
+              <div class="chip" data-val="Home" onclick="toggleChipSingle(this,'birth-location-chips')">Home</div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Support Person</label>
+            <input type="text" id="support-person" placeholder="e.g. Partner's name, Doula...">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Care Team Greeting <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <input type="text" id="care-team" placeholder="e.g. MSH Care Team, Midwives, Doulas...">
+        </div>
+        <div class="inner-divider"></div>
+        <div class="field">
+          <label class="field-label">Health Considerations During Pregnancy <span style="font-weight:400;color:var(--muted)">(select all that apply)</span></label>
+          <div class="field-hint">Sharing relevant health information helps your care team provide the most appropriate, personalised support.</div>
+          <div class="chip-group" id="health-chips">
+            <div class="chip" data-val="Gestational Diabetes (Diet Controlled)" onclick="toggleChip(this)">Gestational Diabetes — Diet Controlled</div>
+            <div class="chip" data-val="Gestational Diabetes (Insulin Controlled)" onclick="toggleChip(this)">Gestational Diabetes — Insulin Controlled</div>
+            <div class="chip" data-val="GBS+" onclick="toggleChip(this)">GBS+</div>
+            <div class="chip" data-val="Preeclampsia" onclick="toggleChip(this)">Preeclampsia</div>
+            <div class="chip" data-val="Mental Health Concerns" onclick="toggleChip(this)">Mental Health Concerns</div>
+            <div class="chip" data-val="Placenta Previa" onclick="toggleChip(this)">Placenta Previa</div>
+            <div class="chip" data-val="High Blood Pressure" onclick="toggleChip(this)">High Blood Pressure</div>
+          </div>
+          <div class="other-input-wrap" id="health-other-wrap">
+            <input type="text" id="health-other" placeholder="Other health consideration...">
+          </div>
+          <div style="margin-top:0.6rem">
+            <div class="chip" id="health-other-btn" data-val="other" onclick="toggleHealthOther(this)" style="border-style:dashed">+ Other</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <span class="step-counter">Step 1 of 6</span>
+      <button class="btn-next" onclick="nextStep()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 — CORE VALUES -->
+  <div class="wizard-step" id="step-1">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-step-tag">Step 2 of 6</div>
+        <div class="section-title">Core Values in Labor</div>
+        <div class="section-intro">During labor, feeling safe, heard, informed, and respected helps build trust and allows you to stay actively involved in decisions about your care. These values support both emotional well-being and physical health.</div>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label class="field-label">What do you value most in labor? <span style="font-weight:400;color:var(--muted)">(select all that apply)</span></label>
+          <div class="options-grid" id="values-options">
+            <div class="option-card" data-val="Feeling Safe" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Safe</div></div>
+              <div class="option-desc">Being in an environment where you trust the people caring for you and feel physically and emotionally secure. This sense of safety can help your body relax and support the natural flow of labor.</div>
+            </div>
+            <div class="option-card" data-val="Feeling Heard" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Heard</div></div>
+              <div class="option-desc">Your questions, concerns, and preferences are listened to and taken seriously. Open communication helps build trust and ensures your voice is part of every conversation.</div>
+            </div>
+            <div class="option-card" data-val="Choices Being Respected" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Choices Being Respected</div></div>
+              <div class="option-desc">Your preferences are acknowledged and honored whenever possible. When plans change, you are included in the discussion and supported in making informed decisions.</div>
+            </div>
+            <div class="option-card" data-val="Feeling Informed" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Informed</div></div>
+              <div class="option-desc">Understanding what is happening in your body and why certain options are offered. Clear explanations empower you to make decisions with confidence throughout labor.</div>
+            </div>
+            <div class="option-card" data-val="Provider Guidance" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Provider Guidance</div></div>
+              <div class="option-desc">Recognizing and considering the knowledge, experience, and recommendations of your care team as part of shared decision-making during labor.</div>
+            </div>
+            <div class="option-card" data-val="Everyone Staying Healthy" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Everyone Staying Healthy</div></div>
+              <div class="option-desc">Focusing on the well-being of both the birthing person and the baby. This includes monitoring, timely care, and making adjustments when needed.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <span class="step-counter">Step 2 of 6</span>
+      <button class="btn-next" onclick="nextStep()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — COMFORT MEASURES -->
+  <div class="wizard-step" id="step-2">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-step-tag">Step 3 of 6</div>
+        <div class="section-title">Comfort Measures</div>
+        <div class="section-intro">Comfort measures are the ways pain and discomfort are managed during labor. Some options support the body's natural coping abilities, while others use medical interventions. Many people choose a combination of both.</div>
+      </div>
+      <div class="section-body">
+        <div class="subsection">
+          <div class="subsection-title">Overall Preference</div>
+          <div class="options-group" id="comfort-pref-options">
+            <div class="option-card" data-val="Natural comfort techniques first" onclick="toggleOptionSingle(this,'comfort-pref-options')">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Natural comfort techniques first</div></div>
+            </div>
+            <div class="option-card" data-val="Medical comfort techniques first" onclick="toggleOptionSingle(this,'comfort-pref-options')">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Medical comfort techniques first</div></div>
+            </div>
+            <div class="option-card" data-val="Combination of both" onclick="toggleOptionSingle(this,'comfort-pref-options')">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Combination of both</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title alt">Natural Comfort Measures</div>
+          <div class="subsection-intro">Non-medical techniques that work with your body's natural response to labor. Can be used alone or alongside medical comfort options.</div>
+          <div class="options-grid" id="natural-options">
+            <div class="option-card" data-val="Aromatherapy" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Aromatherapy</div></div>
+              <div class="option-desc">Using familiar scents to promote calm, reduce nausea, and support relaxation.</div>
+            </div>
+            <div class="option-card" data-val="Breathing Techniques" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Breathing Techniques</div></div>
+              <div class="option-desc">Slow, relaxed breathing helps calm the nervous system, manage pain, and support oxygen flow to both parent and baby.</div>
+            </div>
+            <div class="option-card" data-val="Movement & Position Changes" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Movement &amp; Position Changes</div></div>
+              <div class="option-desc">Staying mobile can increase comfort, help baby move into a helpful position, and support labor progress.</div>
+            </div>
+            <div class="option-card" data-val="Touch & Massage" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Touch &amp; Massage</div></div>
+              <div class="option-desc">Gentle touch, counterpressure, or hip squeezes can reduce pain signals and promote relaxation.</div>
+            </div>
+            <div class="option-card" data-val="Attention Focusing / Ritual" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Attention Focusing / Ritual</div></div>
+              <div class="option-desc">Directing attention to a calming object, voice, or sensation to reduce awareness of pain.</div>
+            </div>
+            <div class="option-card" data-val="Comfortable Environment" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Comfortable Environment</div></div>
+              <div class="option-desc">A space that feels private, comfortable, and respectful can help you relax and support the natural progress of birth.</div>
+            </div>
+            <div class="option-card" data-val="Eat and Drink as Desired" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Eat &amp; Drink as Desired</div></div>
+              <div class="option-desc">Maintain energy, comfort, and hydration as needed.</div>
+            </div>
+            <div class="option-card" data-val="Guided Visualizations" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Guided Visualizations</div></div>
+              <div class="option-desc">Uses calming imagery and focused imagination to help reduce stress and promote comfort during labor.</div>
+            </div>
+            <div class="option-card" data-val="TENs Machine" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">TENs Machine</div></div>
+              <div class="option-desc">Mild electrical pulses through pads on the lower back to help reduce labor discomfort and support natural pain management.</div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title">Medical Comfort Measures</div>
+          <div class="subsection-intro">Pain relief options involving medications or medical procedures, provided and managed by healthcare professionals.</div>
+          <div class="options-grid" id="medical-options">
+            <div class="option-card" data-val="Sterile Water Injections" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Sterile Water Injections</div></div>
+              <div class="option-desc">Small injections in the lower back that can relieve intense back labor for a few hours.</div>
+            </div>
+            <div class="option-card" data-val="Nitrous Oxide (Laughing Gas)" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Nitrous Oxide (Laughing Gas)</div></div>
+              <div class="option-desc">A self-administered gas that takes the edge off pain and anxiety during contractions without affecting baby.</div>
+            </div>
+            <div class="option-card" data-val="Epidural / Spinal" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Epidural / Spinal</div></div>
+              <div class="option-desc">Medication placed in the lower back that numbs pain from the waist down. Provides strong relief but limits movement.</div>
+            </div>
+            <div class="option-card" data-val="Opioids" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Opioids</div></div>
+              <div class="option-desc">Help with relaxation and rest, especially in early labor, though may cause drowsiness or nausea.</div>
+            </div>
+            <div class="option-card" data-val="General Anesthetic" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">General Anesthetic</div></div>
+              <div class="option-desc">Used in emergency C-sections when immediate action is needed. The parent is asleep for the birth.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <span class="step-counter">Step 3 of 6</span>
+      <button class="btn-next" onclick="nextStep()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — LABOR INTERVENTIONS -->
+  <div class="wizard-step" id="step-3">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-step-tag">Step 4 of 6</div>
+        <div class="section-title">Labor Interventions</div>
+        <div class="section-intro">Interventions in labor are medical procedures used to support safety, comfort, or progress during childbirth. They may be recommended based on how labor is unfolding or specific health needs.</div>
+      </div>
+      <div class="section-body">
+        <div class="subsection">
+          <div class="subsection-title">Induction &amp; Augmentation</div>
+          <div class="subsection-intro">Induction starts labor artificially when it has not begun on its own, while augmentation supports labor that is moving slowly.</div>
+          <div class="options-grid" id="induction-options">
+            <div class="option-card" data-val="Natural Methods of Induction" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Natural Methods</div></div>
+              <div class="option-desc">Gentle techniques like a membrane sweep, nipple stimulation, intimacy, or pumping to encourage labor naturally.</div>
+            </div>
+            <div class="option-card" data-val="Medical Induction Methods" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Medical Methods</div></div>
+              <div class="option-desc">Medications or tools to soften the cervix, start contractions, or break the water to help labor progress.</div>
+            </div>
+            <div class="option-card" data-val="Augmentation" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Augmentation</div></div>
+              <div class="option-desc">Support when labor has started but contractions slow or weaken. May involve medication or breaking the water.</div>
+            </div>
+            <div class="option-card" data-val="Natural Labor Progress" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Natural Progress</div></div>
+              <div class="option-desc">Contractions begin naturally and build in strength and rhythm. Pauses in labor are met with patience.</div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title alt">Other Interventions</div>
+          <div class="options-grid" id="other-interventions-options">
+            <div class="option-card" data-val="IV Fluids" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">IV Fluids</div></div>
+              <div class="option-desc">Fluids through IV to support hydration, deliver medications, or maintain fluid balance.</div>
+            </div>
+            <div class="option-card" data-val="Continuous Fetal Monitoring (CTG)" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Continuous Fetal Monitoring (CTG)</div></div>
+              <div class="option-desc">Continuously records the baby's heart rate and the pattern of contractions during labor.</div>
+            </div>
+            <div class="option-card" data-val="Intermittent Fetal Monitoring (Doppler)" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Intermittent Monitoring (Doppler)</div></div>
+              <div class="option-desc">Listens to baby's heartbeat every 15–30 minutes with a handheld doppler. Standard in low-risk pregnancies.</div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title">Vaginal Birth</div>
+          <div class="options-grid" id="vaginal-options">
+            <div class="option-card" data-val="Spontaneous Vaginal Delivery" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Spontaneous Vaginal Delivery</div></div>
+              <div class="option-desc">Baby delivered through the vagina without instruments or surgical procedures.</div>
+            </div>
+            <div class="option-card" data-val="VBAC (Vaginal Birth After Caesarean)" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">VBAC</div></div>
+              <div class="option-desc">Attempting a vaginal birth after a prior C-section.</div>
+            </div>
+            <div class="option-card" data-val="Episiotomy (if necessary)" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Episiotomy</div></div>
+              <div class="option-desc">A small cut at the vaginal opening to create more space. Rarely needed today and usually avoided unless absolutely necessary.</div>
+            </div>
+            <div class="option-card" data-val="Forceps Delivery" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Forceps Delivery</div></div>
+              <div class="option-desc">A tool placed around baby's head to guide them out while the parent pushes. Sometimes used to avoid a C-section.</div>
+            </div>
+            <div class="option-card" data-val="Vacuum Delivery" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Vacuum Delivery</div></div>
+              <div class="option-desc">A soft suction cup on baby's head to assist with birth during pushing. Used when help is needed and birth is close.</div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title rose">Surgical Birth / C-Section</div>
+          <div class="subsection-intro">A C-section is a surgical procedure to deliver a baby through an incision in the abdomen and uterus, performed when a vaginal birth may not be safe.</div>
+          <div class="options-grid" id="csection-options">
+            <div class="option-card" data-val="Planned C-Section" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Planned C-Section</div></div>
+              <div class="option-desc">Scheduled before labor begins, often for medical reasons or personal preference.</div>
+            </div>
+            <div class="option-card" data-val="Emergency C-Section" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Emergency C-Section</div></div>
+              <div class="option-desc">Performed when complications arise during labor that make a vaginal birth unsafe.</div>
+            </div>
+            <div class="option-card" data-val="Repeat C-Section" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Repeat C-Section</div></div>
+              <div class="option-desc">A C-section for someone who has had a previous C-section.</div>
+            </div>
+            <div class="option-card" data-val="Gentle / Family-Centered C-Section" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Gentle / Family-Centered C-Section</div></div>
+              <div class="option-desc">Modifications to include immediate bonding, skin-to-skin, or more involvement from the birthing parent and family.</div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="field">
+          <label class="field-label">Decision-Making Style</label>
+          <div class="field-hint">How you prefer to make important decisions during labor. Select all that apply.</div>
+          <div class="brain-box">
+            <div class="brain-box-title">B.R.A.I.N — Questions to Ask Your Care Team</div>
+            <div class="brain-item"><div class="brain-letter">B</div><div class="brain-text"><strong>Benefits</strong> — What are the benefits of this recommendation?</div></div>
+            <div class="brain-item"><div class="brain-letter">R</div><div class="brain-text"><strong>Risks</strong> — What are the risks?</div></div>
+            <div class="brain-item"><div class="brain-letter">A</div><div class="brain-text"><strong>Alternatives</strong> — What alternatives exist?</div></div>
+            <div class="brain-item"><div class="brain-letter">I</div><div class="brain-text"><strong>Intuition</strong> — What does your intuition say?</div></div>
+            <div class="brain-item"><div class="brain-letter">N</div><div class="brain-text"><strong>Nothing</strong> — What happens if we do nothing right now?</div></div>
+          </div>
+          <div class="options-grid" id="decision-options">
+            <div class="option-card" data-val="I need time to talk things through" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">I need time to talk things through</div></div>
+            </div>
+            <div class="option-card" data-val="Direct guidance from my healthcare provider" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Direct provider guidance preferred</div></div>
+            </div>
+            <div class="option-card" data-val="Fewer interruptions and questions" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Fewer interruptions</div></div>
+            </div>
+            <div class="option-card" data-val="Frequent check-ins" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Frequent check-ins</div></div>
+            </div>
+            <div class="option-card" data-val="Options explained in detail" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Options explained in detail</div></div>
+            </div>
+            <div class="option-card" data-val="I trust my provider's recommendation" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Trust provider's recommendation</div></div>
+            </div>
+            <div class="option-card" data-val="My partner may consent on my behalf" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Partner may consent on my behalf</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <span class="step-counter">Step 4 of 6</span>
+      <button class="btn-next" onclick="nextStep()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 — THE GOLDEN HOUR -->
+  <div class="wizard-step" id="step-4">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-step-tag">Step 5 of 6</div>
+        <div class="section-title">The Golden Hour</div>
+        <div class="section-intro">The golden hour is the first 1–2 hours after birth — an important time for bonding, warmth, and adjustment to life outside the womb. Skin-to-skin contact and early feeding can help regulate the baby's temperature, heart rate, and breathing.</div>
+      </div>
+      <div class="section-body">
+        <div class="subsection">
+          <div class="subsection-title alt">Immediate Bonding</div>
+          <div class="options-grid" id="bonding-options">
+            <div class="option-card" data-val="Immediate skin-to-skin with birthing parent" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Skin-to-Skin — Birthing Parent</div></div>
+            </div>
+            <div class="option-card" data-val="Immediate skin-to-skin with partner" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Skin-to-Skin — Partner</div></div>
+            </div>
+            <div class="option-card" data-val="Breastfeeding" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Breastfeeding</div></div>
+            </div>
+            <div class="option-card" data-val="Bottle Feeding" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Bottle Feeding</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title">Placenta Options</div>
+          <div class="subsection-intro">The delivery of the placenta is the final stage of labor. For many people, it also holds personal or cultural significance.</div>
+          <div class="options-grid" id="placenta-options">
+            <div class="option-card" data-val="Expectant Management of Placenta" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Expectant Management</div></div>
+              <div class="option-desc">The placenta is born naturally as the body continues contracting.</div>
+            </div>
+            <div class="option-card" data-val="Active Management of Placenta" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Active Management</div></div>
+              <div class="option-desc">Medication to help the uterus contract, and the placenta is guided out quickly — usually within about 15 minutes.</div>
+            </div>
+            <div class="option-card" data-val="Take placenta home" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Take Placenta Home</div></div>
+              <div class="option-desc">For personal, cultural, or ceremonial reasons.</div>
+            </div>
+            <div class="option-card" data-val="View the placenta" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">View the Placenta</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title alt">Umbilical Cord</div>
+          <div class="subsection-intro">The timing of cord clamping can influence iron levels, circulation, and early adjustment to life outside the womb.</div>
+          <div class="options-grid" id="cord-options">
+            <div class="option-card" data-val="Immediate cord clamping" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Immediate Clamping</div></div>
+              <div class="option-desc">The cord is clamped and cut within the first few seconds after birth.</div>
+            </div>
+            <div class="option-card" data-val="Delayed cord clamping" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Delayed Clamping</div></div>
+              <div class="option-desc">Clamping delayed (often 30–60 seconds or longer) to allow continued blood flow from the placenta.</div>
+            </div>
+            <div class="option-card" data-val="Physiologic cord clamping" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Physiologic Clamping</div></div>
+              <div class="option-desc">The cord is clamped after it naturally stops pulsing.</div>
+            </div>
+            <div class="option-card" data-val="Cord blood collection" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Cord Blood Collection</div></div>
+              <div class="option-desc">Blood remaining in the cord and placenta collected for private or public banking.</div>
+            </div>
+            <div class="option-card" data-val="Partner to cut the umbilical cord" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Partner Cuts the Cord</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title">Newborn Assessments &amp; Procedures</div>
+          <div class="subsection-intro">Many of these assessments can be done while baby remains on the parent's chest, when both are stable, to support bonding during the golden hour.</div>
+          <div class="options-grid" id="newborn-options">
+            <div class="option-card" data-val="Assessments done on parent's chest" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Assessments on Parent's Chest</div></div>
+              <div class="option-desc">General assessments and measurements while on parent's chest.</div>
+            </div>
+            <div class="option-card" data-val="Assessments at warmer" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Assessments at Warmer</div></div>
+              <div class="option-desc">Baby taken to warmer for general assessments and measurements.</div>
+            </div>
+            <div class="option-card" data-val="Vitamin K" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Vitamin K</div></div>
+              <div class="option-desc">Given after birth to help prevent rare but serious bleeding problems by supporting normal blood clotting.</div>
+            </div>
+            <div class="option-card" data-val="Erythromycin Eye Ointment" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Erythromycin</div></div>
+              <div class="option-desc">Helps prevent bacterial eye infections that can be passed to the baby during delivery.</div>
+            </div>
+            <div class="option-card" data-val="RSV Immunization" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">RSV Immunization</div></div>
+              <div class="option-desc">Protects newborns from severe respiratory syncytial virus infections, especially when born during cold and flu season.</div>
+            </div>
+            <div class="option-card" data-val="Hepatitis B Vaccine" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Hepatitis B Vaccine</div></div>
+              <div class="option-desc">Usually recommended within 24 hours of birth if the birthing parent has hepatitis B or status is unknown.</div>
+            </div>
+            <div class="option-card" data-val="Drying and stimulation" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Drying &amp; Stimulation</div></div>
+              <div class="option-desc">May help the baby begin breathing and maintain body temperature more quickly.</div>
+            </div>
+            <div class="option-card" data-val="Minimal drying and stimulation" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Minimal Drying &amp; Stimulation</div></div>
+              <div class="option-desc">If the baby is stable and you wish to prioritize uninterrupted skin-to-skin contact.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <span class="step-counter">Step 5 of 6</span>
+      <button class="btn-next" onclick="nextStep()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 — PERSONAL CARE -->
+  <div class="wizard-step" id="step-5">
+    <div class="section-card">
+      <div class="section-head">
+        <div class="section-step-tag">Step 6 of 6</div>
+        <div class="section-title">Personal Care &amp; Considerations</div>
+        <div class="section-intro">Each person's needs, preferences, and circumstances are unique. Respectful, personalised support ensures you feel informed, supported, and empowered throughout your birth.</div>
+      </div>
+      <div class="section-body">
+        <div class="subsection">
+          <div class="subsection-title rose">Trauma-Informed Care</div>
+          <div class="subsection-intro">When a person with a history of trauma gives birth, the experience can be overwhelming. Trauma-informed care focuses on safety, control, trust, and empowerment.</div>
+          <div class="options-grid" id="trauma-options">
+            <div class="option-card" data-val="Explicit consent required for all interventions" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Consent &amp; Autonomy</div></div>
+              <div class="option-desc">Any intervention should involve explicit consent.</div>
+            </div>
+            <div class="option-card" data-val="Freedom to change positions and control pace of pushing" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Control</div></div>
+              <div class="option-desc">Freedom to change positions, movement, and pace of pushing.</div>
+            </div>
+            <div class="option-card" data-val="Trauma-informed staff requested" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Trauma-Informed Staff</div></div>
+              <div class="option-desc">Staff trained to recognize and respond to triggers. They ask permission before touch or procedures and offer choices when possible.</div>
+            </div>
+            <div class="option-card" data-val="Privacy and limited interruptions" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Privacy</div></div>
+              <div class="option-desc">A secure and personal space with limited interruptions and a respectful environment.</div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title alt">Emotional Care</div>
+          <div class="options-grid" id="emotional-options">
+            <div class="option-card" data-val="Clear communication — providers explain all procedures and ask permission" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Clear Communication</div></div>
+              <div class="option-desc">Providers explain all procedures, ask permission, and give choices.</div>
+            </div>
+            <div class="option-card" data-val="Continuous support from doula or provider" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Continuous Support</div></div>
+              <div class="option-desc">A doula or provider who can help manage anxiety, advocate for you, and provide reassurance and coping strategies.</div>
+            </div>
+            <div class="option-card" data-val="Positive self-talk and encouragement" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Positive Self-Talk</div></div>
+              <div class="option-desc">Encouraging and reassuring phrases to help build confidence, reduce fear, and stay focused during contractions.</div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+        <div class="field">
+          <label class="field-label">Your Story &amp; Intentions</label>
+          <div class="field-hint">Write your own, or click Generate to have us draft something heartfelt based on everything you have told us &mdash; you can always edit it afterward.</div>
+          <div style="display:flex;gap:0.6rem;margin-bottom:0.7rem;align-items:center;flex-wrap:wrap;">
+            <button id="generate-story-btn" onclick="generateStory()" style="display:flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#1C3A5E 0%,#4A84BE 100%);color:white;border:none;border-radius:8px;padding:0.55rem 1.2rem;font-family:Jost,sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 3px 12px rgba(28,58,94,0.25);transition:all 0.2s;"><span>&#x2736;</span><span id="generate-label">&nbsp;Generate from my selections</span></button>
+            <span id="generate-status" style="font-size:0.75rem;color:#6B7280;display:none;"></span>
+          </div>
+          <textarea id="story" rows="6" placeholder="e.g. Thank you for being here during these deeply important moments. My hope is that we can work together in a spirit of mutual respect..."></textarea>
+          <div id="story-generated-note" style="display:none;margin-top:0.5rem;font-size:0.74rem;color:#6B8F71;font-weight:500;">&#10003; Generated &mdash; feel free to edit this to make it your own.</div>
+        </div>
+        <div class="inner-divider"></div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <span class="step-counter">Step 6 of 6</span>
+      <button class="btn-next" onclick="showPreview()" style="background:linear-gradient(135deg,var(--sage) 0%,#8BB891 100%)">Preview &amp; Download →</button>
+    </div>
+  </div>
+
+</div><!-- /wizard-outer -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Your Birth Preferences</h3>
+      <button class="close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div id="pdf-preview"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-secondary" onclick="closeModal()">← Edit</button>
+      <button class="btn-modal-primary" id="dl-btn" onclick="downloadPDF()">⬇ Download PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep = 0;
+let brittanyFontB64 = null;
+
+async function loadFont() {
+  if (brittanyFontB64) return brittanyFontB64;
+  try {
+    const r = await fetch('BrittanySignature.ttf');
+    if (!r.ok) throw new Error();
+    const buf = await r.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    let bin = '';
+    for (let i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
+    brittanyFontB64 = 'data:font/truetype;base64,' + btoa(bin);
+    return brittanyFontB64;
+  } catch { return null; }
+}
+
+function goToStep(n) {
+  if (n > currentStep) return;
+  setStep(n);
+}
+function nextStep() { setStep(currentStep + 1); }
+function prevStep() { setStep(currentStep - 1); }
+function setStep(n) {
+  document.getElementById('step-' + currentStep)?.classList.remove('active');
+  currentStep = Math.max(0, Math.min(n, 5));
+  document.getElementById('step-' + currentStep)?.classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function updateProgress() {
+  document.querySelectorAll('.progress-step').forEach((el, i) => {
+    el.classList.remove('active','done');
+    if (i === currentStep) el.classList.add('active');
+    else if (i < currentStep) el.classList.add('done');
+  });
+}
+
+function toggleOption(card) {
+  card.classList.toggle('selected');
+  card.querySelector('.option-check').textContent = card.classList.contains('selected') ? '✓' : '';
+}
+function toggleOptionSingle(card, groupId) {
+  document.querySelectorAll('#' + groupId + ' .option-card').forEach(c => {
+    c.classList.remove('selected');
+    c.querySelector('.option-check').textContent = '';
+  });
+  card.classList.add('selected');
+  card.querySelector('.option-check').textContent = '✓';
+}
+function toggleChip(chip) { chip.classList.toggle('selected'); }
+function toggleChipSingle(chip, groupId) {
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+}
+function toggleHealthOther(btn) {
+  btn.classList.toggle('selected');
+  document.getElementById('health-other-wrap').classList.toggle('visible', btn.classList.contains('selected'));
+}
+
+function getSelected(id) {
+  return [...document.querySelectorAll('#' + id + ' .option-card.selected')].map(c => c.dataset.val);
+}
+function getChips(id) {
+  return [...document.querySelectorAll('#' + id + ' .chip.selected')].map(c => c.dataset.val);
+}
+
+function getAllData() {
+  const healthChips = getChips('health-chips');
+  const ho = document.getElementById('health-other').value.trim();
+  if (ho) healthChips.push(ho);
+  return {
+    name: document.getElementById('name').value.trim() || 'Your Name',
+    dueDate: document.getElementById('due-date').value,
+    birthLocation: getChips('birth-location-chips')[0] || '',
+    supportPerson: document.getElementById('support-person').value.trim(),
+    careTeam: document.getElementById('care-team').value.trim() || 'Care Team',
+    healthConsiderations: healthChips,
+    coreValues: getSelected('values-options'),
+    story: document.getElementById('story').value.trim(),
+    comfortPref: getSelected('comfort-pref-options')[0] || '',
+    naturalComfort: getSelected('natural-options'),
+    medicalComfort: getSelected('medical-options'),
+    induction: getSelected('induction-options'),
+    otherInterventions: getSelected('other-interventions-options'),
+    vaginalBirth: getSelected('vaginal-options'),
+    csection: getSelected('csection-options'),
+    decisionMaking: getSelected('decision-options'),
+    bonding: getSelected('bonding-options'),
+    placenta: getSelected('placenta-options'),
+    cord: getSelected('cord-options'),
+    newborn: getSelected('newborn-options'),
+    traumaCare: getSelected('trauma-options'),
+    emotionalCare: getSelected('emotional-options'),
+  };
+}
+
+function showPreview() {
+  const d = getAllData();
+  const dueDateStr = d.dueDate ? new Date(d.dueDate + 'T00:00').toLocaleDateString('en-CA',{month:'long',day:'numeric',year:'numeric'}) : '';
+  const subLine = [d.birthLocation, dueDateStr ? 'Due ' + dueDateStr : ''].filter(Boolean).join(' · ');
+  const healthPills = d.healthConsiderations.map(h => `<span class="preview-health-pill">${h}</span>`).join('');
+  const storyHtml = d.story
+    ? d.story.split(/\n\n+/).map(p=>`<p style="margin-bottom:0.5em">${p.replace(/\n/g,'<br>')}</p>`).join('')
+    : '<em style="color:#aaa">No story added.</em>';
+  function listItems(arr) {
+    return arr.map(i=>`<div class="preview-item-small"><span class="dot">✓</span><span>${i}</span></div>`).join('');
+  }
+  document.getElementById('pdf-preview').innerHTML = `
+    <div class="preview-header">
+      <div class="preview-tag-small">Birth Preferences For</div>
+      <div class="preview-big-name">${d.name}</div>
+      ${subLine ? `<div class="preview-sub">${subLine}</div>` : ''}
+      ${healthPills ? `<div class="preview-health-pills">${healthPills}</div>` : ''}
+    </div>
+    <div class="preview-divider"></div>
+    <div class="preview-grid">
+      <div>
+        ${d.careTeam ? `<div class="preview-greeting">Dear ${d.careTeam}</div>` : ''}
+        <div class="preview-story-text">${storyHtml}</div>
+        ${d.decisionMaking.length ? `<div class="preview-section-title" style="margin-top:1rem">Decision-Making</div>${listItems(d.decisionMaking)}` : ''}
+        ${d.traumaCare.length||d.emotionalCare.length ? `<div class="preview-section-title rose-bg" style="margin-top:0.8rem">Personal Care</div>${listItems([...d.traumaCare,...d.emotionalCare])}` : ''}
+      </div>
+      <div>
+        ${d.naturalComfort.length||d.medicalComfort.length ? `<div class="preview-section-title">Comfort</div>${d.comfortPref?`<div style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:0.4rem">${d.comfortPref}</div>`:''} ${listItems([...d.naturalComfort,...d.medicalComfort])}` : ''}
+        ${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length ? `<div class="preview-section-title" style="margin-top:0.8rem">Labor & Birth</div>${listItems([...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection])}` : ''}
+        ${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length ? `<div class="preview-section-title alt" style="margin-top:0.8rem">Golden Hour</div>${listItems([...d.bonding,...d.placenta,...d.cord,...d.newborn])}` : ''}
+      </div>
+    </div>
+    <div class="preview-footer">Thank you for welcoming my baby into the world with respect, skill and kindness, while also protecting my mental and emotional well-being.<br><br><em>With gratitude, ${d.name}</em></div>
+  `;
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
+async function downloadPDF() {
+  const d = getAllData();
+  const btn = document.getElementById('dl-btn');
+  btn.textContent = 'Generating…'; btn.disabled = true;
+  const fontUrl = await loadFont();
+  const fontFaceCSS = fontUrl
+    ? `@font-face{font-family:'Brittany Signature';src:url('${fontUrl}') format('truetype');}`
+    : `@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');`;
+  const nameFont = fontUrl ? "'Brittany Signature',cursive" : "'Dancing Script',cursive";
+  const dueDateStr = d.dueDate ? new Date(d.dueDate+'T00:00').toLocaleDateString('en-CA',{month:'long',day:'numeric',year:'numeric'}) : '';
+  const subLine = [d.birthLocation, dueDateStr?'Due '+dueDateStr:''].filter(Boolean).join('  ·  ');
+  const healthPillsHTML = d.healthConsiderations.map(h=>
+    `<span style="display:inline-block;background:#E8F0F8;color:#2B5C8A;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:50px;border:1px solid #D8E4EF;margin:2px 3px;">${h}</span>`
+  ).join('');
+  const storyHtmlPdf = d.story
+    ? d.story.split(/\n\n+/).map(p=>`<p style="margin:0 0 7px 0;">${p.replace(/\n/g,'<br>')}</p>`).join('')
+    : '';
+  function pdfList(arr,color='#2B5C8A') {
+    return arr.map(i=>`<div style="display:flex;gap:5px;margin-bottom:4px;font-size:9px;line-height:1.5;align-items:flex-start;"><span style="color:${color};flex-shrink:0;">✓</span><span>${i}</span></div>`).join('');
+  }
+  function pdfSec(title,items,bg='#2B5C8A') {
+    if(!items.length) return '';
+    return `<div style="background:${bg};color:white;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin:9px 0 5px;">${title}</div>${pdfList(items,bg==='#7B3F3F'?'#7B3F3F':'#2B5C8A')}`;
+  }
+  const printHTML = `
+    <style>${fontFaceCSS}</style>
+    <div id="pp" style="width:794px;min-height:1123px;background:#FAF7F2;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;">
+      <div style="background:#E8F0F8;padding:26px 40px 20px;text-align:center;">
+        <div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:5px;color:#2B5C8A;text-transform:uppercase;font-weight:600;margin-bottom:10px;">Birth Preferences For</div>
+        <div style="font-family:${nameFont};font-size:${Math.max(22,Math.min(36,Math.floor(280/(d.name.length*0.5))))}px;color:#111111;line-height:1.1;">${d.name}</div>
+        ${subLine?`<div style="font-family:Arial,sans-serif;font-size:8.5px;color:#6B7280;letter-spacing:2px;margin-top:8px;">${subLine}</div>`:''}
+        ${healthPillsHTML?`<div style="margin-top:10px;">${healthPillsHTML}</div>`:''}
+      </div>
+      <div style="display:flex;gap:18px;padding:18px 40px 0;align-items:flex-start;">
+        <div style="flex:1;font-size:10px;line-height:1.75;color:#333;">
+          ${d.careTeam?`<div style="display:inline-block;background:#E8F0F8;color:#2B5C8A;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin-bottom:10px;">Dear ${d.careTeam}</div>`:''}
+          ${storyHtmlPdf}
+          ${d.decisionMaking.length?pdfSec('Decision-Making',d.decisionMaking):''}
+          ${d.traumaCare.length||d.emotionalCare.length?pdfSec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#7B3F3F'):''}
+        </div>
+        <div style="flex:1;font-size:10px;">
+          ${d.naturalComfort.length||d.medicalComfort.length?pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort]):''}
+          ${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection]):''}
+          ${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#6B8F71'):''}
+        </div>
+      </div>
+      <div style="margin:18px 40px 0;padding-top:12px;border-top:1px solid #DDD;font-size:10px;color:#2C2C2C;line-height:1.75;font-style:italic;">Thank you for welcoming my baby into the world with respect, skill and kindness, while also protecting my mental and emotional well-being.<div style="margin-top:10px;font-style:normal;">With gratitude,</div><div style="font-family:${nameFont};font-size:24px;color:#111111;line-height:1.4;">${d.name}</div></div>
+    </div>`;
+  let container = document.getElementById('pdf-render-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'pdf-render-container';
+    container.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1;';
+    document.body.appendChild(container);
+  }
+  container.innerHTML = printHTML;
+  const target = container.querySelector('#pp');
+  await document.fonts.ready;
+  await new Promise(r => setTimeout(r, 350));
+  html2canvas(target,{scale:2,useCORS:true,backgroundColor:'#FAF7F2',width:794,windowWidth:794}).then(canvas => {
+    const {jsPDF} = window.jspdf;
+    const pdf = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pw = pdf.internal.pageSize.getWidth();
+    const ph = pdf.internal.pageSize.getHeight();
+    pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,pw,ph);
+    pdf.save(`Birth Preferences — ${d.name}.pdf`);
+    btn.textContent = '⬇ Download PDF';
+    btn.disabled = false;
+  });
+}
+
+function generateStory() {
+  var btn = document.getElementById('generate-story-btn');
+  var label = document.getElementById('generate-label');
+  var note = document.getElementById('story-generated-note');
+  var status = document.getElementById('generate-status');
+  var textarea = document.getElementById('story');
+
+  // ── Collect selections ──────────────────────────────────────────
+  var name        = document.getElementById('name').value.trim();
+  var careTeam    = document.getElementById('care-team').value.trim();
+  var support     = document.getElementById('support-person').value.trim();
+  var location    = getChips('birth-location-chips')[0] || '';
+  var health      = getChips('health-chips');
+  var ho          = document.getElementById('health-other').value.trim();
+  if (ho) health.push(ho);
+
+  var values        = getSelected('values-options');
+  var comfortPref   = getSelected('comfort-pref-options')[0] || '';
+  var naturalList   = getSelected('natural-options');
+  var medicalList   = getSelected('medical-options');
+  var induction     = getSelected('induction-options');
+  var vaginal       = getSelected('vaginal-options');
+  var csection      = getSelected('csection-options');
+  var decision      = getSelected('decision-options');
+  var bonding       = getSelected('bonding-options');
+  var cord          = getSelected('cord-options');
+  var trauma        = getSelected('trauma-options');
+  var emotional     = getSelected('emotional-options');
+
+  // ── Helper ───────────────────────────────────────────────────────
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  var n = name || 'I';
+
+  // ── Sentence 1: Opening / greeting ───────────────────────────────
+  var greetings = [
+    'Thank you for being present for one of the most sacred moments of my life.',
+    'I am so grateful you are here to support me through this birth.',
+    'Welcome, and thank you for the care and dedication you bring to this room today.',
+    'Thank you for taking the time to read this and for everything you will do for me and my baby.',
+  ];
+  if (careTeam) {
+    greetings.push('Dear ' + careTeam + ' — thank you for the kindness and skill you bring to this moment.');
+    greetings.push('To my ' + careTeam + ': I am deeply grateful you are here with me today.');
+  }
+  var s1 = pick(greetings);
+
+  // ── Sentence 2: Values ───────────────────────────────────────────
+  var valuePhrases = {
+    'Feeling Safe':            'feeling physically and emotionally safe throughout this experience',
+    'Feeling Heard':           'knowing that my voice and concerns are truly heard',
+    'Choices Being Respected': 'having my choices acknowledged and respected at every stage',
+    'Feeling Informed':        'being kept informed so I can make confident decisions',
+    'Provider Guidance':       'working in partnership with your knowledge and expertise',
+    'Everyone Staying Healthy':'keeping both myself and my baby as safe and healthy as possible',
+  };
+  var valueSnippets = values.map(function(v) { return valuePhrases[v]; }).filter(Boolean);
+  var s2 = '';
+  if (valueSnippets.length >= 2) {
+    s2 = 'What matters most to me during this birth is ' + valueSnippets.slice(0,-1).join(', ') + ', and ' + valueSnippets[valueSnippets.length-1] + '.';
+  } else if (valueSnippets.length === 1) {
+    s2 = 'What matters most to me during this birth is ' + valueSnippets[0] + '.';
+  } else {
+    s2 = pick([
+      'I come into this birth with an open heart and a deep trust in the process.',
+      'I am approaching this birth with both preparation and openness.',
+    ]);
+  }
+
+  // ── Sentence 3: Comfort & approach ───────────────────────────────
+  var s3 = '';
+  var comfortPhrases = {
+    'Natural comfort techniques first': pick([
+      'I would like to begin with natural comfort measures and move to medical support if needed.',
+      'My intention is to lean into natural comfort techniques first, remaining open to further support as labor unfolds.',
+    ]),
+    'Medical comfort techniques first': pick([
+      'I plan to use medical comfort measures to help me feel at ease throughout labor.',
+      'I am planning on medical pain relief and would appreciate your guidance in accessing it smoothly.',
+    ]),
+    'Combination of both': pick([
+      'I am open to a combination of natural and medical comfort measures depending on how labor progresses.',
+      'I plan to draw on both natural techniques and medical support as needed throughout this birth.',
+    ]),
+  };
+  if (comfortPref && comfortPhrases[comfortPref]) {
+    s3 = comfortPhrases[comfortPref];
+  } else if (naturalList.length) {
+    s3 = 'I am hoping to use ' + naturalList.slice(0,2).join(' and ').toLowerCase() + ' to stay comfortable and grounded during labor.';
+  } else if (medicalList.length) {
+    s3 = 'I am planning to use ' + medicalList.slice(0,2).join(' and ').toLowerCase() + ' for pain relief during labor.';
+  }
+
+  // ── Sentence 4: Birth wishes / interventions ─────────────────────
+  var s4 = '';
+  if (csection.indexOf('Gentle / Family-Centered C-Section') !== -1) {
+    s4 = pick([
+      'If a C-section becomes necessary, I would love for it to be as family-centered and gentle as possible.',
+      'Should a C-section be needed, I hope to remain connected to my baby and the birth experience as much as possible.',
+    ]);
+  } else if (vaginal.indexOf('Spontaneous Vaginal Delivery') !== -1) {
+    s4 = pick([
+      'My hope is for a spontaneous vaginal birth, supported by your guidance and expertise.',
+      'I am hoping for a vaginal birth and trust your team to guide me through the process.',
+    ]);
+  } else if (vaginal.indexOf('VBAC (Vaginal Birth After Caesarean)') !== -1) {
+    s4 = pick([
+      'I am hoping for a VBAC and am grateful for your support in working toward that goal.',
+      'This VBAC is something I have prepared for, and I appreciate your partnership in making it possible.',
+    ]);
+  } else if (induction.indexOf('Natural Labor Progress') !== -1) {
+    s4 = pick([
+      'I am hoping to allow labor to unfold naturally, and I appreciate patience as my body finds its rhythm.',
+      'I would love for labor to progress on its own timeline, with your support along the way.',
+    ]);
+  }
+
+  // ── Sentence 5: Golden hour & bonding ───────────────────────────
+  var s5 = '';
+  var skinBaby   = bonding.indexOf('Immediate skin-to-skin with birthing parent') !== -1;
+  var skinPartner= bonding.indexOf('Immediate skin-to-skin with partner') !== -1;
+  var delayed    = cord.indexOf('Delayed cord clamping') !== -1 || cord.indexOf('Physiologic cord clamping') !== -1;
+  var partnerCord= cord.indexOf('Partner to cut the umbilical cord') !== -1;
+
+  if (skinBaby && delayed) {
+    s5 = pick([
+      'After baby arrives, I am hoping for immediate skin-to-skin contact and delayed cord clamping to give us the gentlest possible start.',
+      'I would love to hold my baby skin-to-skin right away, with delayed cord clamping to support those first precious moments.',
+    ]);
+  } else if (skinBaby && partnerCord) {
+    s5 = pick([
+      'I am looking forward to immediate skin-to-skin with my baby while ' + (support || 'my partner') + ' cuts the cord.',
+      'My hope is to hold my baby right away while ' + (support || 'my partner') + ' has the honour of cutting the cord.',
+    ]);
+  } else if (skinBaby) {
+    s5 = pick([
+      'I am hoping to hold my baby skin-to-skin as soon as possible after birth.',
+      'Immediate skin-to-skin contact with my baby is something I am really looking forward to.',
+    ]);
+  } else if (skinPartner && support) {
+    s5 = 'If I am unable to hold baby right away, I would love for ' + support + ' to do skin-to-skin in my place.';
+  } else if (delayed) {
+    s5 = pick([
+      'I would appreciate delayed cord clamping to support my baby\'s transition into the world.',
+      'Delayed cord clamping is something we feel strongly about and would love your support with.',
+    ]);
+  }
+
+  // ── Sentence 6: Personal care / trauma / emotional ───────────────
+  var s6 = '';
+  var wantsConsent  = trauma.indexOf('Explicit consent required for all interventions') !== -1;
+  var wantsPrivacy  = trauma.indexOf('Privacy and limited interruptions') !== -1;
+  var wantsClear    = emotional.indexOf('Clear communication — providers explain all procedures and ask permission') !== -1;
+  var wantsPositive = emotional.indexOf('Positive self-talk and encouragement') !== -1;
+
+  if (wantsConsent && wantsPrivacy) {
+    s6 = pick([
+      'I ask that any procedures be explained and consented to first, and that my privacy and sense of calm be protected throughout.',
+      'Please ask before any procedure, and help me maintain a quiet, private space so I can stay centred and grounded.',
+    ]);
+  } else if (wantsConsent || wantsClear) {
+    s6 = pick([
+      'I appreciate being informed before any procedure — clear communication helps me feel safe and in control.',
+      'Please walk me through what is happening as we go — feeling informed is how I feel most at ease.',
+    ]);
+  } else if (wantsPositive) {
+    s6 = pick([
+      'Encouraging words go a long way for me — please know that positive reinforcement makes a real difference.',
+      'I respond well to encouragement and kind words, so please do not hold back on the support.',
+    ]);
+  } else if (wantsPrivacy) {
+    s6 = pick([
+      'A calm, private environment helps me feel safe, so I appreciate limited interruptions where possible.',
+      'Privacy and a quiet space are important to me — thank you for helping protect that.',
+    ]);
+  }
+
+  // ── Closing ───────────────────────────────────────────────────────
+  var closings = [
+    'I trust your expertise completely, and I am so grateful to be in your care.',
+    'Thank you from the bottom of my heart for the skill and compassion you bring to this work.',
+    'I am so grateful for your presence today — together, I know we will bring this baby into the world beautifully.',
+    'Thank you for welcoming my baby into the world with respect, skill, and kindness.',
+  ];
+  if (support) {
+    closings.push('With ' + support + ' by my side and your team around us, I feel ready and supported for whatever comes.');
+  }
+  var s7 = pick(closings);
+
+  // ── Assemble ─────────────────────────────────────────────────────
+  var sentences = [s1, s2, s3, s4, s5, s6, s7].filter(function(s){ return s && s.trim(); });
+  var paragraph = sentences.join(' ');
+
+  // ── Type it out ───────────────────────────────────────────────────
+  textarea.value = '';
+  note.style.display = 'none';
+  status.style.display = 'none';
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+  label.textContent = ' Writing...';
+
+  var i = 0;
+  var interval = setInterval(function() {
+    textarea.value += paragraph[i];
+    i++;
+    if (i >= paragraph.length) {
+      clearInterval(interval);
+      note.style.display = 'block';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      label.textContent = ' Regenerate';
+    }
+  }, 14);
+}
+
+
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.body.setAttribute('tabindex','-1');
+  document.body.focus({preventScroll:true});
+  document.body.removeAttribute('tabindex');
+  document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+  loadFont();
+  window.scrollTo({top:0,behavior:'instant'});
+});
+</script>
+</body>
+</html>
