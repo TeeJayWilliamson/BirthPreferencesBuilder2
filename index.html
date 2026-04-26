@@ -484,7 +484,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       <div class="section-head">
         <div class="section-step-tag">Step 1 of 6</div>
         <div class="section-title">About You</div>
-        <div class="section-intro">Let's start with the basics — this information will appear on your birth preferences document.</div>
+        <div class="section-intro">This information will appear at the top of your final birth plan.</div>
       </div>
       <div class="section-body">
         <div class="input-row">
@@ -513,7 +513,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
         </div>
         <div class="field">
           <label class="field-label">Care Team Greeting <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-          <input type="text" id="care-team" placeholder="e.g. MSH Care Team, Midwives, Doulas...">
+          <input type="text" id="care-team" placeholder="e.g. Doctor, Midwife, Doula…">
         </div>
         <div class="inner-divider"></div>
         <div class="field">
@@ -634,6 +634,10 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
               <div class="option-header"><div class="option-check"></div><div class="option-name">Touch &amp; Massage</div></div>
               <div class="option-desc">Gentle touch, counterpressure, or hip squeezes can reduce pain signals and promote relaxation.</div>
             </div>
+            <div class="option-card" data-val="Birth Affirmations" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Birth Affirmations</div></div>
+              <div class="option-desc">Short, positive, and empowering statements designed to foster confidence, trust, and calm during pregnancy and labor, helping to replace fear with a mindset of strength.</div>
+            </div>
             <div class="option-card" data-val="Attention Focusing / Ritual" onclick="toggleOption(this)">
               <div class="option-header"><div class="option-check"></div><div class="option-name">Attention Focusing / Ritual</div></div>
               <div class="option-desc">Directing attention to a calming object, voice, or sensation to reduce awareness of pain.</div>
@@ -669,6 +673,16 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
               <div class="option-header"><div class="option-check"></div><div class="option-name">Nitrous Oxide (Laughing Gas)</div></div>
               <div class="option-desc">A self-administered gas that takes the edge off pain and anxiety during contractions without affecting baby.</div>
             </div>
+  
+            <div class="option-card" data-val="Local anesthesia for Episiotomy or Perineal repair" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Local anesthesia for Episiotomy or Perineal repair</div></div>
+              <div class="option-desc">A fast-acting, temporary injection (typically lidocaine) directly into the perineal muscles and skin. It blocks pain signals in that small area, ensuring no pain during the incision or when stitches are placed to repair tears or a surgical cut after childbirth.</div>
+            </div>
+            <div class="option-card" data-val="Pudendal Nerve Block" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Pudendal Nerve Block</div></div>
+              <div class="option-desc">A minimally invasive injection of local anesthetic and sometimes steroids near the pudendal nerve in the pelvis to provide temporary relief from chronic pelvic, genital, or perineal pain.</div>
+            </div>            
+
             <div class="option-card" data-val="Epidural / Spinal" onclick="toggleOption(this)">
               <div class="option-header"><div class="option-check"></div><div class="option-name">Epidural / Spinal</div></div>
               <div class="option-desc">Medication placed in the lower back that numbs pain from the waist down. Provides strong relief but limits movement.</div>
@@ -698,12 +712,12 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       <div class="section-head">
         <div class="section-step-tag">Step 4 of 6</div>
         <div class="section-title">Labor Interventions</div>
-        <div class="section-intro">Interventions in labor are medical procedures used to support safety, comfort, or progress during childbirth. They may be recommended based on how labor is unfolding or specific health needs.</div>
+        <div class="section-intro">They may be recommended based on how labor is unfolding or for specific health needs.</div>
       </div>
       <div class="section-body">
         <div class="subsection">
           <div class="subsection-title">Induction &amp; Augmentation</div>
-          <div class="subsection-intro">Induction starts labor artificially when it has not begun on its own, while augmentation supports labor that is moving slowly.</div>
+          <div class="subsection-intro">Natural pauses in labor.</div>
           <div class="options-grid" id="induction-options">
             <div class="option-card" data-val="Natural Methods of Induction" onclick="toggleOption(this)">
               <div class="option-header"><div class="option-check"></div><div class="option-name">Natural Methods</div></div>
@@ -723,24 +737,8 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
             </div>
           </div>
         </div>
-        <div class="inner-divider"></div>
-        <div class="subsection">
-          <div class="subsection-title alt">Other Interventions</div>
-          <div class="options-grid" id="other-interventions-options">
-            <div class="option-card" data-val="IV Fluids" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">IV Fluids</div></div>
-              <div class="option-desc">Fluids through IV to support hydration, deliver medications, or maintain fluid balance.</div>
-            </div>
-            <div class="option-card" data-val="Continuous Fetal Monitoring (CTG)" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Continuous Fetal Monitoring (CTG)</div></div>
-              <div class="option-desc">Continuously records the baby's heart rate and the pattern of contractions during labor.</div>
-            </div>
-            <div class="option-card" data-val="Intermittent Fetal Monitoring (Doppler)" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Intermittent Monitoring (Doppler)</div></div>
-              <div class="option-desc">Listens to baby's heartbeat every 15–30 minutes with a handheld doppler. Standard in low-risk pregnancies.</div>
-            </div>
-          </div>
-        </div>
+
+
         <div class="inner-divider"></div>
         <div class="subsection">
           <div class="subsection-title">Vaginal Birth</div>
@@ -791,41 +789,25 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
           </div>
         </div>
         <div class="inner-divider"></div>
-        <div class="field">
-          <label class="field-label">Decision-Making Style</label>
-          <div class="field-hint">How you prefer to make important decisions during labor. Select all that apply.</div>
-          <div class="brain-box">
-            <div class="brain-box-title">B.R.A.I.N — Questions to Ask Your Care Team</div>
-            <div class="brain-item"><div class="brain-letter">B</div><div class="brain-text"><strong>Benefits</strong> — What are the benefits of this recommendation?</div></div>
-            <div class="brain-item"><div class="brain-letter">R</div><div class="brain-text"><strong>Risks</strong> — What are the risks?</div></div>
-            <div class="brain-item"><div class="brain-letter">A</div><div class="brain-text"><strong>Alternatives</strong> — What alternatives exist?</div></div>
-            <div class="brain-item"><div class="brain-letter">I</div><div class="brain-text"><strong>Intuition</strong> — What does your intuition say?</div></div>
-            <div class="brain-item"><div class="brain-letter">N</div><div class="brain-text"><strong>Nothing</strong> — What happens if we do nothing right now?</div></div>
-          </div>
-          <div class="options-grid" id="decision-options">
-            <div class="option-card" data-val="I need time to talk things through" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">I need time to talk things through</div></div>
+        <div class="subsection">
+
+                  <div class="subsection-title alt">Other Interventions</div>
+          <div class="options-grid" id="other-interventions-options">
+            <div class="option-card" data-val="IV Fluids" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">IV Fluids</div></div>
+              <div class="option-desc">Fluids through IV to support hydration, deliver medications, or maintain fluid balance.</div>
             </div>
-            <div class="option-card" data-val="Direct guidance from my healthcare provider" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Direct provider guidance preferred</div></div>
+            <div class="option-card" data-val="Continuous Fetal Monitoring (CTG)" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Continuous Fetal Monitoring (CTG)</div></div>
+              <div class="option-desc">Continuously records the baby's heart rate and the pattern of contractions during labor.</div>
             </div>
-            <div class="option-card" data-val="Fewer interruptions and questions" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Fewer interruptions</div></div>
-            </div>
-            <div class="option-card" data-val="Frequent check-ins" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Frequent check-ins</div></div>
-            </div>
-            <div class="option-card" data-val="Options explained in detail" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Options explained in detail</div></div>
-            </div>
-            <div class="option-card" data-val="I trust my provider's recommendation" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Trust provider's recommendation</div></div>
-            </div>
-            <div class="option-card" data-val="My partner may consent on my behalf" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Partner may consent on my behalf</div></div>
+            <div class="option-card" data-val="Intermittent Fetal Monitoring (Doppler)" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Intermittent Monitoring (Doppler)</div></div>
+              <div class="option-desc">Listens to baby's heartbeat every 15–30 minutes with a handheld doppler. Standard in low-risk pregnancies.</div>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
     <div class="wizard-nav">
@@ -841,50 +823,11 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       <div class="section-head">
         <div class="section-step-tag">Step 5 of 6</div>
         <div class="section-title">The Golden Hour</div>
-        <div class="section-intro">The golden hour is the first 1–2 hours after birth — an important time for bonding, warmth, and adjustment to life outside the womb. Skin-to-skin contact and early feeding can help regulate the baby's temperature, heart rate, and breathing.</div>
+        <div class="section-intro">The golden hour is the first 1–2 hours after birth — an important time for bonding, warmth, and adjustment to life outside the womb. Uninterrupted skin-to-skin contact and early feeding can help regulate the baby's temperature, heart rate, and breathing while establishing a foundation for a successful feeding journey.</div>
       </div>
       <div class="section-body">
-        <div class="subsection">
-          <div class="subsection-title alt">Immediate Bonding</div>
-          <div class="options-grid" id="bonding-options">
-            <div class="option-card" data-val="Immediate skin-to-skin with birthing parent" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Skin-to-Skin — Birthing Parent</div></div>
-            </div>
-            <div class="option-card" data-val="Immediate skin-to-skin with partner" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Skin-to-Skin — Partner</div></div>
-            </div>
-            <div class="option-card" data-val="Breastfeeding" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Breastfeeding</div></div>
-            </div>
-            <div class="option-card" data-val="Bottle Feeding" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Bottle Feeding</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="inner-divider"></div>
-        <div class="subsection">
-          <div class="subsection-title">Placenta Options</div>
-          <div class="subsection-intro">The delivery of the placenta is the final stage of labor. For many people, it also holds personal or cultural significance.</div>
-          <div class="options-grid" id="placenta-options">
-            <div class="option-card" data-val="Expectant Management of Placenta" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Expectant Management</div></div>
-              <div class="option-desc">The placenta is born naturally as the body continues contracting.</div>
-            </div>
-            <div class="option-card" data-val="Active Management of Placenta" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Active Management</div></div>
-              <div class="option-desc">Medication to help the uterus contract, and the placenta is guided out quickly — usually within about 15 minutes.</div>
-            </div>
-            <div class="option-card" data-val="Take placenta home" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Take Placenta Home</div></div>
-              <div class="option-desc">For personal, cultural, or ceremonial reasons.</div>
-            </div>
-            <div class="option-card" data-val="View the placenta" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">View the Placenta</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="inner-divider"></div>
-        <div class="subsection">
+        
+<div class="subsection">
           <div class="subsection-title alt">Umbilical Cord</div>
           <div class="subsection-intro">The timing of cord clamping can influence iron levels, circulation, and early adjustment to life outside the womb.</div>
           <div class="options-grid" id="cord-options">
@@ -906,9 +849,65 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
             </div>
             <div class="option-card" data-val="Partner to cut the umbilical cord" onclick="toggleOption(this)">
               <div class="option-header"><div class="option-check"></div><div class="option-name">Partner Cuts the Cord</div></div>
+              <div class="option-desc">Allows your partner to actively participate in the birth process.</div>
             </div>
           </div>
         </div>
+
+        <div class="inner-divider"></div>
+        <div class="subsection">
+          <div class="subsection-title">Placenta Options</div>
+          <div class="subsection-intro">The delivery of the placenta is the final stage of labor. For many people, it also holds personal or cultural significance.</div>
+          <div class="options-grid" id="placenta-options">
+            <div class="option-card" data-val="Expectant Management of Placenta" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Expectant Management</div></div>
+              <div class="option-desc">The placenta is born naturally as the body continues contracting.</div>
+            </div>
+            <div class="option-card" data-val="Active Management of Placenta" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Active Management</div></div>
+              <div class="option-desc">Medication to help the uterus contract, and the placenta is guided out quickly — usually within about 15 minutes.</div>
+            </div>
+            <div class="option-card" data-val="Take placenta home" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Take Placenta Home</div></div>
+              <div class="option-desc">For personal, cultural, or ceremonial reasons.</div>
+            </div>
+            <div class="option-card" data-val="Placenta Tour" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Placenta Tour</div></div>
+              <div class="option-desc">To view the placenta and to see how it, and the umbilical cord supported your baby..</div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
+
+<div class="subsection">
+  <div class="subsection-title alt">Immediate Bonding</div>
+  <div class="options-grid" id="bonding-options">
+    <div class="option-card" data-val="Immediate skin-to-skin with birthing parent" onclick="toggleOption(this)">
+      <div class="option-header"><div class="option-check"></div><div class="option-name">Skin-to-Skin — Birthing Parent</div></div>
+    </div>
+    <div class="option-card" data-val="Immediate skin-to-skin with partner" onclick="toggleOption(this)">
+      <div class="option-header"><div class="option-check"></div><div class="option-name">Skin-to-Skin — Partner</div></div>
+    </div>
+    <div class="option-card" data-val="Breastfeeding" onclick="toggleOption(this)">
+      <div class="option-header"><div class="option-check"></div><div class="option-name">Breastfeeding</div></div>
+    </div>
+    <div class="option-card" data-val="Bottle Feeding" onclick="toggleOption(this)">
+      <div class="option-header"><div class="option-check"></div><div class="option-name">Bottle Feeding</div></div>
+    </div>
+
+<div class="option-card" data-val="Other" onclick="toggleOption(this)">
+  <div class="option-header"><div class="option-check"></div><div class="option-name">Other</div></div>
+  <input
+    type="text"
+    placeholder="Please describe..."
+    onclick="event.stopPropagation()"
+  />
+</div>
+
+  </div>
+</div>
+
+        
         <div class="inner-divider"></div>
         <div class="subsection">
           <div class="subsection-title">Newborn Assessments &amp; Procedures</div>
@@ -966,6 +965,67 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
         <div class="section-intro">Each person's needs, preferences, and circumstances are unique. Respectful, personalised support ensures you feel informed, supported, and empowered throughout your birth.</div>
       </div>
       <div class="section-body">
+
+        
+
+
+        <div class="subsection">
+          <div class="subsection-title alt">Emotional Care</div>
+          <div class="options-grid" id="emotional-options">
+            <div class="option-card" data-val="Clear communication — providers explain all procedures and ask permission" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Clear Communication</div></div>
+              <div class="option-desc">Providers explain all procedures, ask permission, and give choices.</div>
+            </div>
+            <div class="option-card" data-val="Continuous support from doula or provider" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Continuous Support</div></div>
+              <div class="option-desc">A doula or provider who can help manage anxiety, advocate for you, and provide reassurance and coping strategies.</div>
+            </div>
+            <div class="option-card" data-val="Positive self-talk and encouragement" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Positive Self-Talk</div></div>
+              <div class="option-desc">Encouraging and reassuring phrases to help build confidence, reduce fear, and stay focused during contractions.</div>
+            </div>
+          </div>
+        </div>
+
+<div class="inner-divider"></div>
+        <div class="field">
+
+          
+          <label class="field-label">Decision-Making Style</label>
+          <div class="field-hint">How you prefer to make important decisions during labor. Select all that apply.</div>
+          <div class="brain-box">
+            <div class="brain-box-title">B.R.A.I.N — Questions to Ask Your Care Team</div>
+            <div class="brain-item"><div class="brain-letter">B</div><div class="brain-text"><strong>Benefits</strong> — What are the benefits of this recommendation?</div></div>
+            <div class="brain-item"><div class="brain-letter">R</div><div class="brain-text"><strong>Risks</strong> — What are the risks?</div></div>
+            <div class="brain-item"><div class="brain-letter">A</div><div class="brain-text"><strong>Alternatives</strong> — What alternatives exist?</div></div>
+            <div class="brain-item"><div class="brain-letter">I</div><div class="brain-text"><strong>Intuition</strong> — What does your intuition say?</div></div>
+            <div class="brain-item"><div class="brain-letter">N</div><div class="brain-text"><strong>Nothing</strong> — What happens if we do nothing right now?</div></div>
+          </div>
+          <div class="options-grid" id="decision-options">
+            <div class="option-card" data-val="I need time to talk things through" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">I need time to talk things through</div></div>
+            </div>
+            <div class="option-card" data-val="Direct guidance from my healthcare provider" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Direct guidance preferred</div></div>
+            </div>
+            <div class="option-card" data-val="Fewer interruptions and questions" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Fewer interruptions</div></div>
+            </div>
+            <div class="option-card" data-val="Frequent check-ins" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Frequent check-ins</div></div>
+            </div>
+            <div class="option-card" data-val="Options explained in detail" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Options explained in detail</div></div>
+            </div>
+            <div class="option-card" data-val="I trust my provider's recommendation" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Trust provider's recommendation</div></div>
+            </div>
+            <div class="option-card" data-val="My partner may consent on my behalf" onclick="toggleOption(this)">
+              <div class="option-header"><div class="option-check"></div><div class="option-name">Partner may consent on my behalf</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-divider"></div>
         <div class="subsection">
           <div class="subsection-title rose">Trauma-Informed Care</div>
           <div class="subsection-intro">When a person with a history of trauma gives birth, the experience can be overwhelming. Trauma-informed care focuses on safety, control, trust, and empowerment.</div>
@@ -988,28 +1048,11 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
             </div>
           </div>
         </div>
-        <div class="inner-divider"></div>
-        <div class="subsection">
-          <div class="subsection-title alt">Emotional Care</div>
-          <div class="options-grid" id="emotional-options">
-            <div class="option-card" data-val="Clear communication — providers explain all procedures and ask permission" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Clear Communication</div></div>
-              <div class="option-desc">Providers explain all procedures, ask permission, and give choices.</div>
-            </div>
-            <div class="option-card" data-val="Continuous support from doula or provider" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Continuous Support</div></div>
-              <div class="option-desc">A doula or provider who can help manage anxiety, advocate for you, and provide reassurance and coping strategies.</div>
-            </div>
-            <div class="option-card" data-val="Positive self-talk and encouragement" onclick="toggleOption(this)">
-              <div class="option-header"><div class="option-check"></div><div class="option-name">Positive Self-Talk</div></div>
-              <div class="option-desc">Encouraging and reassuring phrases to help build confidence, reduce fear, and stay focused during contractions.</div>
-            </div>
-          </div>
-        </div>
+
         <div class="inner-divider"></div>
         <div class="field">
           <label class="field-label">Your Story &amp; Intentions</label>
-          <div class="field-hint">Write your own, or click Generate to have us draft something heartfelt based on everything you have told us &mdash; you can always edit it afterward.</div>
+          <div class="field-hint">Write your own, or click Generate to have us draft a personalized message to your care team based on the preferences you selected —you can always edit it afterward.</div>
           <div style="display:flex;gap:0.6rem;margin-bottom:0.7rem;align-items:center;flex-wrap:wrap;">
             <button id="generate-story-btn" onclick="generateStory()" style="display:flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#1C3A5E 0%,#4A84BE 100%);color:white;border:none;border-radius:8px;padding:0.55rem 1.2rem;font-family:Jost,sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 3px 12px rgba(28,58,94,0.25);transition:all 0.2s;"><span>&#x2736;</span><span id="generate-label">&nbsp;Generate from my selections</span></button>
             <span id="generate-status" style="font-size:0.75rem;color:#6B7280;display:none;"></span>
@@ -1062,7 +1105,6 @@ async function loadFont() {
 }
 
 function goToStep(n) {
-  if (n > currentStep) return;
   setStep(n);
 }
 function nextStep() { setStep(currentStep + 1); }
