@@ -455,9 +455,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       <div class="auth-tabs">
         <button class="auth-tab active" onclick="switchAuthTab('magic')">Magic Link</button>
         <button class="auth-tab" onclick="switchAuthTab('password')">Email &amp; Password</button>
-            <button onclick="guestMode()" style="margin-top:1.2rem;background:none;border:none;color:var(--muted);font-family:'Jost',sans-serif;font-size:0.8rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">
-      Continue without an account
-    </button>
+        <button class="auth-tab" onclick="guestMode()">Guest</button>
       </div>
 
       <!-- Magic Link Panel -->
@@ -1146,11 +1144,15 @@ function showMsg(id, text, type) {
   el.style.display = 'block';
 }
 function switchAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t,i) => {
-    t.classList.toggle('active', (i===0 && tab==='magic') || (i===1 && tab==='password'));
-  });
-  document.getElementById('panel-magic').classList.toggle('active', tab==='magic');
-  document.getElementById('panel-password').classList.toggle('active', tab==='password');
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+  if (tab === 'magic') {
+    document.querySelectorAll('.auth-tab')[0].classList.add('active');
+    document.getElementById('panel-magic').classList.add('active');
+  } else {
+    document.querySelectorAll('.auth-tab')[1].classList.add('active');
+    document.getElementById('panel-password').classList.add('active');
+  }
 }
 async function sendMagicLink() {
   const email = document.getElementById('magic-email').value.trim();
