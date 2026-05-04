@@ -455,6 +455,9 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       <div class="auth-tabs">
         <button class="auth-tab active" onclick="switchAuthTab('magic')">Magic Link</button>
         <button class="auth-tab" onclick="switchAuthTab('password')">Email &amp; Password</button>
+            <button onclick="guestMode()" style="margin-top:1.2rem;background:none;border:none;color:var(--muted);font-family:'Jost',sans-serif;font-size:0.8rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">
+      Continue without an account
+    </button>
       </div>
 
       <!-- Magic Link Panel -->
@@ -1176,7 +1179,7 @@ async function signUp() {
   showMsg('pw-msg', '✓ Account created! Check your email to confirm, then sign in.', 'success');
 }
 async function signOut() {
-  await sb.auth.signOut();
+  if (currentUser) await sb.auth.signOut();
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('app-screen').style.display  = 'none';
   currentUser = null;
@@ -1415,6 +1418,14 @@ function getAllData() {
     traumaCare:     getSelected('trauma-options'),
     emotionalCare:  getSelected('emotional-options'),
   };
+}
+
+function guestMode() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display  = 'block';
+  document.getElementById('user-email-display').textContent = 'Guest';
+  document.getElementById('save-indicator').textContent = '⚠ Not saved';
+  attachAutoSave();
 }
 
 // ══════════════════════════════════════════════════════════
