@@ -1177,6 +1177,9 @@ async function signUp() {
 }
 async function signOut() {
   await sb.auth.signOut();
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app-screen').style.display  = 'none';
+  currentUser = null;
 }
 
 // ══════════════════════════════════════════════════════════
