@@ -452,22 +452,10 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       <p class="auth-sub">Sign in to create, save, and return to your personalised birth plan at any time.</p>
     </div>
     <div class="auth-body">
-      <div class="auth-tabs">
-        <button class="auth-tab active" onclick="switchAuthTab('magic')">Magic Link</button>
-        <button class="auth-tab" onclick="switchAuthTab('password')">Email &amp; Password</button>
-        <button class="auth-tab" onclick="guestMode()">Guest</button>
-      </div>
-
-      <!-- Magic Link Panel -->
-      <div class="auth-panel active" id="panel-magic">
-        <div class="auth-field">
-          <label class="auth-label">Email Address</label>
-          <input type="email" class="auth-input" id="magic-email" placeholder="you@example.com">
-        </div>
-        <button class="auth-btn" onclick="sendMagicLink()">Send Magic Link</button>
-        <div class="auth-msg" id="magic-msg"></div>
-        <p class="auth-hint">We'll email you a secure, one-click sign-in link — no password needed.</p>
-      </div>
+<div class="auth-tabs">
+  <button class="auth-tab active">Sign In</button>
+  <button class="auth-tab" onclick="guestMode()">Guest</button>
+</div>
 
       <!-- Email + Password Panel -->
       <div class="auth-panel" id="panel-password">
@@ -1143,6 +1131,8 @@ function showMsg(id, text, type) {
   el.className = 'auth-msg ' + type;
   el.style.display = 'block';
 }
+
+/*
 function switchAuthTab(tab) {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
@@ -1154,16 +1144,8 @@ function switchAuthTab(tab) {
     document.getElementById('panel-password').classList.add('active');
   }
 }
-async function sendMagicLink() {
-  const email = document.getElementById('magic-email').value.trim();
-  if (!email) return showMsg('magic-msg', 'Please enter your email address.', 'error');
-  const btn = document.querySelector('#panel-magic .auth-btn');
-  btn.disabled = true; btn.textContent = 'Sending…';
-  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
-  btn.disabled = false; btn.textContent = 'Send Magic Link';
-  if (error) return showMsg('magic-msg', error.message, 'error');
-  showMsg('magic-msg', '✓ Check your inbox — a sign-in link is on its way.', 'success');
-}
+*/
+
 async function signIn() {
   const email = document.getElementById('pw-email').value.trim();
   const password = document.getElementById('pw-password').value;
@@ -1259,6 +1241,7 @@ async function savePlan() {
 
 function flashSaved() {
   const ind = document.getElementById('save-indicator');
+  ind.textContent = '✓ Saved';
   ind.classList.add('visible');
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => ind.classList.remove('visible'), 2500);
