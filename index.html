@@ -1187,6 +1187,7 @@ async function signOut() {
     console.log('Sign out error:', e);
   }
   currentUser = null;
+  resetForm();
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('app-screen').style.display  = 'none';
   Object.keys(localStorage).forEach(key => {
@@ -1436,11 +1437,31 @@ function getAllData() {
 }
 
 function guestMode() {
+  resetForm();
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display  = 'block';
   document.getElementById('user-email-display').textContent = 'Guest';
   document.getElementById('save-indicator').textContent = '⚠ Not saved';
   attachAutoSave();
+}
+
+function resetForm() {
+  // Clear text fields
+  ['name','due-date','support-person','care-team','health-other','story'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  // Clear all option cards
+  document.querySelectorAll('.option-card.selected').forEach(c => {
+    c.classList.remove('selected');
+    c.querySelector('.option-check').textContent = '';
+  });
+  // Clear all chips
+  document.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
+  // Hide health other input
+  document.getElementById('health-other-wrap').classList.remove('visible');
+  document.getElementById('story-generated-note').style.display = 'none';
+  // Reset to step 1
+  setStep(0);
 }
 
 // ══════════════════════════════════════════════════════════
