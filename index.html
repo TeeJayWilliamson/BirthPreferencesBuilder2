@@ -1164,6 +1164,8 @@ async function signOut() {
   }
   currentUser = null;
   resetForm();
+  document.getElementById('pw-email').value = '';
+  document.getElementById('pw-password').value = '';
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('app-screen').style.display  = 'none';
   Object.keys(localStorage).forEach(key => {
