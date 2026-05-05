@@ -453,13 +453,13 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
     </div>
     <div class="auth-body">
 <div class="auth-tabs">
-  <button class="auth-tab active">Sign In</button>
+  <button class="auth-tab active" onclick="switchAuthTab('password')">Sign In</button>
   <button class="auth-tab" onclick="guestMode()">Guest</button>
 </div>
 
       <!-- Email + Password Panel -->
-      <div class="auth-panel" id="panel-password">
-        <div class="auth-field">
+      <div class="auth-panel active" id="panel-password">
+          <div class="auth-field">
           <label class="auth-label">Email Address</label>
           <input type="email" class="auth-input" id="pw-email" placeholder="you@example.com">
         </div>
@@ -1132,19 +1132,13 @@ function showMsg(id, text, type) {
   el.style.display = 'block';
 }
 
-/*
+
 function switchAuthTab(tab) {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
-  if (tab === 'magic') {
-    document.querySelectorAll('.auth-tab')[0].classList.add('active');
-    document.getElementById('panel-magic').classList.add('active');
-  } else {
-    document.querySelectorAll('.auth-tab')[1].classList.add('active');
-    document.getElementById('panel-password').classList.add('active');
-  }
+  event.target.classList.add('active');
+  document.getElementById('panel-password').classList.add('active');
 }
-*/
+
 
 async function signIn() {
   const email = document.getElementById('pw-email').value.trim();
