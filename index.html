@@ -1240,10 +1240,13 @@ function collectRawState() {
 async function savePlan() {
   if (!currentUser) return;
   const plan_data = collectRawState();
+  console.log('Attempting save...', plan_data);
   const { error } = await sb.from('birth_plans')
     .upsert({ user_id: currentUser.id, plan_data, updated_at: new Date().toISOString() },
             { onConflict: 'user_id' });
+  console.log('Save error (if any):', error);
   if (!error) flashSaved();
+  else console.error('Save failed:', error);
 }
 
 function flashSaved() {
