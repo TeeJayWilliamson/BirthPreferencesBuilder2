@@ -1181,10 +1181,17 @@ async function signUp() {
   showMsg('pw-msg', '✓ Account created! Check your email to confirm, then sign in.', 'success');
 }
 async function signOut() {
-  if (currentUser) await sb.auth.signOut();
+  try {
+    await sb.auth.signOut();
+  } catch(e) {
+    console.log('Sign out error:', e);
+  }
+  currentUser = null;
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('app-screen').style.display  = 'none';
-  currentUser = null;
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('sb-')) localStorage.removeItem(key);
+  });
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1316,6 +1323,9 @@ async function loadPlan() {
 
   // Show story note if story exists
   if (d.story) document.getElementById('story-generated-note').style.display = 'block';
+
+    setStep(0);
+
 }
 
 function restoreChips(groupId, vals) {
