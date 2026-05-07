@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blümi — Birth Planning, Beautifully.</title>
+<title>Blümi — Birth Planning, Thoughtfully.</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -47,8 +47,11 @@ nav {
   text-decoration: none;
   display: flex; align-items: center; gap: 0.5rem;
 }
-.nav-logo-leaf {
-  width: 22px; height: 22px; opacity: 0.85;
+.nav-logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.9;
 }
 .nav-links {
   display: flex; align-items: center; gap: 2.5rem;
@@ -272,16 +275,15 @@ nav {
 .app-sim-check-inner { font-size: 5px; color: white; font-weight: 700; }
 .app-sim-card-title { font-size: 6.5px; font-weight: 600; color: #1C3A5E; line-height: 1.2; }
 .app-sim-card-desc { font-size: 5px; color: #6B7280; line-height: 1.4; margin-top: 1px; }
-/* decorative plant */
+
+/* ── Tablet plant ──────────────────────────────── */
 .tablet-plant {
   position: absolute;
   top: -20px; right: -30px;
-  opacity: 0.7; pointer-events: none;
-}
-
-/* ── FLOATING LEAF DECORATION ──────────────────── */
-.leaf-deco {
-  position: absolute; pointer-events: none; opacity: 0.12;
+  width: 120px;
+  opacity: 0.45;
+  pointer-events: none;
+  object-fit: contain;
 }
 
 /* ── SECTION SHARED ────────────────────────────── */
@@ -291,8 +293,12 @@ section { padding: 6rem 1.5rem; }
   display: flex; flex-direction: column; align-items: center;
   margin-bottom: 1rem;
 }
-.section-leaf {
-  width: 32px; margin-bottom: 0.7rem; opacity: 0.6;
+.section-leaf-img {
+  width: 36px;
+  height: auto;
+  margin-bottom: 0.7rem;
+  opacity: 0.65;
+  object-fit: contain;
 }
 .section-title {
   font-family: 'Cormorant Garamond', serif;
@@ -413,11 +419,26 @@ section { padding: 6rem 1.5rem; }
   transition: all 0.22s;
 }
 .cta-btn-large:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(47,62,79,0.38); background: var(--navy-light); }
+
+/* ── CTA decorative leaves ─────────────────────── */
 .cta-deco {
-  position: absolute; pointer-events: none; opacity: 0.08;
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.1;
+  object-fit: contain;
 }
-.cta-deco-right { right: 5%; bottom: 0; }
-.cta-deco-left { left: 3%; top: 10%; transform: scaleX(-1); }
+.cta-deco-right {
+  right: 3%;
+  bottom: 0;
+  width: 220px;
+  transform-origin: bottom right;
+}
+.cta-deco-left {
+  left: 2%;
+  top: 5%;
+  width: 180px;
+  transform: scaleX(-1);
+}
 
 /* ── FOOTER ────────────────────────────────────── */
 footer {
@@ -455,12 +476,7 @@ footer span { color: rgba(168,184,162,0.8); }
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
-    <svg class="nav-logo-leaf" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2C12 2 5 8 5 14C5 17.866 8.134 21 12 21C15.866 21 19 17.866 19 14C19 8 12 2 12 2Z" fill="#A8B8A2" opacity="0.7"/>
-      <path d="M12 21V10" stroke="#6B8F71" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M12 14L8 10" stroke="#6B8F71" stroke-width="1.2" stroke-linecap="round"/>
-      <path d="M12 17L15 14" stroke="#6B8F71" stroke-width="1.2" stroke-linecap="round"/>
-    </svg>
+    <img src="img/logo.png" alt="Blümi leaf" class="nav-logo-img">
     Blümi
   </a>
   <ul class="nav-links">
@@ -479,8 +495,8 @@ footer span { color: rgba(168,184,162,0.8); }
 
   <div class="hero">
     <div class="hero-content">
-      <div class="hero-eyebrow">Birth Planning, Beautifully</div>
-      <h1>Guiding every birth,<br><em>beautifully.</em></h1>
+      <div class="hero-eyebrow">Birth Planning, Thoughtfully</div>
+      <h1>Guiding your birth,<br><em>thoughtfully.</em></h1>
       <p class="hero-sub">A calm, structured way to create and share birth plans — together.</p>
       <div class="hero-actions">
         <a href="app.html" class="btn-primary">Start free</a>
@@ -499,13 +515,8 @@ footer span { color: rgba(168,184,162,0.8); }
     </div>
 
     <div class="hero-visual">
-      <!-- Decorative plant SVG -->
-      <svg class="tablet-plant" width="120" height="200" viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M60 200 C60 200 60 80 60 60" stroke="#6B8F71" stroke-width="2.5" stroke-linecap="round"/>
-        <ellipse cx="40" cy="100" rx="25" ry="40" fill="#A8B8A2" opacity="0.5" transform="rotate(-20 40 100)"/>
-        <ellipse cx="80" cy="120" rx="22" ry="36" fill="#A8B8A2" opacity="0.4" transform="rotate(15 80 120)"/>
-        <ellipse cx="50" cy="70" rx="18" ry="30" fill="#6B8F71" opacity="0.35" transform="rotate(-10 50 70)"/>
-      </svg>
+      <!-- Decorative plant — top right of tablet -->
+      <img src="img/3leaves.png" alt="" class="tablet-plant" aria-hidden="true">
 
       <div class="tablet-wrap">
         <div class="tablet-shadow"></div>
@@ -571,12 +582,7 @@ footer span { color: rgba(168,184,162,0.8); }
 <section class="features" id="how">
   <div class="section-inner">
     <div class="section-eyebrow">
-      <svg class="section-leaf" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 4C20 4 8 14 8 24C8 31.18 13.37 37 20 37C26.63 37 32 31.18 32 24C32 14 20 4 20 4Z" fill="#6B8F71"/>
-        <path d="M20 37V18" stroke="#A8B8A2" stroke-width="2" stroke-linecap="round"/>
-        <path d="M20 26L14 20" stroke="#A8B8A2" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M20 31L26 25" stroke="#A8B8A2" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
+      <img src="img/3leaves.png" alt="" class="section-leaf-img" aria-hidden="true">
       <h2 class="section-title">Birth planning, made simple.</h2>
     </div>
     <p class="section-sub">Blümi helps doulas and families have better conversations, make informed choices, and feel confident every step of the way.</p>
@@ -591,7 +597,7 @@ footer span { color: rgba(168,184,162,0.8); }
           </svg>
         </div>
         <div class="feature-title">Collaborative by design</div>
-        <p class="feature-desc">Build your plan together in a guided, supportive space — with your doula, partner, or on your own.</p>
+        <p class="feature-desc">Build your plan together in a guided, supportive space with your doula, partner, or on your own.</p>
       </div>
 
       <div class="feature-card">
@@ -603,7 +609,7 @@ footer span { color: rgba(168,184,162,0.8); }
           </svg>
         </div>
         <div class="feature-title">Clear and personalized</div>
-        <p class="feature-desc">Answer thoughtful questions that bring clarity to what matters most — with education woven into every step.</p>
+        <p class="feature-desc">Answer thoughtful questions that bring clarity to what matters most with education woven into every step.</p>
       </div>
 
       <div class="feature-card">
@@ -629,7 +635,7 @@ footer span { color: rgba(168,184,162,0.8); }
     <div class="testimonial-author">
       <div class="author-avatar">S</div>
       <div>
-        <div class="author-name">Sarah M.</div>
+        <div class="author-name">Susan Q.</div>
         <div class="author-role">Certified Birth Doula, Toronto</div>
       </div>
     </div>
@@ -638,29 +644,13 @@ footer span { color: rgba(168,184,162,0.8); }
 
 <!-- CTA -->
 <section class="cta-section">
-  <!-- decorative botanical -->
-  <svg class="cta-deco cta-deco-right" width="280" height="320" viewBox="0 0 280 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M140 320 C140 320 140 120 140 80" stroke="#6B8F71" stroke-width="3" stroke-linecap="round"/>
-    <ellipse cx="90" cy="180" rx="55" ry="90" fill="#A8B8A2" transform="rotate(-25 90 180)"/>
-    <ellipse cx="190" cy="220" rx="50" ry="80" fill="#A8B8A2" transform="rotate(20 190 220)"/>
-    <ellipse cx="110" cy="120" rx="40" ry="65" fill="#6B8F71" transform="rotate(-15 110 120)"/>
-    <ellipse cx="170" cy="150" rx="35" ry="58" fill="#6B8F71" opacity="0.6" transform="rotate(10 170 150)"/>
-  </svg>
-  <svg class="cta-deco cta-deco-left" width="200" height="240" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M100 240 C100 240 100 90 100 60" stroke="#6B8F71" stroke-width="2.5" stroke-linecap="round"/>
-    <ellipse cx="60" cy="140" rx="42" ry="70" fill="#A8B8A2" transform="rotate(-20 60 140)"/>
-    <ellipse cx="140" cy="165" rx="38" ry="62" fill="#A8B8A2" transform="rotate(18 140 165)"/>
-    <ellipse cx="80" cy="95" rx="32" ry="52" fill="#6B8F71" opacity="0.7" transform="rotate(-12 80 95)"/>
-  </svg>
+  <!-- Decorative leaves — blended into background -->
+  <img src="img/3leaves.png" alt="" class="cta-deco cta-deco-right" aria-hidden="true">
+  <img src="img/3leaves.png" alt="" class="cta-deco cta-deco-left" aria-hidden="true">
 
   <div class="section-inner" style="position:relative;z-index:1;">
     <div class="section-eyebrow">
-      <svg class="section-leaf" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 4C20 4 8 14 8 24C8 31.18 13.37 37 20 37C26.63 37 32 31.18 32 24C32 14 20 4 20 4Z" fill="#6B8F71"/>
-        <path d="M20 37V18" stroke="#A8B8A2" stroke-width="2" stroke-linecap="round"/>
-        <path d="M20 26L14 20" stroke="#A8B8A2" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M20 31L26 25" stroke="#A8B8A2" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
+      <img src="img/3leaves.png" alt="" class="section-leaf-img" aria-hidden="true">
       <h2 class="section-title">Ready to create calmer, more<br>confident birth experiences?</h2>
     </div>
     <p class="section-sub">Join doulas and families across the Greater Toronto Area using Blümi.</p>
