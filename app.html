@@ -968,12 +968,13 @@ async function signUp() {
 }
 async function signOut() {
   try { await sb.auth.signOut(); } catch(e) {}
-  currentUser = null; resetForm();
+  // Don't rely on onAuthStateChange to update the UI — do it directly
+  currentUser = null;
+  resetForm();
   document.getElementById('pw-email').value = '';
   document.getElementById('pw-password').value = '';
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('app-screen').style.display  = 'none';
-  Object.keys(localStorage).forEach(key => { if (key.startsWith('sb-')) localStorage.removeItem(key); });
 }
 sb.auth.onAuthStateChange(async (event, session) => {
   if (session?.user) {
@@ -1209,35 +1210,384 @@ async function downloadPDF() {
   });
 }
 function generateStory() {
-  var btn=document.getElementById('generate-story-btn'),label=document.getElementById('generate-label'),note=document.getElementById('story-generated-note'),textarea=document.getElementById('story');
-  var careTeam=document.getElementById('care-team').value.trim(),support=document.getElementById('support-person').value.trim();
-  var values=getSelected('values-options'),comfortPref=getSelected('comfort-pref-options')[0]||'';
-  var naturalList=getSelected('natural-options'),medicalList=getSelected('medical-options');
-  var induction=getSelected('induction-options'),vaginal=getSelected('vaginal-options'),csection=getSelected('csection-options');
-  var bonding=getSelected('bonding-options'),cord=getSelected('cord-options');
-  var trauma=getSelected('trauma-options'),emotional=getSelected('emotional-options');
-  function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
-  var greetings=['Thank you for being present for one of the most sacred moments of my life.','I am so grateful you are here to support me through this birth.','Welcome, and thank you for the care and dedication you bring to this room today.','Thank you for taking the time to read this and for everything you will do for me and my baby.'];
-  if(careTeam){greetings.push('Dear '+careTeam+' — thank you for the kindness and skill you bring to this moment.');}
-  var s1=pick(greetings);
-  var valuePhrases={'Feeling Safe':'feeling physically and emotionally safe throughout this experience','Feeling Heard':'knowing that my voice and concerns are truly heard','Choices Being Respected':'having my choices acknowledged and respected at every stage','Feeling Informed':'being kept informed so I can make confident decisions','Provider Guidance':'working in partnership with your knowledge and expertise','Everyone Staying Healthy':'keeping both myself and my baby as safe and healthy as possible'};
-  var valueSnippets=values.map(function(v){return valuePhrases[v];}).filter(Boolean);
-  var s2=valueSnippets.length>=2?'What matters most to me during this birth is '+valueSnippets.slice(0,-1).join(', ')+', and '+valueSnippets[valueSnippets.length-1]+'.':valueSnippets.length===1?'What matters most to me during this birth is '+valueSnippets[0]+'.':pick(['I come into this birth with an open heart and a deep trust in the process.','I am approaching this birth with both preparation and openness.']);
-  var comfortPhrases={'Natural comfort techniques first':pick(['I would like to begin with natural comfort measures and move to medical support if needed.','My intention is to lean into natural comfort techniques first, remaining open to further support as labor unfolds.']),'Medical comfort techniques first':pick(['I plan to use medical comfort measures to help me feel at ease throughout labor.','I am planning on medical pain relief and would appreciate your guidance in accessing it smoothly.']),'Combination of both':pick(['I am open to a combination of natural and medical comfort measures depending on how labor progresses.','I plan to draw on both natural techniques and medical support as needed throughout this birth.'])};
-  var s3=comfortPref&&comfortPhrases[comfortPref]?comfortPhrases[comfortPref]:naturalList.length?'I am hoping to use '+naturalList.slice(0,2).join(' and ').toLowerCase()+' to stay comfortable and grounded during labor.':medicalList.length?'I am planning to use '+medicalList.slice(0,2).join(' and ').toLowerCase()+' for pain relief during labor.':'';
-  var s4=csection.indexOf('Gentle / Family-Centered C-Section')!==-1?pick(['If a C-section becomes necessary, I would love for it to be as family-centered and gentle as possible.','Should a C-section be needed, I hope to remain connected to my baby and the birth experience as much as possible.']):vaginal.indexOf('Spontaneous Vaginal Delivery')!==-1?pick(['My hope is for a spontaneous vaginal birth, supported by your guidance and expertise.','I am hoping for a vaginal birth and trust your team to guide me through the process.']):vaginal.indexOf('VBAC (Vaginal Birth After Caesarean)')!==-1?pick(['I am hoping for a VBAC and am grateful for your support in working toward that goal.','This VBAC is something I have prepared for, and I appreciate your partnership in making it possible.']):induction.indexOf('Natural Labor Progress')!==-1?pick(['I am hoping to allow labor to unfold naturally, and I appreciate patience as my body finds its rhythm.','I would love for labor to progress on its own timeline, with your support along the way.']):'';
-  var skinBaby=bonding.indexOf('Immediate skin-to-skin with birthing parent')!==-1,skinPartner=bonding.indexOf('Immediate skin-to-skin with partner')!==-1;
-  var delayed=cord.indexOf('Delayed cord clamping')!==-1||cord.indexOf('Physiologic cord clamping')!==-1,partnerCord=cord.indexOf('Partner to cut the umbilical cord')!==-1;
-  var s5=skinBaby&&delayed?pick(['After baby arrives, I am hoping for immediate skin-to-skin contact and delayed cord clamping to give us the gentlest possible start.','I would love to hold my baby skin-to-skin right away, with delayed cord clamping to support those first precious moments.']):skinBaby&&partnerCord?pick(['I am looking forward to immediate skin-to-skin with my baby while '+(support||'my partner')+' cuts the cord.','My hope is to hold my baby right away while '+(support||'my partner')+' has the honour of cutting the cord.']):skinBaby?pick(['I am hoping to hold my baby skin-to-skin as soon as possible after birth.','Immediate skin-to-skin contact with my baby is something I am really looking forward to.']):skinPartner&&support?'If I am unable to hold baby right away, I would love for '+support+' to do skin-to-skin in my place.':delayed?pick(['I would appreciate delayed cord clamping to support my baby\'s transition into the world.','Delayed cord clamping is something we feel strongly about and would love your support with.']):'';
-  var wantsConsent=trauma.indexOf('Explicit consent required for all interventions')!==-1,wantsPrivacy=trauma.indexOf('Privacy and limited interruptions')!==-1;
-  var wantsClear=emotional.indexOf('Clear communication — providers explain all procedures and ask permission')!==-1,wantsPositive=emotional.indexOf('Positive self-talk and encouragement')!==-1;
-  var s6=wantsConsent&&wantsPrivacy?pick(['I ask that any procedures be explained and consented to first, and that my privacy and sense of calm be protected throughout.','Please ask before any procedure, and help me maintain a quiet, private space so I can stay centred and grounded.']):wantsConsent||wantsClear?pick(['I appreciate being informed before any procedure — clear communication helps me feel safe and in control.','Please walk me through what is happening as we go — feeling informed is how I feel most at ease.']):wantsPositive?pick(['Encouraging words go a long way for me — please know that positive reinforcement makes a real difference.','I respond well to encouragement and kind words, so please do not hold back on the support.']):wantsPrivacy?pick(['A calm, private environment helps me feel safe, so I appreciate limited interruptions where possible.','Privacy and a quiet space are important to me — thank you for helping protect that.']):'';
-  var closings=['I trust your expertise completely, and I am so grateful to be in your care.','Thank you from the bottom of my heart for the skill and compassion you bring to this work.','I am so grateful for your presence today — together, I know we will bring this baby into the world beautifully.','Thank you for welcoming my baby into the world with respect, skill, and kindness.'];
-  if(support)closings.push('With '+support+' by my side and your team around us, I feel ready and supported for whatever comes.');
-  var s7=pick(closings);
-  var paragraph=[s1,s2,s3,s4,s5,s6,s7].filter(function(s){return s&&s.trim();}).join(' ');
-  textarea.value='';note.style.display='none';btn.disabled=true;btn.style.opacity='0.7';label.textContent=' Writing...';
-  var i=0;var interval=setInterval(function(){textarea.value+=paragraph[i];i++;if(i>=paragraph.length){clearInterval(interval);note.style.display='block';btn.disabled=false;btn.style.opacity='1';label.textContent=' Regenerate';}},14);
+  var btn      = document.getElementById('generate-story-btn');
+  var label    = document.getElementById('generate-label');
+  var note     = document.getElementById('story-generated-note');
+  var textarea = document.getElementById('story');
+ 
+  // ── Collect all selections ────────────────────────────────────────────────
+  var careTeam    = document.getElementById('care-team').value.trim();
+  var support     = document.getElementById('support-person').value.trim();
+  var sp          = support || 'my partner';
+ 
+  var values              = getSelected('values-options');
+  var comfortPref         = getSelected('comfort-pref-options')[0] || '';
+  var naturalList         = getSelected('natural-options');
+  var medicalList         = getSelected('medical-options');
+  var inductionList       = getSelected('induction-options');
+  var vaginalList         = getSelected('vaginal-options');
+  var csectionList        = getSelected('csection-options');
+  var otherInterventions  = getSelected('other-interventions-options');
+  var cordList            = getSelected('cord-options');
+  var placentaList        = getSelected('placenta-options');
+  var bondingList         = getSelected('bonding-options');
+  var newbornList         = getSelected('newborn-options');
+  var emergencyList       = getSelected('emergency-delivery-options');
+  var nicuSepList         = getSelected('nicu-separation-options');
+  var nicuFeedList        = getSelected('nicu-feeding-options');
+  var nicuCommList        = getSelected('nicu-communication-options');
+  var emotionalList       = getSelected('emotional-options');
+  var decisionList        = getSelected('decision-options');
+  var traumaList          = getSelected('trauma-options');
+ 
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function has(list, val) { return list.indexOf(val) !== -1; }
+  function any(list, vals) { return vals.some(function(v) { return has(list, v); }); }
+ 
+  // ── Sentence bank ─────────────────────────────────────────────────────────
+ 
+  // S1: GREETING
+  var greetings = [
+    'Thank you for being present for one of the most sacred moments of my life.',
+    'I am so grateful you are here to support me through this birth.',
+    'Welcome, and thank you for the care and dedication you bring to this room today.',
+    'Thank you for taking the time to read this and for everything you will do for me and my baby.'
+  ];
+  if (careTeam) {
+    greetings.push(
+      'Dear ' + careTeam + ', thank you for the kindness and skill you bring to this moment.',
+      'Thank you, ' + careTeam + ', for taking the time to understand what this birth means to me.'
+    );
+  }
+  var s1 = pick(greetings);
+ 
+  // S2: CORE VALUES
+  var valuePhrases = {
+    'Feeling Safe':               ['feeling physically and emotionally safe throughout this experience',
+                                   'knowing I am in a space where I can fully trust the people around me'],
+    'Feeling Heard':              ['knowing that my voice and concerns are truly heard',
+                                   'being seen as a whole person, not just a patient, throughout labor'],
+    'Choices Being Respected':    ['having my choices acknowledged and respected at every stage',
+                                   'being trusted to make decisions about my own body and birth'],
+    'Feeling Informed':           ['being kept informed so I can make confident decisions',
+                                   'understanding what is happening and why at each step of the way'],
+    'Provider Guidance':          ['working in partnership with your knowledge and expertise',
+                                   'leaning on your experience while staying part of the conversation'],
+    'Everyone Staying Healthy':   ['keeping both myself and my baby as safe and healthy as possible',
+                                   'knowing that the wellbeing of my baby and I is always the priority']
+  };
+  var valueSnippets = values.map(function(v) {
+    return valuePhrases[v] ? pick(valuePhrases[v]) : null;
+  }).filter(Boolean);
+  var s2 = valueSnippets.length >= 2
+    ? 'What matters most to me during this birth is ' + valueSnippets.slice(0, -1).join(', ') + ', and ' + valueSnippets[valueSnippets.length - 1] + '.'
+    : valueSnippets.length === 1
+      ? 'What matters most to me during this birth is ' + valueSnippets[0] + '.'
+      : pick([
+          'I come into this birth with an open heart and a deep trust in the process.',
+          'I am approaching this birth with both preparation and genuine openness.'
+        ]);
+ 
+  // S3: COMFORT MEASURES
+  var comfortPhrases = {
+    'Natural comfort techniques first': [
+      'I would like to begin with natural comfort measures and move to medical support if needed.',
+      'My plan is to start with non-medical techniques, staying open to more support as labor unfolds.'
+    ],
+    'Medical comfort techniques first': [
+      'I plan to use medical comfort measures and would appreciate your guidance in accessing them smoothly.',
+      'I am planning on medical pain relief from early in labor. Please help me stay on top of it.'
+    ],
+    'Combination of both': [
+      'I am open to a combination of natural and medical comfort measures depending on how things progress.',
+      'I plan to draw on both natural techniques and medical support as labor unfolds.'
+    ]
+  };
+ 
+  var naturalPhrases = {
+    'Aromatherapy':                  ['Familiar scents help me feel calm, so I will be using aromatherapy during labor.',
+                                      'I find aromatherapy really settling. I will have some with me and may use it throughout.'],
+    'Breathing Techniques':          ['Focused breathing is one of my main tools for staying calm during contractions.',
+                                      'I have been practicing breathing techniques and plan to use them to move through each wave.'],
+    'Movement & Position Changes':   ['Being able to move and change positions is really important to me during labor.',
+                                      'I plan to stay mobile as much as possible. Movement is how my body copes best.'],
+    'Touch & Massage':               ['Touch and massage, especially counterpressure, really help me manage discomfort.',
+                                      'Physical support through massage or pressure is something I find very grounding.'],
+    'Birth Affirmations':            ['I have been working with birth affirmations and would love them spoken or displayed during labor.',
+                                      'Positive affirmations are part of how I plan to stay focused through each contraction.'],
+    'Attention Focusing / Ritual':   ['Having a focal point or personal ritual helps me stay present and calm.',
+                                      'I use attention focusing as a coping tool. Please support me in keeping that rhythm.'],
+    'Comfortable Environment':       ['A calm, private space is really important to me. I do better when the room feels settled.',
+                                      'The atmosphere of the room matters to me. I appreciate a space that feels quiet and respectful.'],
+    'Eat and Drink as Desired':      ['Being able to eat and drink during labor helps me maintain energy and stay comfortable.',
+                                      'I would like to be free to eat light snacks and drink fluids as I feel I need them.'],
+    'Guided Visualizations':         ['I use guided visualization as a relaxation tool and plan to lean on it during labor.',
+                                      'Calming mental imagery helps me manage intensity. I will be using guided visualizations throughout.'],
+    'TENs Machine':                  ['I plan to use a TENs machine for pain relief, especially in early and active labor.',
+                                      'I have a TENs machine I would like to use. Please support me in keeping it on as labor progresses.']
+  };
+ 
+  var medicalPhrases = {
+    'Sterile Water Injections':                           ['If I have strong back labor, I would like to try sterile water injections before other options.',
+                                                           'Sterile water injections are something I am open to, especially for back pain during labor.'],
+    'Nitrous Oxide (Laughing Gas)':                       ['I would like to use nitrous oxide to take the edge off during contractions.',
+                                                           'Gas is something I am keen to try. Please let me know when it is available and how to use it.'],
+    'Local anesthesia for Episiotomy or Perineal repair': ['I would like local anesthesia if I need an episiotomy or any perineal repair.',
+                                                           'Please use local anesthetic for any stitching or repair after birth.'],
+    'Pudendal Nerve Block':                               ['If needed, I would like a pudendal nerve block for pelvic pain relief during pushing.',
+                                                           'A pudendal block is something I would consider as a pain relief option during second stage.'],
+    'Epidural / Spinal':                                  ['I plan to have an epidural. Please help me access it promptly when I ask.',
+                                                           'An epidural is part of my plan. I would appreciate your support in getting it placed without delay.'],
+    'Opioids':                                            ['I am open to opioids, particularly in early labor, to help me rest and conserve energy.',
+                                                           'If opioids are available and appropriate, I would like to be offered them as an option.'],
+    'General Anesthetic':                                 ['I understand general anesthetic may be necessary in an emergency and accept that possibility.',
+                                                           'If an emergency C-section requires general anesthesia, I trust your team to act quickly and keep me safe.']
+  };
+ 
+  var s3 = '';
+  if (comfortPref && comfortPhrases[comfortPref]) {
+    s3 = pick(comfortPhrases[comfortPref]);
+  } else if (naturalList.length) {
+    var nKey = naturalList[Math.floor(Math.random() * naturalList.length)];
+    s3 = naturalPhrases[nKey] ? pick(naturalPhrases[nKey]) : '';
+  } else if (medicalList.length) {
+    var mKey = medicalList[Math.floor(Math.random() * medicalList.length)];
+    s3 = medicalPhrases[mKey] ? pick(medicalPhrases[mKey]) : '';
+  }
+ 
+  // S4: LABOR / BIRTH TYPE
+  var inductionPhrases = {
+    'Natural Methods of Induction': ['I am open to natural induction methods if labor needs a little encouragement to get started.',
+                                     'If induction is needed, I would prefer to begin with gentler natural methods first.'],
+    'Medical Induction Methods':    ['If medical induction is recommended, I am on board and trust your guidance through that process.',
+                                     'I understand that medical induction may be necessary and I am open to it when the time comes.'],
+    'Augmentation':                 ['If my contractions slow or need support, I am open to augmentation to keep things moving.',
+                                     'I am happy to use augmentation if labor stalls. Please talk me through what that involves at the time.'],
+    'Natural Labor Progress':       ['My hope is for labor to begin on its own and progress naturally when my body is ready.',
+                                     'I am hoping to allow labor to unfold at its own pace, with your support along the way.']
+  };
+ 
+  var s4 = '';
+  if (has(csectionList, 'Gentle / Family-Centered C-Section')) {
+    s4 = pick([
+      'If a C-section becomes necessary, I would love for it to be as gentle and family-centered as possible.',
+      'Should a C-section be needed, I hope to stay connected to my baby and the birth experience throughout.'
+    ]);
+  } else if (has(csectionList, 'Planned C-Section')) {
+    s4 = pick([
+      'I have a planned C-section and have spent time preparing for what that experience will look like.',
+      'My birth will be a planned C-section. I would love your help making it as calm and meaningful as possible.'
+    ]);
+  } else if (has(csectionList, 'Repeat C-Section')) {
+    s4 = pick([
+      'This will be a repeat C-section. I know the process and I hope it can feel as positive as possible.',
+      'Having been through a C-section before, I have preferences I would love to talk through with you.'
+    ]);
+  } else if (has(vaginalList, 'VBAC (Vaginal Birth After Caesarean)')) {
+    s4 = pick([
+      'This VBAC is something I have prepared for, and I appreciate your partnership in making it possible.',
+      'I am hoping for a VBAC. Thank you for supporting me in working toward that goal.'
+    ]);
+  } else if (has(vaginalList, 'Spontaneous Vaginal Delivery')) {
+    s4 = pick([
+      'My hope is for a spontaneous vaginal birth, supported by your guidance and skill.',
+      'A vaginal birth is what I am working toward, and I trust your team to help me get there.'
+    ]);
+  } else if (inductionList.length) {
+    var iKey = inductionList[Math.floor(Math.random() * inductionList.length)];
+    s4 = inductionPhrases[iKey] ? pick(inductionPhrases[iKey]) : '';
+  }
+ 
+  // S5: GOLDEN HOUR
+  var skinBaby    = has(bondingList, 'Immediate skin-to-skin with birthing parent');
+  var skinPartner = has(bondingList, 'Immediate skin-to-skin with partner');
+  var delayed     = has(cordList, 'Delayed cord clamping') || has(cordList, 'Physiologic cord clamping');
+  var partnerCord = has(cordList, 'Partner to cut the umbilical cord');
+  var breastfeed  = has(bondingList, 'Breastfeeding');
+  var bottlefeed  = has(bondingList, 'Bottle Feeding');
+ 
+  var s5 = '';
+  if (skinBaby && delayed && partnerCord) {
+    s5 = pick([
+      'After baby arrives, I am hoping for immediate skin-to-skin while ' + sp + ' cuts the cord and we wait for it to stop pulsing.',
+      'I would love to hold my baby skin-to-skin right away, with ' + sp + ' cutting the cord after delayed clamping.'
+    ]);
+  } else if (skinBaby && delayed) {
+    s5 = pick([
+      'After baby arrives, I am hoping for immediate skin-to-skin contact and delayed cord clamping to give us the gentlest possible start.',
+      'I would love to hold my baby skin-to-skin right away, with delayed cord clamping to support those first precious moments.'
+    ]);
+  } else if (skinBaby && partnerCord) {
+    s5 = pick([
+      'I am looking forward to immediate skin-to-skin with my baby while ' + sp + ' cuts the cord.',
+      'My hope is to hold my baby right away while ' + sp + ' has the honour of cutting the cord.'
+    ]);
+  } else if (skinBaby && breastfeed) {
+    s5 = pick([
+      'I am hoping to hold my baby skin-to-skin straight away and get breastfeeding started in those first golden minutes.',
+      'Immediate skin-to-skin and an early first feed are two things I am really looking forward to.'
+    ]);
+  } else if (skinBaby) {
+    s5 = pick([
+      'I am hoping to hold my baby skin-to-skin as soon as possible after birth.',
+      'Immediate skin-to-skin contact with my baby is something I am really looking forward to.'
+    ]);
+  } else if (skinPartner) {
+    s5 = pick([
+      'If I am unable to hold baby right away, I would love for ' + sp + ' to do skin-to-skin in my place.',
+      'Please offer skin-to-skin to ' + sp + ' straight away if I cannot hold baby immediately.'
+    ]);
+  } else if (delayed) {
+    s5 = pick([
+      'I would appreciate delayed cord clamping to support my baby\'s transition into the world.',
+      'Delayed cord clamping is something we feel strongly about and would love your support with.'
+    ]);
+  } else if (breastfeed) {
+    s5 = pick([
+      'I plan to breastfeed and would love support in latching as soon as possible after birth.',
+      'Breastfeeding is really important to me. Please help us get started in the golden hour if we can.'
+    ]);
+  } else if (bottlefeed) {
+    s5 = pick([
+      'We are planning to bottle feed. Please have formula available and help us get started after birth.',
+      'I will be bottle feeding and would appreciate that being supported without question or comment.'
+    ]);
+  }
+ 
+  // S6: PERSONAL CARE / COMMUNICATION / TRAUMA
+  var traumaPhrases = {
+    'Explicit consent required for all interventions': [
+      'I ask that any procedure be explained and consented to first. That matters deeply to me.',
+      'Please do not proceed with anything without checking in first. Consent is not a formality for me.'
+    ],
+    'Freedom to change positions and control pace of pushing': [
+      'Having freedom over my positions and the pace of pushing is really important for my sense of safety.',
+      'Being in control of my own body during labor is something I need. Please follow my lead on movement and pushing.'
+    ],
+    'Trauma-informed staff requested': [
+      'I would appreciate staff who are mindful of trauma and know how to respond with sensitivity.',
+      'Please flag to whoever is caring for me that trauma-informed support is something I need throughout.'
+    ],
+    'Privacy and limited interruptions': [
+      'A private, calm space with limited foot traffic is really important to my ability to cope.',
+      'Please help protect my privacy during labor. Unexpected visitors or busy rooms make it harder for me.'
+    ]
+  };
+ 
+  var emotionalPhrases = {
+    'Clear communication — providers explain all procedures and ask permission': [
+      'I appreciate being informed before any procedure. Clear communication is how I feel most at ease.',
+      'Please walk me through what is happening as we go. Knowing what to expect makes a real difference for me.'
+    ],
+    'Continuous support from doula or provider': [
+      'Having someone consistently present to check in and offer reassurance matters a lot to me.',
+      'I do best with continuous support. Please do not leave me alone for long stretches during labor.'
+    ],
+    'Positive self-talk and encouragement': [
+      'Encouraging words go a long way for me. Please know that verbal support makes a real difference.',
+      'I respond really well to reassurance and kind words during contractions. Please keep them coming.'
+    ]
+  };
+ 
+  var decisionPhrases = {
+    'I need time to talk things through':       ['Please give me a moment to talk with ' + sp + ' before any major decision. That time matters to me.',
+                                                  'I am someone who needs to process things out loud. Please do not rush me when choices need to be made.'],
+    'Direct guidance from my healthcare provider': ['I would appreciate your direct guidance on decisions. Tell me what you recommend and why.',
+                                                    'If you have a strong recommendation, please share it clearly. I find that easier than open-ended options in the moment.'],
+    'Fewer interruptions and questions':         ['Once I am in a rhythm, I do best with fewer check-ins between contractions.',
+                                                  'I would appreciate space to focus during active labor. Please keep non-essential visits to a minimum.'],
+    'Frequent check-ins':                        ['Regular check-ins help me feel safe and informed, so please do not hold back on those.',
+                                                  'I like knowing someone is close by and aware of how I am doing. Please check in often.'],
+    'Options explained in detail':               ['Please take the time to explain all options fully, even if it feels like extra information. I want to understand.',
+                                                  'I prefer detailed explanations over summaries. The more I understand, the better I cope.'],
+    'I trust my provider\'s recommendation':     ['I trust your clinical judgment. If you have a clear recommendation, you do not need to present every option.',
+                                                  'I am happy to follow your lead on decisions during labor. I trust your expertise and experience.'],
+    'My partner may consent on my behalf':       ['If I am unable to respond, ' + sp + ' has my full trust to make decisions on my behalf.',
+                                                  'Please involve ' + sp + ' in decisions if I cannot communicate. They know my wishes.']
+  };
+ 
+  var s6 = '';
+  // Priority: trauma preferences first, then emotional, then decision style
+  if (traumaList.length) {
+    var tKey = traumaList[Math.floor(Math.random() * traumaList.length)];
+    s6 = traumaPhrases[tKey] ? pick(traumaPhrases[tKey]) : '';
+  }
+  if (!s6 && emotionalList.length) {
+    var eKey = emotionalList[Math.floor(Math.random() * emotionalList.length)];
+    s6 = emotionalPhrases[eKey] ? pick(emotionalPhrases[eKey]) : '';
+  }
+  if (!s6 && decisionList.length) {
+    var dKey = decisionList[Math.floor(Math.random() * decisionList.length)];
+    s6 = decisionPhrases[dKey] ? pick(decisionPhrases[dKey]) : '';
+  }
+ 
+  // S7: EMERGENCY / NICU (brief sentence if selections made)
+  var s7emergency = '';
+  var nicuAny = nicuSepList.length || nicuFeedList.length || nicuCommList.length;
+ 
+  if (emergencyList.length || nicuAny) {
+    var emergencyPhrases = {
+      'Forceps Delivery':    ['If an assisted delivery is needed, I would consider forceps. Please talk me through it first.',
+                              'I am open to forceps if your team recommends it and time allows for a quick explanation.'],
+      'Vacuum Delivery':     ['If we need some help getting baby out, I would prefer to try vacuum before other options.',
+                              'A vacuum delivery is something I am open to if an assisted birth becomes necessary.'],
+      'Emergency C-Section': ['If an emergency C-section is needed, I trust your team completely. Please act quickly and keep me informed.',
+                              'Should an emergency C-section become necessary, please prioritize my baby\'s safety and keep ' + sp + ' with me.']
+    };
+ 
+    if (emergencyList.length) {
+      var erKey = emergencyList[Math.floor(Math.random() * emergencyList.length)];
+      s7emergency = emergencyPhrases[erKey] ? pick(emergencyPhrases[erKey]) : '';
+    }
+ 
+    if (!s7emergency && nicuAny) {
+      s7emergency = pick([
+        'I have also given thought to what I would want if our baby needs extra support after birth. Those preferences are captured in this plan.',
+        'Should our baby need NICU care, my wishes around feeding, communication, and staying connected are included here too.'
+      ]);
+    }
+  }
+ 
+  // S8: CLOSING
+  var closings = [
+    'I trust your expertise completely, and I am so grateful to be in your care.',
+    'Thank you from the bottom of my heart for the skill and compassion you bring to this work.',
+    'I am so grateful for your presence today. Together, I know we will bring this baby into the world beautifully.',
+    'Thank you for welcoming my baby into the world with respect, skill, and kindness.'
+  ];
+  if (support) {
+    closings.push(
+      'With ' + support + ' by my side and your team around us, I feel ready and supported for whatever comes.',
+      support + ' and I have prepared so carefully for this. Thank you for being part of it.'
+    );
+  }
+  var s8 = pick(closings);
+ 
+  // ── Assemble ──────────────────────────────────────────────────────────────
+  var paragraph = [s1, s2, s3, s4, s5, s6, s7emergency, s8]
+    .filter(function(s) { return s && s.trim(); })
+    .join(' ');
+ 
+  // ── Animate into textarea ─────────────────────────────────────────────────
+  textarea.value = '';
+  note.style.display = 'none';
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+  label.textContent = ' Writing...';
+ 
+  var i = 0;
+  var interval = setInterval(function() {
+    textarea.value += paragraph[i];
+    i++;
+    if (i >= paragraph.length) {
+      clearInterval(interval);
+      note.style.display = 'block';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      label.textContent = ' Regenerate';
+    }
+  }, 14);
 }
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
