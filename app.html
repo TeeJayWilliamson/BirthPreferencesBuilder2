@@ -967,14 +967,7 @@ async function signUp() {
   showMsg('pw-msg', '✓ Account created! You can now sign in.', 'success');
 }
 async function signOut() {
-  try { await sb.auth.signOut(); } catch(e) {}
-  // Don't rely on onAuthStateChange to update the UI — do it directly
-  currentUser = null;
-  resetForm();
-  document.getElementById('pw-email').value = '';
-  document.getElementById('pw-password').value = '';
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('app-screen').style.display  = 'none';
+  try { await sb.auth.signOut(); } catch(e) { console.error(e); }
 }
 sb.auth.onAuthStateChange(async (event, session) => {
   if (session?.user) {
@@ -985,6 +978,9 @@ sb.auth.onAuthStateChange(async (event, session) => {
     await loadPlan(); attachAutoSave();
   } else {
     currentUser = null;
+    resetForm();
+    document.getElementById('pw-email').value = '';
+    document.getElementById('pw-password').value = '';
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('app-screen').style.display  = 'none';
   }
