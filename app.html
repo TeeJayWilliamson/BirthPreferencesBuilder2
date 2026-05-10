@@ -406,13 +406,49 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 .preview-story-text { font-family:'Cormorant Garamond',serif; font-size:0.82rem; line-height:1.7; color:#333; }
 .preview-greeting { display:inline-block; background:var(--olive-pale); color:var(--olive); font-family:'Jost',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; padding:0.3rem 0.7rem; border-radius:5px; margin-bottom:0.8rem; }
 .preview-footer { margin-top:1.2rem; padding-top:0.8rem; border-top:1px solid #EEE; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.78rem; color:var(--muted); }
+
+
+/* Home Button Styling */
+.home-link-fixed {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: white;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  border-radius: 50px;
+  padding: 0.6rem 1.2rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+  z-index: 100;
+}
+
+.home-link-fixed:hover {
+  border-color: var(--olive-mid);
+  color: var(--olive);
+  transform: translateY(-2px);
+}
+
+/* Hide the button once the user is in the app */
+#app-screen:not([style*="display: none"]) ~ .home-link-fixed {
+  display: none;
+}
+
+
 </style>
 </head>
 <body>
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
-  <div class="auth-card">
+  <div class="auth-card" style="position: relative;">
     <div class="auth-card-head">
       <div class="auth-logo"><img src="img/logo.png" alt="Blümi"></div>
       <div class="auth-brand-tag">Birth Planning, Thoughtfully</div>
@@ -437,8 +473,11 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
           <button class="auth-btn" style="flex:1;background:linear-gradient(135deg,var(--olive-mid) 0%,var(--olive-light) 100%);box-shadow:0 6px 20px rgba(107,143,113,0.3);" onclick="signUp()">Create Account</button>
         </div>
         <div class="auth-msg" id="pw-msg"></div>
-      </div>
-    </div>
+      </div>      
+    </div> 
+    <br>
+    
+    <a href="landing_rename_to_index.html" style="position:absolute; bottom:1rem; right:1.2rem; color:var(--muted); font-family:'Jost',sans-serif; font-size:0.75rem; text-decoration:none; display:flex; align-items:center; gap:0.4rem; opacity:0.7;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
   </div>
 </div>
 
@@ -1696,6 +1735,8 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
   window.scrollTo({top:0,behavior:'instant'});
 });
-</script>
+
+</script
+
 </body>
 </html>
