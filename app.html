@@ -1031,8 +1031,30 @@ async function signOut() {
   try { await sb.auth.signOut(); } catch(e) { console.error(e); }
 }
 
+async function signOut() {
+  // Cancel any pending autosave FIRST so a queued save can't blank the DB
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  currentUser = null;
+  // Hide UI immediately so the button feels responsive
+  document.getElementById('app-screen').style.display    = 'none';
+  document.getElementById('auth-screen').style.display   = 'flex';
+  document.getElementById('portal-banner').style.display = 'none';
+  // Now sign out — onAuthStateChange else-branch will resetForm safely
+  try { await sb.auth.signOut(); } catch(e) { console.error(e); }
+}
+
+// Prevent duplicate Supabase auth events (TOKEN_REFRESHED etc.) from
+// re-running boot and re-attaching autosave listeners on every refresh.
+let _initializedUserId = null;
+
 sb.auth.onAuthStateChange(async (event, session) => {
   if (session?.user) {
+    // Already running for this user — skip re-init (avoids autosave double-attach
+    // and loadPlanForUser running twice which can race against the first load)
+    if (session.user.id === _initializedUserId) return;
+    _initializedUserId = session.user.id;
+
     currentUser = session.user;
 
     // ── Portal mode: birth worker viewing a client's plan ──────────────
@@ -1041,12 +1063,9 @@ sb.auth.onAuthStateChange(async (event, session) => {
       document.getElementById('app-screen').style.display  = 'block';
       document.getElementById('portal-banner').style.display = 'block';
       document.getElementById('user-email-display').textContent = 'Viewing client plan';
-      // Change sign-out button to close-tab behaviour, with graceful fallback
       const soBtn = document.getElementById('sign-out-btn');
       soBtn.textContent = '← Back to Portal';
       soBtn.onclick = () => {
-        // window.close() only works if tab was opened by script.
-        // If it fails (e.g. user duplicated the tab), navigate back to portal instead.
         window.close();
         setTimeout(() => {
           const returnUrl = sessionStorage.getItem('portalReturnUrl') || 'portal.html';
@@ -1063,21 +1082,23 @@ sb.auth.onAuthStateChange(async (event, session) => {
     document.getElementById('app-screen').style.display  = 'block';
     document.getElementById('user-email-display').textContent = currentUser.email;
 
-    // Resolve invite token if the client arrived via an invite link
     if (INVITE_TOKEN) {
       await resolveInviteToken(INVITE_TOKEN);
-      history.replaceState({}, '', location.pathname); // clean URL
+      history.replaceState({}, '', location.pathname);
     }
 
     await loadPlanForUser(currentUser.id);
     attachAutoSave(currentUser.id);
   } else {
+    // Session fully ended — safe to reset form now (no autosave will fire
+    // because currentUser is null and saveTimer was cleared in signOut)
+    _initializedUserId = null;
     currentUser = null;
     resetForm();
     document.getElementById('pw-email').value    = '';
     document.getElementById('pw-password').value = '';
-    document.getElementById('auth-screen').style.display = 'flex';
-    document.getElementById('app-screen').style.display  = 'none';
+    document.getElementById('auth-screen').style.display   = 'flex';
+    document.getElementById('app-screen').style.display    = 'none';
     document.getElementById('portal-banner').style.display = 'none';
   }
 });

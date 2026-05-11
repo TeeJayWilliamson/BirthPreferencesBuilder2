@@ -728,19 +728,26 @@ async function signUp() {
 }
 
 async function signOut() {
-  await sb.auth.signOut();
-  // UI reset is handled by onAuthStateChange else-branch below
-}
-
-function showAuthScreen() {
+  // Reset UI immediately so the button feels responsive
   currentUser = null; currentProfile = null; allClients = [];
   document.getElementById('app-screen').style.display    = 'none';
   document.getElementById('signup-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display   = 'flex';
+  await sb.auth.signOut();
 }
+
+// Track which user we've already fully initialised so duplicate Supabase
+// auth events (TOKEN_REFRESHED, INITIAL_SESSION firing after SIGNED_IN, etc.)
+// don't re-run the whole boot sequence or flicker the UI.
+let _initializedUserId = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
   if (session?.user) {
+    // Ignore TOKEN_REFRESHED and other housekeeping events once we're already
+    // showing the app for this user — they don't need a full re-init.
+    if (session.user.id === _initializedUserId) return;
+    _initializedUserId = session.user.id;
+
     currentUser = session.user;
     await loadProfile();
 
@@ -753,17 +760,19 @@ sb.auth.onAuthStateChange(async (event, session) => {
       }
     }
 
-    // Role check: only sign out if profile loaded AND role is definitely wrong.
-    // If profile is null (e.g. DB slow on first signup), fall back to user_metadata.
-    // Never auto-sign-out just because a profile row hasn't appeared yet.
+    // Role check: only reject if we're sure the role is wrong.
+    // If profile is null (DB slow / row not yet created), fall back to
+    // user_metadata. Never auto-sign-out just because the row hasn't appeared yet.
     const role = currentProfile?.role || session.user.user_metadata?.role;
     if (currentProfile && currentProfile.role !== 'birth_worker') {
       showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
+      _initializedUserId = null;
       await sb.auth.signOut();
       return;
     }
-    if (!currentProfile && role !== 'birth_worker') {
+    if (!currentProfile && role && role !== 'birth_worker') {
       showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
+      _initializedUserId = null;
       await sb.auth.signOut();
       return;
     }
@@ -775,8 +784,12 @@ sb.auth.onAuthStateChange(async (event, session) => {
     renderTierBadge();
     await loadClients();
   } else {
-    // Session ended (sign-out, token expiry, etc.) — always reset UI
-    showAuthScreen();
+    // Session fully ended — reset tracking so next login boots cleanly
+    _initializedUserId = null;
+    currentUser = null; currentProfile = null; allClients = [];
+    document.getElementById('app-screen').style.display    = 'none';
+    document.getElementById('signup-screen').style.display = 'none';
+    document.getElementById('auth-screen').style.display   = 'flex';
   }
 });
 
