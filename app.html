@@ -1021,6 +1021,13 @@ async function signUp() {
 }
 
 async function signOut() {
+  // Immediately show auth screen so the button always feels responsive,
+  // even if Supabase is slow or the tab wasn't opened by script.
+  currentUser = null;
+  document.getElementById('app-screen').style.display  = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('portal-banner').style.display = 'none';
+  resetForm();
   try { await sb.auth.signOut(); } catch(e) { console.error(e); }
 }
 
@@ -1034,10 +1041,18 @@ sb.auth.onAuthStateChange(async (event, session) => {
       document.getElementById('app-screen').style.display  = 'block';
       document.getElementById('portal-banner').style.display = 'block';
       document.getElementById('user-email-display').textContent = 'Viewing client plan';
-      // Change sign-out button to close-tab behaviour
+      // Change sign-out button to close-tab behaviour, with graceful fallback
       const soBtn = document.getElementById('sign-out-btn');
       soBtn.textContent = '← Back to Portal';
-      soBtn.onclick = () => window.close();
+      soBtn.onclick = () => {
+        // window.close() only works if tab was opened by script.
+        // If it fails (e.g. user duplicated the tab), navigate back to portal instead.
+        window.close();
+        setTimeout(() => {
+          const returnUrl = sessionStorage.getItem('portalReturnUrl') || 'portal.html';
+          window.location.href = returnUrl;
+        }, 300);
+      };
       await loadPlanForUser(PORTAL_CLIENT);
       attachAutoSave(PORTAL_CLIENT);
       return;

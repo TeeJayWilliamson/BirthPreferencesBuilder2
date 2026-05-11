@@ -482,7 +482,7 @@ body::before {
 </div>
 
 <!-- SIGN UP SCREEN -->
-<div id="signup-screen" style="display:none; min-height:100vh; display:none; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1.5rem;">
+<div id="signup-screen" style="display:none; min-height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1.5rem;">
   <div class="auth-card" style="max-width:460px;">
     <div class="auth-card-head">
       <div class="auth-logo"><img src="img/logo.png" alt="Blümi"></div>
@@ -729,15 +729,21 @@ async function signUp() {
 
 async function signOut() {
   await sb.auth.signOut();
+  // UI reset is handled by onAuthStateChange else-branch below
+}
+
+function showAuthScreen() {
   currentUser = null; currentProfile = null; allClients = [];
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app-screen').style.display    = 'none';
+  document.getElementById('signup-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display   = 'flex';
 }
 
 sb.auth.onAuthStateChange(async (event, session) => {
   if (session?.user) {
     currentUser = session.user;
     await loadProfile();
+
     // After signup, update tier from metadata if profile exists but tier is null
     if (currentProfile && !currentProfile.tier) {
       const tier = session.user.user_metadata?.tier;
@@ -747,20 +753,30 @@ sb.auth.onAuthStateChange(async (event, session) => {
       }
     }
 
-    const role =
-  currentProfile?.role ||
-  session.user.user_metadata?.role;
-    if (!currentProfile || currentProfile.role !== 'birth_worker') {
+    // Role check: only sign out if profile loaded AND role is definitely wrong.
+    // If profile is null (e.g. DB slow on first signup), fall back to user_metadata.
+    // Never auto-sign-out just because a profile row hasn't appeared yet.
+    const role = currentProfile?.role || session.user.user_metadata?.role;
+    if (currentProfile && currentProfile.role !== 'birth_worker') {
       showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
       await sb.auth.signOut();
       return;
     }
-    document.getElementById('auth-screen').style.display = 'none';
+    if (!currentProfile && role !== 'birth_worker') {
+      showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
+      await sb.auth.signOut();
+      return;
+    }
+
+    document.getElementById('auth-screen').style.display   = 'none';
     document.getElementById('signup-screen').style.display = 'none';
-    document.getElementById('app-screen').style.display = 'block';
-    document.getElementById('topbar-email').textContent = currentUser.email;
+    document.getElementById('app-screen').style.display    = 'block';
+    document.getElementById('topbar-email').textContent    = currentUser.email;
     renderTierBadge();
     await loadClients();
+  } else {
+    // Session ended (sign-out, token expiry, etc.) — always reset UI
+    showAuthScreen();
   }
 });
 
