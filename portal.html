@@ -370,27 +370,115 @@ body::before {
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
-  <div class="auth-card">
+
+  <div class="auth-card" style="position:relative;">
+
     <div class="auth-card-head">
-      <div class="auth-logo"><img src="img/logo.png" alt="Blümi"></div>
-      <div class="auth-brand-tag">Birth Worker Portal</div>
-      <div class="auth-portal-tag">Professional Access</div>
-      <p class="auth-sub">Sign in to your birth worker account to manage clients and birth plans.</p>
+      <div class="auth-logo">
+        <img src="img/logo.png" alt="Blümi">
+      </div>
+
+      <div class="auth-brand-tag">
+        Birth Worker Portal
+      </div>
+
+      <div class="auth-portal-tag">
+        Professional Access
+      </div>
+
+      <p class="auth-sub">
+        Sign in to your birth worker account to manage clients and birth plans.
+      </p>
     </div>
+
     <div class="auth-body">
+
       <div class="auth-field">
-        <label class="auth-label">Email Address</label>
-        <input type="email" class="auth-input" id="auth-email" placeholder="you@example.com">
+        <label class="auth-label">
+          Email Address
+        </label>
+
+        <input
+          type="email"
+          class="auth-input"
+          id="auth-email"
+          placeholder="you@example.com"
+        >
       </div>
+
       <div class="auth-field">
-        <label class="auth-label">Password</label>
-        <input type="password" class="auth-input" id="auth-password" placeholder="Your password">
+        <label class="auth-label">
+          Password
+        </label>
+
+        <input
+          type="password"
+          class="auth-input"
+          id="auth-password"
+          placeholder="Your password"
+        >
       </div>
-      <button class="auth-btn" onclick="signIn()">Sign In</button>
+
+      <button
+        class="auth-btn"
+        onclick="signIn()"
+      >
+        Sign In
+      </button>
+
       <div class="auth-msg" id="auth-msg"></div>
-      <div class="auth-switch">New to Blümi? <a onclick="showSignUp()">Create a birth worker account</a></div>
+
+      <div class="auth-switch">
+        New to Blümi?
+        <a onclick="showSignUp()">
+          Create a birth worker account
+        </a>
+      </div>
+
     </div>
+
+    <!-- HOME LINK -->
+    <a
+      href="landing_rename_to_index.html"
+      style="
+        position:absolute;
+        bottom:1rem;
+        right:1.2rem;
+
+        display:flex;
+        align-items:center;
+        gap:0.4rem;
+
+        color:var(--muted);
+        font-family:'Jost',sans-serif;
+        font-size:0.75rem;
+        text-decoration:none;
+
+        opacity:0.7;
+        transition:opacity 0.2s ease;
+      "
+      onmouseover="this.style.opacity='1'"
+      onmouseout="this.style.opacity='0.7'"
+    >
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+
+      Home
+    </a>
+
   </div>
+
 </div>
 
 <!-- SIGN UP SCREEN -->
@@ -426,6 +514,7 @@ body::before {
       <div class="auth-msg" id="su-msg"></div>
       <div class="auth-switch">Already have an account? <a onclick="showSignIn()">Sign in</a></div>
     </div>
+    
   </div>
 </div>
 
@@ -657,6 +746,10 @@ sb.auth.onAuthStateChange(async (event, session) => {
         currentProfile.tier = tier;
       }
     }
+
+    const role =
+  currentProfile?.role ||
+  session.user.user_metadata?.role;
     if (!currentProfile || currentProfile.role !== 'birth_worker') {
       showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
       await sb.auth.signOut();
