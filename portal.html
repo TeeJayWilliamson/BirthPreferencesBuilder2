@@ -906,7 +906,7 @@ function showInviteLink(token, email) {
 }
 
 function buildInviteUI(token, email) {
-  const link = location.origin + '/app.html?invite=' + token;
+  const link = new URL('app.html?invite=' + token, location.href).href;
   currentInviteLink = link;
   document.getElementById('invite-link-display').textContent = link;
   document.getElementById('invite-result').classList.add('visible');
