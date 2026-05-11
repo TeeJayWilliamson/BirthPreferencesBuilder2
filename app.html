@@ -1021,17 +1021,6 @@ async function signUp() {
 }
 
 async function signOut() {
-  // Immediately show auth screen so the button always feels responsive,
-  // even if Supabase is slow or the tab wasn't opened by script.
-  currentUser = null;
-  document.getElementById('app-screen').style.display  = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('portal-banner').style.display = 'none';
-  resetForm();
-  try { await sb.auth.signOut(); } catch(e) { console.error(e); }
-}
-
-async function signOut() {
   // Cancel any pending autosave FIRST so a queued save can't blank the DB
   clearTimeout(saveTimer);
   saveTimer = null;
@@ -1040,7 +1029,7 @@ async function signOut() {
   document.getElementById('app-screen').style.display    = 'none';
   document.getElementById('auth-screen').style.display   = 'flex';
   document.getElementById('portal-banner').style.display = 'none';
-  // Now sign out — onAuthStateChange else-branch will resetForm safely
+  // onAuthStateChange else-branch will resetForm safely after Supabase confirms
   try { await sb.auth.signOut(); } catch(e) { console.error(e); }
 }
 
@@ -1050,17 +1039,43 @@ let _initializedUserId = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
   if (session?.user) {
-    // Already running for this user — skip re-init (avoids autosave double-attach
-    // and loadPlanForUser running twice which can race against the first load)
-    if (session.user.id === _initializedUserId) return;
-    _initializedUserId = session.user.id;
+    // ── Invite-link session hijack guard ───────────────────────────────
+    // Only runs when arriving via an invite link (not portal mode).
+    // Checks if the logged-in user is the birth worker who sent the invite;
+    // if so, signs them out so the actual client can log in.
+    if (INVITE_TOKEN && !PORTAL_MODE) {
+      const { data: inviteRow } = await sb
+        .from('birth_worker_clients')
+        .select('birth_worker_id, invited_email')
+        .eq('invite_token', INVITE_TOKEN)
+        .maybeSingle();
 
-    currentUser = session.user;
+      if (inviteRow && inviteRow.birth_worker_id === session.user.id) {
+        _initializedUserId = null;
+        await sb.auth.signOut();
+        setTimeout(() => {
+          if (inviteRow.invited_email) {
+            document.getElementById('pw-email').value = inviteRow.invited_email;
+          }
+          document.getElementById('auth-sub-text').textContent =
+            'Your birth worker has shared this link with you. Sign in or create an account to get started.';
+        }, 50);
+        return;
+      }
+    }
 
     // ── Portal mode: birth worker viewing a client's plan ──────────────
+    // Handle this BEFORE the dedup guard. Portal mode must always load the
+    // client's plan — even if this user was already "initialized" from a
+    // prior cross-tab TOKEN_REFRESHED event that ran before portal mode
+    // was detected. We track portal init separately so we don't double-load.
     if (PORTAL_MODE === '1' && PORTAL_CLIENT) {
-      document.getElementById('auth-screen').style.display = 'none';
-      document.getElementById('app-screen').style.display  = 'block';
+      if (session.user.id === _initializedUserId) return; // already fully booted for portal
+      _initializedUserId = session.user.id;
+      currentUser = session.user;
+
+      document.getElementById('auth-screen').style.display   = 'none';
+      document.getElementById('app-screen').style.display    = 'block';
       document.getElementById('portal-banner').style.display = 'block';
       document.getElementById('user-email-display').textContent = 'Viewing client plan';
       const soBtn = document.getElementById('sign-out-btn');
@@ -1073,9 +1088,15 @@ sb.auth.onAuthStateChange(async (event, session) => {
         }, 300);
       };
       await loadPlanForUser(PORTAL_CLIENT);
-      attachAutoSave(PORTAL_CLIENT);
+      // Do NOT attachAutoSave in portal mode — the birth worker viewing a
+      // client's plan must never trigger a save. Read-only view only.
       return;
     }
+
+    // Dedup guard for normal/invite flows — skip if already initialized
+    if (session.user.id === _initializedUserId) return;
+    _initializedUserId = session.user.id;
+    currentUser = session.user;
 
     // ── Normal client flow ──────────────────────────────────────────────
     document.getElementById('auth-screen').style.display = 'none';
@@ -1278,14 +1299,14 @@ let currentStep = 0;
 function goToStep(n) { setStep(n); }
 
 function nextStep() {
-  const target = PORTAL_MODE === '1' ? PORTAL_CLIENT : (currentUser ? currentUser.id : null);
-  savePlan(target);
+  // Never save in portal mode — birth worker is read-only
+  if (PORTAL_MODE !== '1') savePlan(currentUser ? currentUser.id : null);
   setStep(currentStep + 1);
 }
 
 function prevStep() {
-  const target = PORTAL_MODE === '1' ? PORTAL_CLIENT : (currentUser ? currentUser.id : null);
-  savePlan(target);
+  // Never save in portal mode — birth worker is read-only
+  if (PORTAL_MODE !== '1') savePlan(currentUser ? currentUser.id : null);
   setStep(currentStep - 1);
 }
 
