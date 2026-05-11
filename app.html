@@ -939,6 +939,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 </div>
 
 <script>
+console.log('[app] script loaded. PORTAL_MODE=' + new URLSearchParams(location.search).get('portalMode') + ' PORTAL_CLIENT=' + new URLSearchParams(location.search).get('clientId'));
 const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
 const { createClient } = supabase;
