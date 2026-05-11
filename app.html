@@ -1071,7 +1071,11 @@ sb.auth.onAuthStateChange(async (event, session) => {
     // prior cross-tab TOKEN_REFRESHED event that ran before portal mode
     // was detected. We track portal init separately so we don't double-load.
     if (PORTAL_MODE === '1' && PORTAL_CLIENT) {
-      if (session.user.id === _initializedUserId) return; // already fully booted for portal
+      console.log('[portal-mode] branch entered. event=' + event + ' userId=' + session.user.id + ' _initializedUserId=' + _initializedUserId);
+      if (session.user.id === _initializedUserId) {
+        console.log('[portal-mode] skipped — already initialized');
+        return;
+      }
       _initializedUserId = session.user.id;
       currentUser = session.user;
 
@@ -1088,7 +1092,9 @@ sb.auth.onAuthStateChange(async (event, session) => {
           window.location.href = returnUrl;
         }, 300);
       };
+      console.log('[portal-mode] calling loadPlanForUser for', PORTAL_CLIENT);
       await loadPlanForUser(PORTAL_CLIENT);
+      console.log('[portal-mode] loadPlanForUser complete');
       // Do NOT attachAutoSave in portal mode — the birth worker viewing a
       // client's plan must never trigger a save. Read-only view only.
       return;
