@@ -1022,15 +1022,16 @@ async function signUp() {
 }
 
 async function signOut() {
-  // Cancel any pending autosave FIRST so a queued save can't blank the DB
   clearTimeout(saveTimer);
   saveTimer = null;
+  _initializedUserId = null;
   currentUser = null;
-  // Hide UI immediately so the button feels responsive
+  resetForm();
   document.getElementById('app-screen').style.display    = 'none';
   document.getElementById('auth-screen').style.display   = 'flex';
   document.getElementById('portal-banner').style.display = 'none';
-  // onAuthStateChange else-branch will resetForm safely after Supabase confirms
+  document.getElementById('pw-email').value    = '';
+  document.getElementById('pw-password').value = '';
   try { await sb.auth.signOut(); } catch(e) { console.error(e); }
 }
 
@@ -1039,7 +1040,21 @@ async function signOut() {
 let _initializedUserId = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
-  if (session?.user) {
+  // Use the event name directly — more reliable than checking session nullness
+  if (event === 'SIGNED_OUT') {
+    _initializedUserId = null;
+    currentUser = null;
+    resetForm();
+    document.getElementById('pw-email').value    = '';
+    document.getElementById('pw-password').value = '';
+    document.getElementById('auth-screen').style.display   = 'flex';
+    document.getElementById('app-screen').style.display    = 'none';
+    document.getElementById('portal-banner').style.display = 'none';
+    return;
+  }
+
+  if (!session?.user) return;
+
     // ── Invite-link session hijack guard ───────────────────────────────
     // Only runs when arriving via an invite link (not portal mode).
     // Checks if the logged-in user is the birth worker who sent the invite;
@@ -1066,16 +1081,8 @@ sb.auth.onAuthStateChange(async (event, session) => {
     }
 
     // ── Portal mode: birth worker viewing a client's plan ──────────────
-    // Handle this BEFORE the dedup guard. Portal mode must always load the
-    // client's plan — even if this user was already "initialized" from a
-    // prior cross-tab TOKEN_REFRESHED event that ran before portal mode
-    // was detected. We track portal init separately so we don't double-load.
     if (PORTAL_MODE === '1' && PORTAL_CLIENT) {
-      console.log('[portal-mode] branch entered. event=' + event + ' userId=' + session.user.id + ' _initializedUserId=' + _initializedUserId);
-      if (session.user.id === _initializedUserId) {
-        console.log('[portal-mode] skipped — already initialized');
-        return;
-      }
+      if (session.user.id === _initializedUserId) return;
       _initializedUserId = session.user.id;
       currentUser = session.user;
 
@@ -1092,15 +1099,11 @@ sb.auth.onAuthStateChange(async (event, session) => {
           window.location.href = returnUrl;
         }, 300);
       };
-      console.log('[portal-mode] calling loadPlanForUser for', PORTAL_CLIENT);
       await loadPlanForUser(PORTAL_CLIENT);
-      console.log('[portal-mode] loadPlanForUser complete');
-      // Do NOT attachAutoSave in portal mode — the birth worker viewing a
-      // client's plan must never trigger a save. Read-only view only.
       return;
     }
 
-    // Dedup guard for normal/invite flows — skip if already initialized
+    // Dedup guard for normal/invite flows
     if (session.user.id === _initializedUserId) return;
     _initializedUserId = session.user.id;
     currentUser = session.user;
@@ -1113,22 +1116,14 @@ sb.auth.onAuthStateChange(async (event, session) => {
     if (INVITE_TOKEN) {
       await resolveInviteToken(INVITE_TOKEN);
       history.replaceState({}, '', location.pathname);
+    } else {
+      // Fallback: resolve any pending invite matching this email.
+      // Handles clients who signed in/up without the invite token still in the URL.
+      await resolveInviteByEmail(currentUser.email);
     }
 
     await loadPlanForUser(currentUser.id);
     attachAutoSave(currentUser.id);
-  } else {
-    // Session fully ended — safe to reset form now (no autosave will fire
-    // because currentUser is null and saveTimer was cleared in signOut)
-    _initializedUserId = null;
-    currentUser = null;
-    resetForm();
-    document.getElementById('pw-email').value    = '';
-    document.getElementById('pw-password').value = '';
-    document.getElementById('auth-screen').style.display   = 'flex';
-    document.getElementById('app-screen').style.display    = 'none';
-    document.getElementById('portal-banner').style.display = 'none';
-  }
 });
 
 // Links this client's account to the birth worker who invited them
@@ -1140,9 +1135,29 @@ async function resolveInviteToken(token) {
     .maybeSingle();
 
   if (!row) return;
-  if (row.client_id && row.client_id !== currentUser.id) return; // already claimed by someone else
+  if (row.client_id && row.client_id !== currentUser.id) return;
 
   if (row.status === 'pending' || !row.client_id) {
+    await sb
+      .from('birth_worker_clients')
+      .update({ client_id: currentUser.id, status: 'active' })
+      .eq('id', row.id);
+  }
+}
+
+// Fallback: if the client signed in without the token in the URL,
+// check their email against any pending invite rows and activate them.
+async function resolveInviteByEmail(email) {
+  if (!email) return;
+  const { data: rows } = await sb
+    .from('birth_worker_clients')
+    .select('id, status, client_id')
+    .eq('invited_email', email.toLowerCase())
+    .eq('status', 'pending');
+
+  if (!rows || rows.length === 0) return;
+  for (const row of rows) {
+    if (row.client_id && row.client_id !== currentUser.id) continue;
     await sb
       .from('birth_worker_clients')
       .update({ client_id: currentUser.id, status: 'active' })

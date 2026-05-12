@@ -157,6 +157,16 @@ body::before {
 }
 .btn-invite:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(74,87,70,0.35); }
 .btn-invite:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+.btn-refresh {
+  background: white; border: 1.5px solid var(--border); color: var(--muted);
+  border-radius: 50px; padding: 0.8rem 1.4rem;
+  font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-refresh:hover { border-color: var(--olive-mid); color: var(--olive); }
+.btn-refresh:disabled { opacity: 0.5; cursor: not-allowed; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.btn-refresh.spinning { display: inline-block; animation: spin 0.7s linear; }
 
 /* ── STATS ROW ── */
 .stats-row {
@@ -538,7 +548,10 @@ body::before {
         <h1>Your Clients</h1>
         <p>Invite, support, and co-create birth plans alongside your clients.</p>
       </div>
-      <button class="btn-invite" id="btn-invite-main" onclick="openInviteModal()">+ Invite Client</button>
+      <div style="display:flex;gap:0.7rem;align-items:center;flex-wrap:wrap;">
+        <button class="btn-refresh" id="btn-refresh" onclick="refreshClients()">↻ Refresh</button>
+        <button class="btn-invite" id="btn-invite-main" onclick="openInviteModal()">+ Invite Client</button>
+      </div>
     </div>
 
     <div class="stats-row">
@@ -728,11 +741,13 @@ async function signUp() {
 }
 
 async function signOut() {
-  // Reset UI immediately so the button feels responsive
+  _initializedUserId = null;
   currentUser = null; currentProfile = null; allClients = [];
   document.getElementById('app-screen').style.display    = 'none';
   document.getElementById('signup-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display   = 'flex';
+  document.getElementById('auth-email').value    = '';
+  document.getElementById('auth-password').value = '';
   await sb.auth.signOut();
 }
 
@@ -742,55 +757,54 @@ async function signOut() {
 let _initializedUserId = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
-  if (session?.user) {
-    // Ignore TOKEN_REFRESHED and other housekeeping events once we're already
-    // showing the app for this user — they don't need a full re-init.
-    if (session.user.id === _initializedUserId) return;
-    _initializedUserId = session.user.id;
-
-    currentUser = session.user;
-    await loadProfile();
-
-    // After signup, update tier from metadata if profile exists but tier is null
-    if (currentProfile && !currentProfile.tier) {
-      const tier = session.user.user_metadata?.tier;
-      if (tier) {
-        await sb.from('profiles').update({ tier }).eq('id', currentUser.id);
-        currentProfile.tier = tier;
-      }
-    }
-
-    // Role check: only reject if we're sure the role is wrong.
-    // If profile is null (DB slow / row not yet created), fall back to
-    // user_metadata. Never auto-sign-out just because the row hasn't appeared yet.
-    const role = currentProfile?.role || session.user.user_metadata?.role;
-    if (currentProfile && currentProfile.role !== 'birth_worker') {
-      showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
-      _initializedUserId = null;
-      await sb.auth.signOut();
-      return;
-    }
-    if (!currentProfile && role && role !== 'birth_worker') {
-      showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
-      _initializedUserId = null;
-      await sb.auth.signOut();
-      return;
-    }
-
-    document.getElementById('auth-screen').style.display   = 'none';
-    document.getElementById('signup-screen').style.display = 'none';
-    document.getElementById('app-screen').style.display    = 'block';
-    document.getElementById('topbar-email').textContent    = currentUser.email;
-    renderTierBadge();
-    await loadClients();
-  } else {
-    // Session fully ended — reset tracking so next login boots cleanly
+  if (event === 'SIGNED_OUT') {
     _initializedUserId = null;
     currentUser = null; currentProfile = null; allClients = [];
     document.getElementById('app-screen').style.display    = 'none';
     document.getElementById('signup-screen').style.display = 'none';
     document.getElementById('auth-screen').style.display   = 'flex';
+    return;
   }
+
+  if (!session?.user) return;
+
+  // Ignore duplicate events for the same user (TOKEN_REFRESHED, etc.)
+  if (session.user.id === _initializedUserId) return;
+  _initializedUserId = session.user.id;
+
+  currentUser = session.user;
+  await loadProfile();
+
+  // Profile row may not exist yet right after signup — retry once
+  if (!currentProfile) {
+    await new Promise(r => setTimeout(r, 800));
+    await loadProfile();
+  }
+
+  // Set tier from signup metadata if profile has no tier yet
+  if (currentProfile && !currentProfile.tier) {
+    const tier = session.user.user_metadata?.tier;
+    if (tier) {
+      await sb.from('profiles').update({ tier }).eq('id', currentUser.id);
+      currentProfile.tier = tier;
+    }
+  }
+
+  // Role check — use metadata as fallback if profile row is still missing
+  const role = currentProfile?.role ?? session.user.user_metadata?.role;
+  if (role && role !== 'birth_worker') {
+    showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
+    _initializedUserId = null;
+    await sb.auth.signOut();
+    return;
+  }
+
+  document.getElementById('auth-screen').style.display   = 'none';
+  document.getElementById('signup-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display    = 'block';
+  document.getElementById('topbar-email').textContent    = currentUser.email;
+  renderTierBadge();
+  await loadClients();
 });
 
 async function loadProfile() {
@@ -875,6 +889,16 @@ function updateStats() {
   btn.title = atLimit ? 'You have reached your plan\'s client limit.' : '';
 }
 
+async function refreshClients() {
+  const btn = document.getElementById('btn-refresh');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+  await loadClients();
+  btn.classList.remove('spinning');
+  btn.disabled = false;
+  showToast('Client list refreshed.');
+}
+
 function setFilter(f, el) {
   activeFilter = f;
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -940,7 +964,7 @@ function renderTable() {
               ? `<button class="btn-icon" onclick="showInviteLink('${r.invite_token}', '${escAttr(r.invited_email)}')">View Link</button>`
               : ''
           }
-          <button class="btn-icon" onclick="openNotesModal('${r.id}', ${JSON.stringify(r.notes || '').replace(/"/g, '&quot;')})">Notes</button>
+          <button class="btn-icon" onclick="openNotesModal('${r.id}')">Notes${r.notes ? ' ✎' : ''}</button>
           ${canArchive ? `<button class="btn-icon danger" onclick="openArchiveModal('${r.id}', '${escAttr(name)}')">Archive</button>` : ''}
         </div>
       </td>
@@ -1020,11 +1044,12 @@ async function submitInvite() {
 }
 
 function showInviteLink(token, email) {
+  document.getElementById('invite-result').classList.remove('visible');
   document.getElementById('invite-form-section').style.display = 'none';
-  document.getElementById('invite-submit-btn').style.display = 'none';
+  document.getElementById('invite-submit-btn').style.display   = 'none';
   document.querySelector('#invite-modal .btn-secondary').textContent = 'Close';
-  buildInviteUI(token, email);
   openModal('invite-modal');
+  setTimeout(() => buildInviteUI(token, email), 60);
 }
 
 function buildInviteUI(token, email) {
@@ -1054,9 +1079,10 @@ function copyInviteLink() {
 
 // ── NOTES ───────────────────────────────────────────────────
 
-function openNotesModal(rowId, notes) {
+function openNotesModal(rowId) {
   activeNoteRow = rowId;
-  document.getElementById('notes-textarea').value = notes || '';
+  const row = allClients.find(r => r.id === rowId);
+  document.getElementById('notes-textarea').value = row?.notes || '';
   openModal('notes-modal');
 }
 
