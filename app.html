@@ -951,6 +951,23 @@ const INVITE_TOKEN = urlParams.get('invite');      // client arrived via invite 
 const PORTAL_MODE  = urlParams.get('portalMode');  // '1' when worker opens from portal
 const PORTAL_CLIENT= urlParams.get('clientId');    // the client's user_id
 
+// ── Portal session bootstrap ─────────────────────────────────────────────
+// Edge/Safari tracking prevention blocks cross-tab storage, so the portal
+// passes the birth worker's tokens in the URL. We inject them immediately
+// so Supabase is authenticated before onAuthStateChange fires.
+// Clean the tokens from the URL right away so they aren't bookmarked.
+(async () => {
+  const at = urlParams.get('at');
+  const rt = urlParams.get('rt');
+  if (at && rt && PORTAL_MODE === '1') {
+    await sb.auth.setSession({ access_token: at, refresh_token: rt });
+    const clean = new URL(location.href);
+    clean.searchParams.delete('at');
+    clean.searchParams.delete('rt');
+    history.replaceState({}, '', clean.toString());
+  }
+})();
+
 let currentUser = null;
 let saveTimer   = null;
 
@@ -1074,17 +1091,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
         window.location.href = returnUrl;
       }, 300);
     };
-    // Diagnostic: verify the worker-client relationship is visible before loading
-    const { data: linkCheck, error: linkErr } = await sb
-      .from('birth_worker_clients')
-      .select('id, status, client_id')
-      .eq('birth_worker_id', currentUser.id)
-      .eq('client_id', PORTAL_CLIENT)
-      .maybeSingle();
-    console.log('[portal mode] link check:', linkCheck, linkErr?.message);
-
     await loadPlanForUser(PORTAL_CLIENT);
-    attachAutoSave(PORTAL_CLIENT); // allow birth worker to edit & save client's plan
     return;
   }
 
@@ -1244,23 +1251,7 @@ async function loadPlanForUser(userId) {
     .select('plan_data')
     .eq('user_id', userId)
     .maybeSingle();
-
-  if (error) {
-    console.error('[loadPlanForUser] error:', error.message, '| userId:', userId, '| currentUser:', currentUser?.id);
-    return;
-  }
-
-  if (!data) {
-    console.log('[loadPlanForUser] no plan found yet for userId:', userId);
-    // In portal mode, show a gentle note on the banner so the birth worker knows
-    if (PORTAL_MODE === '1') {
-      const banner = document.getElementById('portal-banner');
-      if (banner) banner.innerHTML += ' &nbsp;·&nbsp; <em>No plan saved yet — any edits you make here will create the plan.</em>';
-    }
-    return;
-  }
-
-  console.log('[loadPlanForUser] loaded plan for userId:', userId);
+  if (error || !data) return;
   applyPlanToForm(data.plan_data);
 }
 

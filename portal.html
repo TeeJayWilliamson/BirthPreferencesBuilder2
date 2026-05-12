@@ -741,7 +741,11 @@ async function signUp() {
 }
 
 async function signOut() {
-  _resetAuthState();
+  _initializedUserId = null;
+  currentUser = null; currentProfile = null; allClients = [];
+  document.getElementById('app-screen').style.display    = 'none';
+  document.getElementById('signup-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display   = 'flex';
   document.getElementById('auth-email').value    = '';
   document.getElementById('auth-password').value = '';
   await sb.auth.signOut();
@@ -751,23 +755,14 @@ async function signOut() {
 // auth events (TOKEN_REFRESHED, INITIAL_SESSION firing after SIGNED_IN, etc.)
 // don't re-run the whole boot sequence or flicker the UI.
 let _initializedUserId = null;
-let _realtimeChannel   = null;
-
-function _resetAuthState() {
-  _initializedUserId = '__signed_out__'; // sentinel — distinct from null and any real user id
-  if (_realtimeChannel) {
-    sb.removeChannel(_realtimeChannel);
-    _realtimeChannel = null;
-  }
-  currentUser = null; currentProfile = null; allClients = [];
-  document.getElementById('app-screen').style.display    = 'none';
-  document.getElementById('signup-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display   = 'flex';
-}
 
 sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
-    _resetAuthState();
+    _initializedUserId = null;
+    currentUser = null; currentProfile = null; allClients = [];
+    document.getElementById('app-screen').style.display    = 'none';
+    document.getElementById('signup-screen').style.display = 'none';
+    document.getElementById('auth-screen').style.display   = 'flex';
     return;
   }
 
@@ -814,7 +809,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   // ── Realtime: auto-refresh when any client row changes ──────
   // Portal updates automatically when a client accepts their invite —
   // no manual Refresh needed.
-  _realtimeChannel = sb.channel('portal-clients')
+  sb.channel('portal-clients')
     .on('postgres_changes', {
       event:  '*',
       schema: 'public',
@@ -993,11 +988,18 @@ function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39
 
 // ── OPEN PLAN ───────────────────────────────────────────────
 
-function openPlan(clientId) {
-  // Pass the client's userId to app.html via sessionStorage so it loads their plan
-  sessionStorage.setItem('portalClientId', clientId);
-  sessionStorage.setItem('portalReturnUrl', location.href);
-  window.open('app.html?portalMode=1&clientId=' + clientId, '_blank');
+async function openPlan(clientId) {
+  // Tracking-prevention in Edge/Safari blocks cross-tab sessionStorage, so we
+  // pass the birth worker's access token directly in the URL. app.html reads it
+  // and calls setSession() before any auth listener fires, so the new tab is
+  // authenticated even with storage blocked.
+  const { data: { session } } = await sb.auth.getSession();
+  const token    = session?.access_token  || '';
+  const refresh  = session?.refresh_token || '';
+  const url = 'app.html?portalMode=1&clientId=' + clientId
+            + '&at=' + encodeURIComponent(token)
+            + '&rt=' + encodeURIComponent(refresh);
+  window.open(url, '_blank');
 }
 
 // ── INVITE ──────────────────────────────────────────────────
