@@ -1013,12 +1013,20 @@ async function signUp() {
   const password = document.getElementById('pw-password').value;
   if (!email || !password) return showMsg('pw-msg', 'Please enter your email and a password (8+ characters).', 'error');
   if (password.length < 8) return showMsg('pw-msg', 'Password must be at least 8 characters.', 'error');
+
+  // Store the invite token in sessionStorage so it survives the email-confirmation
+  // redirect. Also embed it in redirectTo as a backup.
+  if (INVITE_TOKEN) sessionStorage.setItem('pendingInviteToken', INVITE_TOKEN);
+  const redirectTo = INVITE_TOKEN
+    ? `${location.origin}${location.pathname}?invite=${INVITE_TOKEN}`
+    : location.href;
+
   const { error } = await sb.auth.signUp({
     email, password,
-    options: { emailRedirectTo: location.href }
+    options: { emailRedirectTo: redirectTo }
   });
   if (error) return showMsg('pw-msg', error.message, 'error');
-  showMsg('pw-msg', '✓ Account created! You can now sign in.', 'success');
+  showMsg('pw-msg', '✓ Check your email to confirm your account, then return here to sign in.', 'success');
 }
 
 async function signOut() {
@@ -1113,12 +1121,17 @@ sb.auth.onAuthStateChange(async (event, session) => {
   document.getElementById('app-screen').style.display  = 'block';
   document.getElementById('user-email-display').textContent = currentUser.email;
 
-  if (INVITE_TOKEN) {
-    await resolveInviteToken(INVITE_TOKEN);
-    history.replaceState({}, '', location.pathname);
+  // Recover the invite token — check the URL first, then sessionStorage
+  // (sessionStorage holds it when the client returns after email confirmation
+  // and the ?invite= param is no longer in the URL).
+  const effectiveToken = INVITE_TOKEN || sessionStorage.getItem('pendingInviteToken');
+
+  if (effectiveToken) {
+    await resolveInviteToken(effectiveToken);
+    sessionStorage.removeItem('pendingInviteToken');
+    if (INVITE_TOKEN) history.replaceState({}, '', location.pathname);
   } else {
-    // Fallback: resolve any pending invite matching this email.
-    // Handles clients who signed in/up without the invite token still in the URL.
+    // Last-resort fallback: match by email for clients who lost the token entirely.
     await resolveInviteByEmail(currentUser.email);
   }
 

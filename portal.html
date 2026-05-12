@@ -741,11 +741,7 @@ async function signUp() {
 }
 
 async function signOut() {
-  _initializedUserId = null;
-  currentUser = null; currentProfile = null; allClients = [];
-  document.getElementById('app-screen').style.display    = 'none';
-  document.getElementById('signup-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display   = 'flex';
+  _resetAuthState();
   document.getElementById('auth-email').value    = '';
   document.getElementById('auth-password').value = '';
   await sb.auth.signOut();
@@ -755,14 +751,23 @@ async function signOut() {
 // auth events (TOKEN_REFRESHED, INITIAL_SESSION firing after SIGNED_IN, etc.)
 // don't re-run the whole boot sequence or flicker the UI.
 let _initializedUserId = null;
+let _realtimeChannel   = null;
+
+function _resetAuthState() {
+  _initializedUserId = '__signed_out__'; // sentinel — distinct from null and any real user id
+  if (_realtimeChannel) {
+    sb.removeChannel(_realtimeChannel);
+    _realtimeChannel = null;
+  }
+  currentUser = null; currentProfile = null; allClients = [];
+  document.getElementById('app-screen').style.display    = 'none';
+  document.getElementById('signup-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display   = 'flex';
+}
 
 sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
-    _initializedUserId = null;
-    currentUser = null; currentProfile = null; allClients = [];
-    document.getElementById('app-screen').style.display    = 'none';
-    document.getElementById('signup-screen').style.display = 'none';
-    document.getElementById('auth-screen').style.display   = 'flex';
+    _resetAuthState();
     return;
   }
 
@@ -809,7 +814,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   // ── Realtime: auto-refresh when any client row changes ──────
   // Portal updates automatically when a client accepts their invite —
   // no manual Refresh needed.
-  sb.channel('portal-clients')
+  _realtimeChannel = sb.channel('portal-clients')
     .on('postgres_changes', {
       event:  '*',
       schema: 'public',
