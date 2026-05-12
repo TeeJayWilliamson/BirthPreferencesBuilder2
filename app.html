@@ -964,6 +964,14 @@ const PORTAL_CLIENT= urlParams.get('clientId');    // the client's user_id
 // passes the birth worker's tokens in the URL. We inject them immediately
 // so Supabase is authenticated before onAuthStateChange fires.
 // Clean the tokens from the URL right away so they aren't bookmarked.
+let currentUser = null;
+let saveTimer   = null;
+
+// _sessionReady resolves once the portal token bootstrap completes.
+// onAuthStateChange awaits it so it never fires before setSession() finishes.
+let _resolveSessionReady;
+const _sessionReady = new Promise(res => { _resolveSessionReady = res; });
+
 (async () => {
   const at = urlParams.get('at');
   const rt = urlParams.get('rt');
@@ -974,10 +982,8 @@ const PORTAL_CLIENT= urlParams.get('clientId');    // the client's user_id
     clean.searchParams.delete('rt');
     history.replaceState({}, '', clean.toString());
   }
+  _resolveSessionReady(); // signal that bootstrap is done
 })();
-
-let currentUser = null;
-let saveTimer   = null;
 
 // ── AUTH ────────────────────────────────────────────────────────────────
 
@@ -1065,6 +1071,10 @@ async function signOut() {
 let _initializedUserId = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
+  // Wait for the portal token bootstrap to finish before doing anything.
+  // Prevents the listener firing with an empty session before setSession() completes.
+  await _sessionReady;
+
   // ── Sign-out: reset everything ──────────────────────────────────────
   if (event === 'SIGNED_OUT') {
     _initializedUserId = null;
@@ -1869,6 +1879,7 @@ function generateStory() {
     }
   }, 14);
 }
+
 </script>
 </body>
 </html>
