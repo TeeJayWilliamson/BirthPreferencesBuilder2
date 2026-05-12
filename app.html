@@ -1013,20 +1013,12 @@ async function signUp() {
   const password = document.getElementById('pw-password').value;
   if (!email || !password) return showMsg('pw-msg', 'Please enter your email and a password (8+ characters).', 'error');
   if (password.length < 8) return showMsg('pw-msg', 'Password must be at least 8 characters.', 'error');
-
-  // Store the invite token in sessionStorage so it survives the email-confirmation
-  // redirect. Also embed it in redirectTo as a backup.
-  if (INVITE_TOKEN) sessionStorage.setItem('pendingInviteToken', INVITE_TOKEN);
-  const redirectTo = INVITE_TOKEN
-    ? `${location.origin}${location.pathname}?invite=${INVITE_TOKEN}`
-    : location.href;
-
   const { error } = await sb.auth.signUp({
     email, password,
-    options: { emailRedirectTo: redirectTo }
+    options: { emailRedirectTo: location.href }
   });
   if (error) return showMsg('pw-msg', error.message, 'error');
-  showMsg('pw-msg', '✓ Check your email to confirm your account, then return here to sign in.', 'success');
+  showMsg('pw-msg', '✓ Account created! You can now sign in.', 'success');
 }
 
 async function signOut() {
@@ -1082,7 +1074,17 @@ sb.auth.onAuthStateChange(async (event, session) => {
         window.location.href = returnUrl;
       }, 300);
     };
+    // Diagnostic: verify the worker-client relationship is visible before loading
+    const { data: linkCheck, error: linkErr } = await sb
+      .from('birth_worker_clients')
+      .select('id, status, client_id')
+      .eq('birth_worker_id', currentUser.id)
+      .eq('client_id', PORTAL_CLIENT)
+      .maybeSingle();
+    console.log('[portal mode] link check:', linkCheck, linkErr?.message);
+
     await loadPlanForUser(PORTAL_CLIENT);
+    attachAutoSave(PORTAL_CLIENT); // allow birth worker to edit & save client's plan
     return;
   }
 
@@ -1121,17 +1123,12 @@ sb.auth.onAuthStateChange(async (event, session) => {
   document.getElementById('app-screen').style.display  = 'block';
   document.getElementById('user-email-display').textContent = currentUser.email;
 
-  // Recover the invite token — check the URL first, then sessionStorage
-  // (sessionStorage holds it when the client returns after email confirmation
-  // and the ?invite= param is no longer in the URL).
-  const effectiveToken = INVITE_TOKEN || sessionStorage.getItem('pendingInviteToken');
-
-  if (effectiveToken) {
-    await resolveInviteToken(effectiveToken);
-    sessionStorage.removeItem('pendingInviteToken');
-    if (INVITE_TOKEN) history.replaceState({}, '', location.pathname);
+  if (INVITE_TOKEN) {
+    await resolveInviteToken(INVITE_TOKEN);
+    history.replaceState({}, '', location.pathname);
   } else {
-    // Last-resort fallback: match by email for clients who lost the token entirely.
+    // Fallback: resolve any pending invite matching this email.
+    // Handles clients who signed in/up without the invite token still in the URL.
     await resolveInviteByEmail(currentUser.email);
   }
 
@@ -1247,7 +1244,23 @@ async function loadPlanForUser(userId) {
     .select('plan_data')
     .eq('user_id', userId)
     .maybeSingle();
-  if (error || !data) return;
+
+  if (error) {
+    console.error('[loadPlanForUser] error:', error.message, '| userId:', userId, '| currentUser:', currentUser?.id);
+    return;
+  }
+
+  if (!data) {
+    console.log('[loadPlanForUser] no plan found yet for userId:', userId);
+    // In portal mode, show a gentle note on the banner so the birth worker knows
+    if (PORTAL_MODE === '1') {
+      const banner = document.getElementById('portal-banner');
+      if (banner) banner.innerHTML += ' &nbsp;·&nbsp; <em>No plan saved yet — any edits you make here will create the plan.</em>';
+    }
+    return;
+  }
+
+  console.log('[loadPlanForUser] loaded plan for userId:', userId);
   applyPlanToForm(data.plan_data);
 }
 
