@@ -943,7 +943,14 @@ console.log('[app] script loaded. PORTAL_MODE=' + new URLSearchParams(location.s
 const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    storageKey: 'bluumi-app-auth',   // isolated from portal.html's session
+    storage: window.localStorage,
+    persistSession: true,
+    detectSessionInUrl: true,
+  }
+});
 
 // ── URL params (set when portal opens a client's plan) ──────────────────
 const urlParams    = new URLSearchParams(location.search);
@@ -1246,6 +1253,21 @@ function attachAutoSave(targetUserId) {
 
 // Load any user's plan into the form (own plan or a client's plan)
 async function loadPlanForUser(userId) {
+  // In portal mode, the birth worker's session may not have RLS access to the
+  // client's birth_plans row. portal.html passes the plan data via sessionStorage
+  // when it opens this tab, so check there first before hitting the DB.
+  if (PORTAL_MODE === '1') {
+    const cached = sessionStorage.getItem('portalPlanData-' + userId);
+    if (cached) {
+      try {
+        applyPlanToForm(JSON.parse(cached));
+        return;
+      } catch(e) {
+        console.warn('Could not parse cached plan data, falling back to DB');
+      }
+    }
+  }
+
   const { data, error } = await sb
     .from('birth_plans')
     .select('plan_data')

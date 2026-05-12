@@ -689,7 +689,14 @@ body::before {
 const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    storageKey: 'bluumi-portal-auth',   // isolated key — won't collide with app.html
+    storage: window.localStorage,
+    persistSession: true,
+    detectSessionInUrl: true,
+  }
+});
 
 let currentUser    = null;
 let currentProfile = null;
@@ -999,13 +1006,23 @@ function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39
 // ── OPEN PLAN ───────────────────────────────────────────────
 
 async function openPlan(clientId) {
-  // Tracking-prevention in Edge/Safari blocks cross-tab sessionStorage, so we
-  // pass the birth worker's access token directly in the URL. app.html reads it
-  // and calls setSession() before any auth listener fires, so the new tab is
-  // authenticated even with storage blocked.
+  // Pass the plan data via sessionStorage so app.html doesn't need the birth
+  // worker's session to have RLS read access on the client's birth_plans row.
+  // This also avoids the blank-plan issue when RLS only allows uid = user_id.
+  const clientRow = allClients.find(r => r.client?.id === clientId);
+  const planData  = clientRow?.plan_data || null;
+  sessionStorage.setItem('portalReturnUrl', location.href);
+  if (planData) {
+    sessionStorage.setItem('portalPlanData-' + clientId, JSON.stringify(planData));
+  } else {
+    sessionStorage.removeItem('portalPlanData-' + clientId);
+  }
+
+  // Also pass the birth worker's tokens in the URL so Edge/Safari with
+  // tracking prevention can still authenticate the new tab.
   const { data: { session } } = await sb.auth.getSession();
-  const token    = session?.access_token  || '';
-  const refresh  = session?.refresh_token || '';
+  const token   = session?.access_token  || '';
+  const refresh = session?.refresh_token || '';
   const url = 'app.html?portalMode=1&clientId=' + clientId
             + '&at=' + encodeURIComponent(token)
             + '&rt=' + encodeURIComponent(refresh);
