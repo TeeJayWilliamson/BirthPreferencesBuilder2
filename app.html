@@ -966,6 +966,57 @@ const PORTAL_CLIENT= urlParams.get('clientId');    // the client's user_id
 let currentUser = null;
 let saveTimer   = null;
 
+// ── Portal session bootstrap ─────────────────────────────────────────────
+// Edge/Safari Tracking Prevention blocks localStorage for CDN-loaded scripts
+// in new tabs opened by window.open(). So we can't rely on shared storage.
+// Instead, portal.html passes tokens in the URL and we call setSession()
+// here synchronously (well, as early as possible) before anything else runs.
+// We use a flag so the onAuthStateChange handler skips portal mode —
+// we boot it manually below instead, avoiding the race entirely.
+let _portalBooted = false;
+
+if (PORTAL_MODE === '1' && PORTAL_CLIENT) {
+  (async () => {
+    const at = urlParams.get('at');
+    const rt = urlParams.get('rt');
+    if (at && rt) {
+      await sb.auth.setSession({ access_token: at, refresh_token: rt });
+      // Clean tokens from URL so they aren't bookmarked or shared
+      const clean = new URL(location.href);
+      clean.searchParams.delete('at');
+      clean.searchParams.delete('rt');
+      history.replaceState({}, '', clean.toString());
+    }
+
+    // Manually boot portal mode — don't wait for onAuthStateChange
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session?.user) {
+      // Tokens were invalid or missing — show auth screen
+      document.getElementById('auth-screen').style.display = 'flex';
+      return;
+    }
+
+    _portalBooted   = true;
+    currentUser     = session.user;
+    _initializedUserId = session.user.id;
+
+    document.getElementById('auth-screen').style.display   = 'none';
+    document.getElementById('app-screen').style.display    = 'block';
+    document.getElementById('portal-banner').style.display = 'block';
+    document.getElementById('user-email-display').textContent = 'Viewing client plan';
+    const soBtn = document.getElementById('sign-out-btn');
+    soBtn.textContent = '← Back to Portal';
+    soBtn.onclick = () => {
+      window.close();
+      setTimeout(() => {
+        window.location.href = sessionStorage.getItem('portalReturnUrl') || 'portal.html';
+      }, 300);
+    };
+    await loadPlanForUser(PORTAL_CLIENT);
+    attachAutoSave(PORTAL_CLIENT);
+  })();
+}
+
 
 
 // ── AUTH ────────────────────────────────────────────────────────────────
@@ -1054,6 +1105,9 @@ async function signOut() {
 let _initializedUserId = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
+  // Portal mode is booted manually above — skip it here entirely
+  if (PORTAL_MODE === '1') return;
+
   // ── Sign-out: reset everything ──────────────────────────────────────
   if (event === 'SIGNED_OUT') {
     _initializedUserId = null;
@@ -1276,9 +1330,6 @@ async function loadPlanForUser(userId) {
     .select('plan_data')
     .eq('user_id', userId)
     .maybeSingle();
-
-  console.log('[loadPlanForUser] userId:', userId, 'data:', JSON.stringify(data)?.slice(0,100), 'error:', JSON.stringify(error));
-
   if (error || !data) return;
   applyPlanToForm(data.plan_data);
 }
