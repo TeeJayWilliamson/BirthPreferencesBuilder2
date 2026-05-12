@@ -805,6 +805,18 @@ sb.auth.onAuthStateChange(async (event, session) => {
   document.getElementById('topbar-email').textContent    = currentUser.email;
   renderTierBadge();
   await loadClients();
+
+  // ── Realtime: auto-refresh when any client row changes ──────
+  // Portal updates automatically when a client accepts their invite —
+  // no manual Refresh needed.
+  sb.channel('portal-clients')
+    .on('postgres_changes', {
+      event:  '*',
+      schema: 'public',
+      table:  'birth_worker_clients',
+      filter: `birth_worker_id=eq.${currentUser.id}`
+    }, () => { loadClients(); })
+    .subscribe();
 });
 
 async function loadProfile() {
@@ -830,17 +842,7 @@ function getSlotLimit() {
 // ── CLIENTS ─────────────────────────────────────────────────
 
 async function loadClients() {
-  const { data, error } = await sb
-    .from('birth_worker_clients')
-    .select(`
-      id, invited_email, status, notes, created_at, invite_token,
-      client:client_id ( id, display_name ),
-      birth_plan:birth_plans!inner( plan_data )
-    `)
-    .eq('birth_worker_id', currentUser.id)
-    .order('created_at', { ascending: false });
-
-  // birth_plans join may fail for pending clients — do a softer query
+  // Single query — no !inner join so pending clients (who have no birth plan yet) are included
   const { data: data2 } = await sb
     .from('birth_worker_clients')
     .select(`
