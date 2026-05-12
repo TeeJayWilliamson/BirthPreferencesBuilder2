@@ -740,35 +740,45 @@ async function signUp() {
   showMsg('su-msg', '✓ Account created! Signing you in…', 'success');
 }
 
-async function signOut() {
-  _initializedUserId = null;
+// ── Auth state tracking ─────────────────────────────────────────────────
+// _initializedUserId starts as a sentinel so the first real sign-in always
+// passes the dedup guard, even if it's the same account as last session.
+let _initializedUserId = '__none__';
+let _realtimeChannel   = null;
+
+function _resetAuthState() {
+  // Use a sentinel (not null) so signing back in with the same account
+  // always passes the dedup guard on the next INITIAL_SESSION / SIGNED_IN.
+  _initializedUserId = '__signed_out__';
+  // Tear down the realtime channel so we don't accumulate duplicates.
+  if (_realtimeChannel) {
+    sb.removeChannel(_realtimeChannel);
+    _realtimeChannel = null;
+  }
   currentUser = null; currentProfile = null; allClients = [];
   document.getElementById('app-screen').style.display    = 'none';
   document.getElementById('signup-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display   = 'flex';
+}
+
+async function signOut() {
+  _resetAuthState();
   document.getElementById('auth-email').value    = '';
   document.getElementById('auth-password').value = '';
   await sb.auth.signOut();
 }
 
-// Track which user we've already fully initialised so duplicate Supabase
-// auth events (TOKEN_REFRESHED, INITIAL_SESSION firing after SIGNED_IN, etc.)
-// don't re-run the whole boot sequence or flicker the UI.
-let _initializedUserId = null;
-
 sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
-    _initializedUserId = null;
-    currentUser = null; currentProfile = null; allClients = [];
-    document.getElementById('app-screen').style.display    = 'none';
-    document.getElementById('signup-screen').style.display = 'none';
-    document.getElementById('auth-screen').style.display   = 'flex';
+    _resetAuthState();
     return;
   }
 
   if (!session?.user) return;
 
   // Ignore duplicate events for the same user (TOKEN_REFRESHED, etc.)
+  // The sentinel values '__none__' and '__signed_out__' never match a real UUID,
+  // so the first event after page-load or sign-out always runs the boot sequence.
   if (session.user.id === _initializedUserId) return;
   _initializedUserId = session.user.id;
 
@@ -809,7 +819,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   // ── Realtime: auto-refresh when any client row changes ──────
   // Portal updates automatically when a client accepts their invite —
   // no manual Refresh needed.
-  sb.channel('portal-clients')
+  _realtimeChannel = sb.channel('portal-clients')
     .on('postgres_changes', {
       event:  '*',
       schema: 'public',
