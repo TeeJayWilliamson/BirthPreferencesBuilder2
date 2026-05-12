@@ -691,8 +691,8 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
-    storageKey:     'bluumi-portal-auth',
-    persistSession: true,
+    storageKey:     'bluumi-app-auth',  // same key as app.html so worker session
+    persistSession: true,               // is already present when portal opens a tab
     detectSessionInUrl: true,
   }
 });
@@ -1004,28 +1004,12 @@ function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39
 
 // ── OPEN PLAN ───────────────────────────────────────────────
 
-async function openPlan(clientId) {
-  // Pass the plan data via sessionStorage so app.html doesn't need the birth
-  // worker's session to have RLS read access on the client's birth_plans row.
-  // This also avoids the blank-plan issue when RLS only allows uid = user_id.
-  const clientRow = allClients.find(r => r.client?.id === clientId);
-  const planData  = clientRow?.plan_data || null;
+function openPlan(clientId) {
+  // portal.html and app.html share the same Supabase storageKey ('bluumi-app-auth'),
+  // so the worker's session is already present in localStorage when the new tab opens.
+  // No token passing needed — app.html will find the session immediately.
   sessionStorage.setItem('portalReturnUrl', location.href);
-  if (planData) {
-    sessionStorage.setItem('portalPlanData-' + clientId, JSON.stringify(planData));
-  } else {
-    sessionStorage.removeItem('portalPlanData-' + clientId);
-  }
-
-  // Also pass the birth worker's tokens in the URL so Edge/Safari with
-  // tracking prevention can still authenticate the new tab.
-  const { data: { session } } = await sb.auth.getSession();
-  const token   = session?.access_token  || '';
-  const refresh = session?.refresh_token || '';
-  const url = 'app.html?portalMode=1&clientId=' + clientId
-            + '&at=' + encodeURIComponent(token)
-            + '&rt=' + encodeURIComponent(refresh);
-  window.open(url, '_blank');
+  window.open('app.html?portalMode=1&clientId=' + clientId, '_blank');
 }
 
 // ── INVITE ──────────────────────────────────────────────────
