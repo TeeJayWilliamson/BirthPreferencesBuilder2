@@ -1271,22 +1271,15 @@ function attachAutoSave(targetUserId) {
 
 // Load any user's plan into the form (own plan or a client's plan)
 async function loadPlanForUser(userId) {
-  // Always query the DB directly — sessionStorage cache is stale if the worker
-  // saved changes and then re-opened the plan.
   const { data, error } = await sb
     .from('birth_plans')
     .select('plan_data')
     .eq('user_id', userId)
     .maybeSingle();
 
-  if (error || !data) {
-    // DB read failed (e.g. RLS) — fall back to sessionStorage cache if available
-    const cached = sessionStorage.getItem('portalPlanData-' + userId);
-    if (cached) {
-      try { applyPlanToForm(JSON.parse(cached)); } catch(e) {}
-    }
-    return;
-  }
+  console.log('[loadPlanForUser] userId:', userId, 'data:', JSON.stringify(data)?.slice(0,100), 'error:', JSON.stringify(error));
+
+  if (error || !data) return;
   applyPlanToForm(data.plan_data);
 }
 
