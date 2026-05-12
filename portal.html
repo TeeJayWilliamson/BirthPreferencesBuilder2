@@ -389,7 +389,7 @@ body::before {
       </div>
 
       <div class="auth-brand-tag">
-        Birth Worker Portal
+        Care Provider Portal
       </div>
 
       <div class="auth-portal-tag">
@@ -397,7 +397,7 @@ body::before {
       </div>
 
       <p class="auth-sub">
-        Sign in to your birth worker account to manage clients and birth plans.
+        Sign in to your Care Provider account to manage clients and birth plans.
       </p>
     </div>
 
@@ -441,7 +441,7 @@ body::before {
       <div class="auth-switch">
         New to Blümi?
         <a onclick="showSignUp()">
-          Create a birth worker account
+          Create a Care Provider account
         </a>
       </div>
 
@@ -809,7 +809,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   // Role check — use metadata as fallback if profile row is still missing
   const role = currentProfile?.role ?? session.user.user_metadata?.role;
   if (role && role !== 'birth_worker') {
-    showMsg('auth-msg', 'This portal is for birth workers only. Please use app.html for your birth plan.', 'error');
+    showMsg('auth-msg', 'This portal is for Care Providers only. Please use app.html for your birth plan.', 'error');
     _initializedUserId = null;
     await sb.auth.signOut();
     return;

@@ -439,7 +439,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 </head>
 <body>
 
-<!-- PORTAL MODE BANNER (shown when a birth worker opens a client's plan) -->
+<!-- PORTAL MODE BANNER (shown when a Care Provider opens a client's plan) -->
 <div id="portal-banner">
   You are viewing a client's birth plan in your portal.
   <a href="#" id="portal-back-link">← Back to Portal</a>
@@ -960,7 +960,7 @@ const PORTAL_CLIENT= urlParams.get('clientId');    // the client's user_id
 
 // ── Portal session bootstrap ─────────────────────────────────────────────
 // Edge/Safari tracking prevention blocks cross-tab storage, so the portal
-// passes the birth worker's tokens in the URL. We inject them immediately
+// passes the Care Provider's tokens in the URL. We inject them immediately
 // so Supabase is authenticated before onAuthStateChange fires.
 // Clean the tokens from the URL right away so they aren't bookmarked.
 let currentUser = null;
@@ -1039,7 +1039,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if (email) {
         document.getElementById('pw-email').value = email;
         document.getElementById('auth-sub-text').textContent =
-          'Your birth worker has invited you. Sign in or create an account below to get started.';
+          'Your Care Provider has invited you. Sign in or create an account below to get started.';
       }
     });
   }
@@ -1123,7 +1123,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
 
   if (!session?.user) return;
 
-  // ── Portal mode: birth worker viewing a client's plan ──────────────
+  // ── Portal mode: Care Provider viewing a client's plan ──────────────
   // Handle this before the dedup guard so it always runs cleanly.
   if (PORTAL_MODE === '1' && PORTAL_CLIENT) {
     if (session.user.id === _initializedUserId) return;
@@ -1149,7 +1149,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
 
   // ── Invite-link session hijack guard ────────────────────────────────
   // Only runs on SIGNED_IN (not TOKEN_REFRESHED etc.) to avoid repeated DB hits.
-  // If the logged-in user is the birth worker who sent this invite, sign them out
+  // If the logged-in user is the Care Provider who sent this invite, sign them out
   // so the actual client can log in instead.
   if (INVITE_TOKEN && event === 'SIGNED_IN') {
     const { data: inviteRow } = await sb
@@ -1166,7 +1166,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
           document.getElementById('pw-email').value = inviteRow.invited_email;
         }
         document.getElementById('auth-sub-text').textContent =
-          'Your birth worker has shared this link with you. Sign in or create an account to get started.';
+          'Your Care Provider has shared this link with you. Sign in or create an account to get started.';
       }, 50);
       return;
     }
@@ -1195,7 +1195,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   attachAutoSave(currentUser.id);
 });
 
-// Links this client's account to the birth worker who invited them.
+// Links this client's account to the Care Provider who invited them.
 // Uses a security-definer RPC to bypass RLS — clients have no direct
 // write permission on birth_worker_clients so a plain .update() is silently blocked.
 async function resolveInviteToken(token) {
