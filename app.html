@@ -1215,15 +1215,45 @@ function collectRawState() {
 // In guest mode = null (skip save).
 async function savePlan(targetUserId) {
   if (!currentUser || !targetUserId) return;
+  console.log('[savePlan] called. currentUser:', currentUser.id, 'target:', targetUserId, 'portalMode:', PORTAL_MODE);
   const plan_data = collectRawState();
-  const { error } = await sb
+  const now = new Date().toISOString();
+
+  const { data: updated, error: updateError } = await sb
     .from('birth_plans')
-    .upsert(
-      { user_id: targetUserId, plan_data, updated_at: new Date().toISOString() },
-      { onConflict: 'user_id' }
-    );
-  if (!error) flashSaved();
-  else console.error('Save failed:', error);
+    .update({ plan_data, updated_at: now })
+    .eq('user_id', targetUserId)
+    .select('user_id');
+
+  console.log('[savePlan] update result — data:', JSON.stringify(updated), 'error:', JSON.stringify(updateError));
+
+  if (updateError) {
+    console.error('Save (update) failed:', updateError);
+    return;
+  }
+
+  // Row existed and was updated — done
+  if (updated && updated.length > 0) {
+    flashSaved();
+    return;
+  }
+
+  // No row existed — INSERT
+  const { error: insertError } = await sb
+    .from('birth_plans')
+    .insert({ user_id: targetUserId, plan_data, updated_at: now });
+
+  if (insertError) {
+    console.error('Save (insert) failed:', insertError);
+    // Surface the failure visibly in portal mode so the worker knows
+    if (PORTAL_MODE === '1') {
+      const msg = document.getElementById('portal-save-msg');
+      if (msg) { msg.textContent = '⚠ Save failed — check permissions'; msg.style.color = '#ffcccc'; }
+    }
+    return;
+  }
+
+  flashSaved();
 }
 
 function flashSaved() {
