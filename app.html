@@ -1040,7 +1040,7 @@ async function signOut() {
 let _initializedUserId = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
-  // Use the event name directly — more reliable than checking session nullness
+  // ── Sign-out: reset everything ──────────────────────────────────────
   if (event === 'SIGNED_OUT') {
     _initializedUserId = null;
     currentUser = null;
@@ -1055,83 +1055,84 @@ sb.auth.onAuthStateChange(async (event, session) => {
 
   if (!session?.user) return;
 
-    // ── Invite-link session hijack guard ───────────────────────────────
-    // Only runs when arriving via an invite link (not portal mode).
-    // Checks if the logged-in user is the birth worker who sent the invite;
-    // if so, signs them out so the actual client can log in.
-    if (INVITE_TOKEN && !PORTAL_MODE) {
-      const { data: inviteRow } = await sb
-        .from('birth_worker_clients')
-        .select('birth_worker_id, invited_email')
-        .eq('invite_token', INVITE_TOKEN)
-        .maybeSingle();
-
-      if (inviteRow && inviteRow.birth_worker_id === session.user.id) {
-        _initializedUserId = null;
-        await sb.auth.signOut();
-        setTimeout(() => {
-          if (inviteRow.invited_email) {
-            document.getElementById('pw-email').value = inviteRow.invited_email;
-          }
-          document.getElementById('auth-sub-text').textContent =
-            'Your birth worker has shared this link with you. Sign in or create an account to get started.';
-        }, 50);
-        return;
-      }
-    }
-
-    // ── Portal mode: birth worker viewing a client's plan ──────────────
-    if (PORTAL_MODE === '1' && PORTAL_CLIENT) {
-      if (session.user.id === _initializedUserId) return;
-      _initializedUserId = session.user.id;
-      currentUser = session.user;
-
-      document.getElementById('auth-screen').style.display   = 'none';
-      document.getElementById('app-screen').style.display    = 'block';
-      document.getElementById('portal-banner').style.display = 'block';
-      document.getElementById('user-email-display').textContent = 'Viewing client plan';
-      const soBtn = document.getElementById('sign-out-btn');
-      soBtn.textContent = '← Back to Portal';
-      soBtn.onclick = () => {
-        window.close();
-        setTimeout(() => {
-          const returnUrl = sessionStorage.getItem('portalReturnUrl') || 'portal.html';
-          window.location.href = returnUrl;
-        }, 300);
-      };
-      await loadPlanForUser(PORTAL_CLIENT);
-      return;
-    }
-
-    // Dedup guard for normal/invite flows
+  // ── Portal mode: birth worker viewing a client's plan ──────────────
+  // Handle this before the dedup guard so it always runs cleanly.
+  if (PORTAL_MODE === '1' && PORTAL_CLIENT) {
     if (session.user.id === _initializedUserId) return;
     _initializedUserId = session.user.id;
     currentUser = session.user;
+    document.getElementById('auth-screen').style.display   = 'none';
+    document.getElementById('app-screen').style.display    = 'block';
+    document.getElementById('portal-banner').style.display = 'block';
+    document.getElementById('user-email-display').textContent = 'Viewing client plan';
+    const soBtn = document.getElementById('sign-out-btn');
+    soBtn.textContent = '← Back to Portal';
+    soBtn.onclick = () => {
+      window.close();
+      setTimeout(() => {
+        const returnUrl = sessionStorage.getItem('portalReturnUrl') || 'portal.html';
+        window.location.href = returnUrl;
+      }, 300);
+    };
+    await loadPlanForUser(PORTAL_CLIENT);
+    return;
+  }
 
-    // ── Normal client flow ──────────────────────────────────────────────
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('app-screen').style.display  = 'block';
-    document.getElementById('user-email-display').textContent = currentUser.email;
+  // ── Invite-link session hijack guard ────────────────────────────────
+  // Only runs on SIGNED_IN (not TOKEN_REFRESHED etc.) to avoid repeated DB hits.
+  // If the logged-in user is the birth worker who sent this invite, sign them out
+  // so the actual client can log in instead.
+  if (INVITE_TOKEN && event === 'SIGNED_IN') {
+    const { data: inviteRow } = await sb
+      .from('birth_worker_clients')
+      .select('birth_worker_id, invited_email')
+      .eq('invite_token', INVITE_TOKEN)
+      .maybeSingle();
 
-    if (INVITE_TOKEN) {
-      await resolveInviteToken(INVITE_TOKEN);
-      history.replaceState({}, '', location.pathname);
-    } else {
-      // Fallback: resolve any pending invite matching this email.
-      // Handles clients who signed in/up without the invite token still in the URL.
-      await resolveInviteByEmail(currentUser.email);
+    if (inviteRow && inviteRow.birth_worker_id === session.user.id) {
+      _initializedUserId = null;
+      await sb.auth.signOut();
+      setTimeout(() => {
+        if (inviteRow.invited_email) {
+          document.getElementById('pw-email').value = inviteRow.invited_email;
+        }
+        document.getElementById('auth-sub-text').textContent =
+          'Your birth worker has shared this link with you. Sign in or create an account to get started.';
+      }, 50);
+      return;
     }
+  }
 
-    await loadPlanForUser(currentUser.id);
-    attachAutoSave(currentUser.id);
+  // ── Dedup guard: ignore TOKEN_REFRESHED / INITIAL_SESSION for the same user ──
+  if (session.user.id === _initializedUserId) return;
+  _initializedUserId = session.user.id;
+  currentUser = session.user;
+
+  // ── Normal client flow ──────────────────────────────────────────────
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display  = 'block';
+  document.getElementById('user-email-display').textContent = currentUser.email;
+
+  if (INVITE_TOKEN) {
+    await resolveInviteToken(INVITE_TOKEN);
+    history.replaceState({}, '', location.pathname);
+  } else {
+    // Fallback: resolve any pending invite matching this email.
+    // Handles clients who signed in/up without the invite token still in the URL.
+    await resolveInviteByEmail(currentUser.email);
+  }
+
+  await loadPlanForUser(currentUser.id);
+  attachAutoSave(currentUser.id);
 });
 
 // Links this client's account to the birth worker who invited them.
-// Uses a security-definer RPC so the update bypasses RLS
-// (clients have no direct write permission on birth_worker_clients).
+// Uses a security-definer RPC to bypass RLS — clients have no direct
+// write permission on birth_worker_clients so a plain .update() is silently blocked.
 async function resolveInviteToken(token) {
   const { error } = await sb.rpc('claim_invite', { p_token: token });
   if (error) console.error('[resolveInviteToken] claim_invite failed:', error.message);
+  else console.log('[resolveInviteToken] claim_invite succeeded for token', token);
 }
 
 // Fallback: if the client signed in without the token in the URL,
@@ -1141,6 +1142,7 @@ async function resolveInviteByEmail(email) {
   if (!email) return;
   const { error } = await sb.rpc('claim_invite_by_email', { p_email: email.toLowerCase() });
   if (error) console.error('[resolveInviteByEmail] claim_invite_by_email failed:', error.message);
+  else console.log('[resolveInviteByEmail] claim_invite_by_email succeeded for email', email);
 }
 
 function guestMode() {
