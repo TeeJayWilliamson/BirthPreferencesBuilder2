@@ -689,14 +689,7 @@ body::before {
 const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    storageKey: 'bluumi-portal-auth',   // isolated key — won't collide with app.html
-    storage: window.localStorage,
-    persistSession: true,
-    detectSessionInUrl: true,
-  }
-});
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser    = null;
 let currentProfile = null;

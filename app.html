@@ -443,6 +443,8 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 <div id="portal-banner">
   You are viewing a client's birth plan in your portal.
   <a href="#" id="portal-back-link">← Back to Portal</a>
+  <a href="#" id="portal-save-btn" onclick="portalSave(); return false;" style="margin-left:1.5rem;">💾 Save Changes</a>
+  <span id="portal-save-msg" style="margin-left:1rem;font-size:0.75rem;opacity:0.85;"></span>
 </div>
 
 <!-- AUTH SCREEN -->
@@ -943,14 +945,7 @@ console.log('[app] script loaded. PORTAL_MODE=' + new URLSearchParams(location.s
 const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    storageKey: 'bluumi-app-auth',   // isolated from portal.html's session
-    storage: window.localStorage,
-    persistSession: true,
-    detectSessionInUrl: true,
-  }
-});
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── URL params (set when portal opens a client's plan) ──────────────────
 const urlParams    = new URLSearchParams(location.search);
@@ -1099,6 +1094,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
       }, 300);
     };
     await loadPlanForUser(PORTAL_CLIENT);
+      attachAutoSave(PORTAL_CLIENT);
     return;
   }
 
@@ -1340,15 +1336,23 @@ let currentStep = 0;
 function goToStep(n) { setStep(n); }
 
 function nextStep() {
-  // Never save in portal mode — birth worker is read-only
-  if (PORTAL_MODE !== '1') savePlan(currentUser ? currentUser.id : null);
+  const target = PORTAL_MODE === '1' ? PORTAL_CLIENT : (currentUser ? currentUser.id : null);
+  savePlan(target);
   setStep(currentStep + 1);
 }
 
 function prevStep() {
-  // Never save in portal mode — birth worker is read-only
-  if (PORTAL_MODE !== '1') savePlan(currentUser ? currentUser.id : null);
+  const target = PORTAL_MODE === '1' ? PORTAL_CLIENT : (currentUser ? currentUser.id : null);
+  savePlan(target);
   setStep(currentStep - 1);
+}
+
+async function portalSave() {
+  const msg = document.getElementById('portal-save-msg');
+  msg.textContent = 'Saving…';
+  await savePlan(PORTAL_CLIENT);
+  msg.textContent = 'Saved ✓';
+  setTimeout(() => { msg.textContent = ''; }, 2500);
 }
 
 function setStep(n) {
