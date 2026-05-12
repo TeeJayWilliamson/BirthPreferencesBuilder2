@@ -1126,43 +1126,21 @@ sb.auth.onAuthStateChange(async (event, session) => {
     attachAutoSave(currentUser.id);
 });
 
-// Links this client's account to the birth worker who invited them
+// Links this client's account to the birth worker who invited them.
+// Uses a security-definer RPC so the update bypasses RLS
+// (clients have no direct write permission on birth_worker_clients).
 async function resolveInviteToken(token) {
-  const { data: row } = await sb
-    .from('birth_worker_clients')
-    .select('id, status, client_id')
-    .eq('invite_token', token)
-    .maybeSingle();
-
-  if (!row) return;
-  if (row.client_id && row.client_id !== currentUser.id) return;
-
-  if (row.status === 'pending' || !row.client_id) {
-    await sb
-      .from('birth_worker_clients')
-      .update({ client_id: currentUser.id, status: 'active' })
-      .eq('id', row.id);
-  }
+  const { error } = await sb.rpc('claim_invite', { p_token: token });
+  if (error) console.error('[resolveInviteToken] claim_invite failed:', error.message);
 }
 
 // Fallback: if the client signed in without the token in the URL,
 // check their email against any pending invite rows and activate them.
+// Also uses security-definer RPC to bypass RLS.
 async function resolveInviteByEmail(email) {
   if (!email) return;
-  const { data: rows } = await sb
-    .from('birth_worker_clients')
-    .select('id, status, client_id')
-    .eq('invited_email', email.toLowerCase())
-    .eq('status', 'pending');
-
-  if (!rows || rows.length === 0) return;
-  for (const row of rows) {
-    if (row.client_id && row.client_id !== currentUser.id) continue;
-    await sb
-      .from('birth_worker_clients')
-      .update({ client_id: currentUser.id, status: 'active' })
-      .eq('id', row.id);
-  }
+  const { error } = await sb.rpc('claim_invite_by_email', { p_email: email.toLowerCase() });
+  if (error) console.error('[resolveInviteByEmail] claim_invite_by_email failed:', error.message);
 }
 
 function guestMode() {
