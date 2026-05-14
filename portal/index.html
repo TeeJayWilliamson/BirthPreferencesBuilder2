@@ -19,7 +19,6 @@
   --blush:       #EBC4BE;
   --blush-light: #FAF0EE;
   --cream:       #F7F3EE;
-  --warm:        #F5EFE8;
   --rose:        #7B4040;
   --rose-light:  #F5EDED;
   --text:        #2C2C2C;
@@ -49,8 +48,8 @@ body::before {
   z-index: -1;
 }
 
-/* ── AUTH ── */
-#auth-screen {
+/* ── AUTH SCREENS ── */
+.auth-screen {
   min-height: 100vh;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -60,7 +59,8 @@ body::before {
   background: white; border-radius: 20px;
   box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255,255,255,0.9);
-  max-width: 420px; width: 100%; overflow: hidden;
+  max-width: 440px; width: 100%;
+  overflow: hidden; position: relative;
 }
 .auth-card-head {
   background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%);
@@ -87,6 +87,7 @@ body::before {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .auth-input:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
+.auth-input.error { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(123,64,64,0.1); }
 .auth-btn {
   width: 100%; background: linear-gradient(135deg, var(--olive) 0%, var(--olive-mid) 100%);
   color: white; border: none; border-radius: 50px; padding: 0.85rem 2rem;
@@ -99,7 +100,12 @@ body::before {
 .auth-msg.success { background: var(--sage-light); color: #2D5A30; border: 1px solid #B5D4B8; }
 .auth-msg.error { background: var(--rose-light); color: var(--rose); border: 1px solid #E8C4C4; }
 .auth-switch { text-align: center; margin-top: 1rem; font-size: 0.78rem; color: var(--muted); }
-.auth-switch a { color: var(--olive); font-weight: 500; cursor: pointer; text-decoration: none; }
+.auth-switch a { color: var(--olive); font-weight: 600; cursor: pointer; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+.pw-strength { margin-top: 0.4rem; font-size: 0.72rem; color: var(--muted); min-height: 1rem; }
+.pw-strength.weak  { color: var(--rose); }
+.pw-strength.ok    { color: #B08000; }
+.pw-strength.good  { color: var(--olive-mid); }
 
 /* ── APP ── */
 #app-screen { display: none; }
@@ -131,29 +137,17 @@ body::before {
 .topbar-signout:hover { border-color: var(--rose); color: var(--rose); }
 
 /* ── LAYOUT ── */
-.portal-layout {
-  max-width: 1100px; margin: 0 auto;
-  padding: 2.5rem 1.5rem 5rem;
-}
+.portal-layout { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
 
 /* ── HEADER ROW ── */
-.portal-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;
-}
-.portal-header-text h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 600; color: var(--olive); line-height: 1.2;
-}
+.portal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap; }
+.portal-header-text h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 600; color: var(--olive); line-height: 1.2; }
 .portal-header-text p { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; font-family: 'Cormorant Garamond', serif; font-style: italic; }
 .btn-invite {
   background: linear-gradient(135deg, var(--olive) 0%, var(--olive-mid) 100%);
-  color: white; border: none; border-radius: 50px;
-  padding: 0.8rem 1.8rem;
+  color: white; border: none; border-radius: 50px; padding: 0.8rem 1.8rem;
   font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.04em;
-  cursor: pointer; box-shadow: 0 6px 20px rgba(74,87,70,0.28); transition: all 0.2s;
-  white-space: nowrap;
+  cursor: pointer; box-shadow: 0 6px 20px rgba(74,87,70,0.28); transition: all 0.2s; white-space: nowrap;
 }
 .btn-invite:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(74,87,70,0.35); }
 .btn-invite:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
@@ -164,138 +158,72 @@ body::before {
   cursor: pointer; transition: all 0.2s; white-space: nowrap;
 }
 .btn-refresh:hover { border-color: var(--olive-mid); color: var(--olive); }
-.btn-refresh:disabled { opacity: 0.5; cursor: not-allowed; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.btn-refresh.spinning { display: inline-block; animation: spin 0.7s linear; }
+.btn-refresh.spinning { animation: spin 0.7s linear; }
 
-/* ── STATS ROW ── */
-.stats-row {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 1rem; margin-bottom: 2rem;
-}
+/* ── STATS ── */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
 @media (max-width: 700px) { .stats-row { grid-template-columns: 1fr 1fr; } }
-.stat-card {
-  background: white; border-radius: var(--radius);
-  border: 1px solid rgba(255,255,255,0.9);
-  box-shadow: var(--shadow); padding: 1.2rem 1.4rem;
-}
+.stat-card { background: white; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.9); box-shadow: var(--shadow); padding: 1.2rem 1.4rem; }
 .stat-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
 .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; color: var(--olive); line-height: 1; }
 .stat-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
-
-/* Slot usage bar */
 .slot-bar-wrap { margin-top: 0.5rem; }
 .slot-bar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
 .slot-bar-fill { height: 100%; background: linear-gradient(to right, var(--olive), var(--olive-mid)); border-radius: 2px; transition: width 0.6s ease; }
 
 /* ── FILTERS ── */
-.filters-row {
-  display: flex; align-items: center; gap: 0.6rem;
-  margin-bottom: 1.2rem; flex-wrap: wrap;
-}
-.filter-chip {
-  padding: 0.4rem 1rem; border-radius: 50px;
-  border: 1.5px solid var(--border); background: var(--cream);
-  font-size: 0.75rem; font-weight: 500; color: var(--muted);
-  cursor: pointer; transition: all 0.2s; user-select: none;
-}
+.filters-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.filter-chip { padding: 0.4rem 1rem; border-radius: 50px; border: 1.5px solid var(--border); background: var(--cream); font-size: 0.75rem; font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.2s; user-select: none; }
 .filter-chip:hover { border-color: var(--olive-mid); color: var(--olive); }
 .filter-chip.active { background: var(--olive); border-color: var(--olive); color: white; }
 .search-wrap { margin-left: auto; position: relative; }
-.search-input {
-  padding: 0.42rem 1rem 0.42rem 2.2rem;
-  border: 1.5px solid var(--border); border-radius: 50px;
-  font-family: 'Jost', sans-serif; font-size: 0.78rem; color: var(--text);
-  background: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-  width: 200px;
-}
-.search-input:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.12); }
+.search-input { padding: 0.42rem 1rem 0.42rem 2.2rem; border: 1.5px solid var(--border); border-radius: 50px; font-family: 'Jost', sans-serif; font-size: 0.78rem; color: var(--text); background: white; outline: none; transition: border-color 0.2s; width: 200px; }
+.search-input:focus { border-color: var(--olive-mid); }
 .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.85rem; pointer-events: none; }
 
 /* ── CLIENT TABLE ── */
-.clients-card {
-  background: white; border-radius: var(--radius);
-  box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.9);
-  overflow: hidden;
-}
+.clients-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.9); overflow: hidden; }
 .clients-table { width: 100%; border-collapse: collapse; }
 .clients-table thead tr { border-bottom: 1px solid var(--border); background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%); }
-.clients-table th {
-  padding: 0.9rem 1.2rem; text-align: left;
-  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
-}
-.clients-table tbody tr {
-  border-bottom: 1px solid rgba(212,221,206,0.4);
-  transition: background 0.15s;
-  animation: rowIn 0.3s ease both;
-}
+.clients-table th { padding: 0.9rem 1.2rem; text-align: left; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.clients-table tbody tr { border-bottom: 1px solid rgba(212,221,206,0.4); transition: background 0.15s; animation: rowIn 0.3s ease both; }
 @keyframes rowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .clients-table tbody tr:hover { background: var(--olive-pale); }
 .clients-table tbody tr:last-child { border-bottom: none; }
 .clients-table td { padding: 1rem 1.2rem; font-size: 0.85rem; vertical-align: middle; }
 .client-name-cell { display: flex; align-items: center; gap: 0.8rem; }
-.client-avatar {
-  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--olive-pale), var(--sage-light));
-  border: 1.5px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.78rem; font-weight: 600; color: var(--olive);
-}
+.client-avatar { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--olive-pale), var(--sage-light)); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: var(--olive); }
 .client-name { font-weight: 500; color: var(--text); }
 .client-email { font-size: 0.75rem; color: var(--muted); margin-top: 0.1rem; }
-.status-pill {
-  display: inline-flex; align-items: center; gap: 0.35rem;
-  padding: 0.28rem 0.75rem; border-radius: 50px;
-  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
-}
+.status-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.28rem 0.75rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; }
 .status-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
-.status-active   { background: var(--sage-light);  color: #2D5A30; }
+.status-active   { background: var(--sage-light); color: #2D5A30; }
 .status-active::before   { background: #4A8F50; }
 .status-pending  { background: #FEF9EC; color: #7A5800; border: 1px solid #F0D98C; }
 .status-pending::before  { background: #D4A017; }
 .status-archived { background: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; }
 .status-archived::before { background: #9CA3AF; }
-
 .due-date-cell { font-size: 0.8rem; color: var(--muted); }
 .due-date-cell.soon { color: var(--olive); font-weight: 500; }
 .table-actions { display: flex; align-items: center; gap: 0.5rem; }
-.btn-icon {
-  background: none; border: 1.5px solid var(--border); color: var(--muted);
-  border-radius: 8px; padding: 0.4rem 0.65rem;
-  font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 500;
-  cursor: pointer; transition: all 0.2s; white-space: nowrap;
-}
+.btn-icon { background: none; border: 1.5px solid var(--border); color: var(--muted); border-radius: 8px; padding: 0.4rem 0.65rem; font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .btn-icon:hover { border-color: var(--olive-mid); color: var(--olive); background: var(--olive-pale); }
 .btn-icon.open-plan { background: var(--olive-pale); border-color: var(--olive-mid); color: var(--olive); }
 .btn-icon.open-plan:hover { background: var(--olive); color: white; border-color: var(--olive); }
+.btn-icon.has-notes { border-color: var(--olive-mid); color: var(--olive); }
 .btn-icon.danger:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-light); }
-
-.empty-state {
-  padding: 4rem 2rem; text-align: center;
-}
+.empty-state { padding: 4rem 2rem; text-align: center; }
 .empty-state-icon { font-size: 2rem; margin-bottom: 1rem; opacity: 0.4; }
 .empty-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--olive); margin-bottom: 0.5rem; }
 .empty-state p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
 
-/* ── MODAL OVERLAY ── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
-  z-index: 1000; justify-content: center; align-items: center; padding: 1rem;
-}
+/* ── MODALS ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; }
 .modal-overlay.active { display: flex; }
-.modal {
-  background: white; border-radius: 20px;
-  width: 100%; max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.25);
-  animation: modalIn 0.28s ease;
-}
+.modal { background: white; border-radius: 20px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 40px 100px rgba(0,0,0,0.25); animation: modalIn 0.28s ease; }
 @keyframes modalIn { from { transform: scale(0.95) translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
-.modal-head {
-  padding: 1.4rem 1.8rem; border-bottom: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-  background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%);
-}
+.modal-head { padding: 1.4rem 1.8rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%); }
 .modal-head h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--olive); }
 .modal-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); transition: color 0.15s; padding: 0.2rem; }
 .modal-close:hover { color: var(--text); }
@@ -309,195 +237,100 @@ body::before {
 .btn-danger { background: var(--rose-light); color: var(--rose); border: 1.5px solid #E8C4C4; border-radius: 50px; padding: 0.7rem 1.6rem; font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .btn-danger:hover { background: var(--rose); color: white; border-color: var(--rose); }
 
-/* ── INVITE MODAL SPECIFIC ── */
+/* ── INVITE MODAL ── */
 .invite-field { margin-bottom: 1.2rem; }
 .invite-label { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--olive); margin-bottom: 0.4rem; }
-.invite-input {
-  width: 100%; padding: 0.75rem 1rem;
-  border: 1.5px solid var(--border); border-radius: 10px;
-  font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--text);
-  background: var(--cream); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-}
+.invite-input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--text); background: var(--cream); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
 .invite-input:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
 .invite-result { display: none; }
 .invite-result.visible { display: block; }
-.invite-link-box {
-  background: var(--olive-pale); border: 1.5px solid var(--border); border-radius: 12px;
-  padding: 1rem 1.2rem; margin-bottom: 1rem;
-}
+.invite-link-box { background: var(--olive-pale); border: 1.5px solid var(--border); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
 .invite-link-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-mid); margin-bottom: 0.5rem; }
 .invite-link-url { font-size: 0.78rem; color: var(--text); word-break: break-all; line-height: 1.5; margin-bottom: 0.7rem; }
-.invite-copy-btn {
-  background: var(--olive); color: white; border: none; border-radius: 8px;
-  padding: 0.5rem 1rem; font-family: 'Jost', sans-serif; font-size: 0.76rem; font-weight: 600;
-  cursor: pointer; transition: all 0.2s;
-}
+.invite-copy-btn { background: var(--olive); color: white; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-family: 'Jost', sans-serif; font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .invite-copy-btn:hover { background: var(--olive-mid); }
 .invite-copy-btn.copied { background: #2D5A30; }
 .qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; margin-top: 1rem; }
 .qr-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 #qr-canvas { border-radius: 12px; border: 6px solid white; box-shadow: var(--shadow); }
 
-/* ── NOTES MODAL SPECIFIC ── */
-.notes-textarea {
-  width: 100%; padding: 0.85rem 1rem;
-  border: 1.5px solid var(--border); border-radius: 10px;
-  font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--text);
-  background: var(--cream); outline: none; resize: vertical; min-height: 140px; line-height: 1.65;
-  transition: border-color 0.2s, box-shadow 0.2s;
+/* ── NOTES MODAL ── */
+.notes-history { margin-bottom: 1.4rem; max-height: 240px; overflow-y: auto; }
+.note-entry {
+  background: var(--olive-pale); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.7rem;
 }
+.note-entry:last-child { margin-bottom: 0; }
+.note-entry-meta {
+  font-size: 0.65rem; color: var(--muted); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem;
+}
+.note-entry-text { font-size: 0.83rem; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+.notes-divider { height: 1px; background: var(--border); margin: 1.2rem 0; }
+.notes-new-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--olive); margin-bottom: 0.5rem; }
+.notes-textarea { width: 100%; padding: 0.85rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--text); background: var(--cream); outline: none; resize: vertical; min-height: 100px; line-height: 1.65; transition: border-color 0.2s, box-shadow 0.2s; }
 .notes-textarea:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
+.notes-empty { font-size: 0.82rem; color: var(--muted); font-style: italic; text-align: center; padding: 1rem; }
+
+/* ── ARCHIVE MODAL ── */
+/* uses generic modal styles */
 
 /* ── TOAST ── */
-.toast {
-  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(12px);
-  background: var(--olive); color: white; border-radius: 50px;
-  padding: 0.7rem 1.6rem; font-size: 0.82rem; font-weight: 500;
-  box-shadow: var(--shadow-lg); z-index: 9999;
-  opacity: 0; transition: all 0.3s ease; pointer-events: none;
-}
+.toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--olive); color: white; border-radius: 50px; padding: 0.7rem 1.6rem; font-size: 0.82rem; font-weight: 500; box-shadow: var(--shadow-lg); z-index: 9999; opacity: 0; transition: all 0.3s ease; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ── TIER BADGE ── */
-.tier-badge {
-  display: inline-block; padding: 0.25rem 0.7rem; border-radius: 50px;
-  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-}
+.tier-badge { display: inline-block; padding: 0.25rem 0.7rem; border-radius: 50px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
 .tier-solo       { background: var(--sage-light); color: var(--olive); border: 1px solid var(--border); }
 .tier-practice   { background: var(--olive-pale); color: var(--olive); border: 1px solid var(--olive-mid); }
 .tier-collective { background: var(--olive); color: white; }
 .tier-none       { background: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; }
 
 @media (max-width: 700px) {
-  .clients-table th:nth-child(3),
-  .clients-table td:nth-child(3),
-  .clients-table th:nth-child(4),
-  .clients-table td:nth-child(4) { display: none; }
+  .clients-table th:nth-child(3), .clients-table td:nth-child(3),
+  .clients-table th:nth-child(4), .clients-table td:nth-child(4) { display: none; }
 }
 </style>
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
-<div id="auth-screen">
-
-  <div class="auth-card" style="position:relative;">
-
+<!-- ── SIGN IN SCREEN ── -->
+<div id="signin-screen" class="auth-screen">
+  <div class="auth-card">
     <div class="auth-card-head">
-      <div class="auth-logo">
-        <img src="img/logo.png" alt="Blümi">
-      </div>
-
-      <div class="auth-brand-tag">
-        Care Provider Portal
-      </div>
-
-      <div class="auth-portal-tag">
-        Professional Access
-      </div>
-
-      <p class="auth-sub">
-        Sign in to your Care Provider account to manage clients and birth plans.
-      </p>
+      <div class="auth-logo"><img src="img/logo.png" alt="Blümi"></div>
+      <div class="auth-brand-tag">Care Provider Portal</div>
+      <div class="auth-portal-tag">Professional Access</div>
+      <p class="auth-sub">Sign in to your Care Provider account to manage clients and birth plans.</p>
     </div>
-
     <div class="auth-body">
-
       <div class="auth-field">
-        <label class="auth-label">
-          Email Address
-        </label>
-
-        <input
-          type="email"
-          class="auth-input"
-          id="auth-email"
-          placeholder="you@example.com"
-        >
+        <label class="auth-label">Email Address</label>
+        <input type="email" class="auth-input" id="si-email" placeholder="you@example.com" autocomplete="email">
       </div>
-
       <div class="auth-field">
-        <label class="auth-label">
-          Password
-        </label>
-
-        <input
-          type="password"
-          class="auth-input"
-          id="auth-password"
-          placeholder="Your password"
-        >
+        <label class="auth-label">Password</label>
+        <input type="password" class="auth-input" id="si-password" placeholder="Your password" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter') signIn()">
       </div>
-
-      <button
-        class="auth-btn"
-        onclick="signIn()"
-      >
-        Sign In
-      </button>
-
-      <div class="auth-msg" id="auth-msg"></div>
-
-      <div class="auth-switch">
-        New to Blümi?
-        <a onclick="showSignUp()">
-          Create a Care Provider account
-        </a>
-      </div>
-
+      <button class="auth-btn" onclick="signIn()">Sign In</button>
+      <div class="auth-msg" id="si-msg"></div>
+      <div class="auth-switch">New to Blümi? <a onclick="showScreen('signup')">Create a Care Provider account</a></div>
     </div>
-
-    <!-- HOME LINK -->
-    <a
-      href="index.html"
-      style="
-        position:absolute;
-        bottom:1rem;
-        right:1.2rem;
-
-        display:flex;
-        align-items:center;
-        gap:0.4rem;
-
-        color:var(--muted);
-        font-family:'Jost',sans-serif;
-        font-size:0.75rem;
-        text-decoration:none;
-
-        opacity:0.7;
-        transition:opacity 0.2s ease;
-      "
-      onmouseover="this.style.opacity='1'"
-      onmouseout="this.style.opacity='0.7'"
-    >
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-
+    <a href="index.html" style="position:absolute;bottom:1rem;right:1.2rem;color:var(--muted);font-family:'Jost',sans-serif;font-size:0.75rem;text-decoration:none;display:flex;align-items:center;gap:0.4rem;opacity:0.7;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Home
     </a>
-
   </div>
-
 </div>
 
-<!-- SIGN UP SCREEN -->
-<div id="signup-screen" style="display:none; min-height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1.5rem;">
+<!-- ── SIGN UP SCREEN ── -->
+<div id="signup-screen" class="auth-screen" style="display:none;">
   <div class="auth-card" style="max-width:460px;">
     <div class="auth-card-head">
       <div class="auth-logo"><img src="img/logo.png" alt="Blümi"></div>
       <div class="auth-brand-tag">Create Your Portal Account</div>
-      <p class="auth-sub">Choose a plan, then sign up. All plans are free during our beta.</p>
+      <p class="auth-sub">All plans are free during our beta. Choose your tier and get started.</p>
     </div>
     <div class="auth-body">
       <div class="auth-field">
@@ -506,11 +339,18 @@ body::before {
       </div>
       <div class="auth-field">
         <label class="auth-label">Email Address</label>
-        <input type="email" class="auth-input" id="su-email" placeholder="you@example.com">
+        <input type="email" class="auth-input" id="su-email" placeholder="you@example.com" autocomplete="email">
       </div>
       <div class="auth-field">
         <label class="auth-label">Password</label>
-        <input type="password" class="auth-input" id="su-password" placeholder="At least 8 characters">
+        <input type="password" class="auth-input" id="su-password" placeholder="At least 8 characters" autocomplete="new-password"
+          oninput="checkPwStrength(this.value)">
+        <div class="pw-strength" id="pw-strength-msg"></div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Confirm Password</label>
+        <input type="password" class="auth-input" id="su-confirm" placeholder="Re-enter your password" autocomplete="new-password"
+          onkeydown="if(event.key==='Enter') signUp()">
       </div>
       <div class="auth-field">
         <label class="auth-label">Plan</label>
@@ -522,13 +362,12 @@ body::before {
       </div>
       <button class="auth-btn" onclick="signUp()">Create Account</button>
       <div class="auth-msg" id="su-msg"></div>
-      <div class="auth-switch">Already have an account? <a onclick="showSignIn()">Sign in</a></div>
+      <div class="auth-switch">Already have an account? <a onclick="showScreen('signin')">Sign in</a></div>
     </div>
-    
   </div>
 </div>
 
-<!-- APP SCREEN -->
+<!-- ── APP SCREEN ── -->
 <div id="app-screen">
   <nav class="topbar">
     <div class="topbar-left">
@@ -574,9 +413,7 @@ body::before {
         <div class="stat-label">Slots Used</div>
         <div class="stat-value" id="stat-slots">—</div>
         <div class="stat-sub" id="stat-slots-sub">of your plan limit</div>
-        <div class="slot-bar-wrap">
-          <div class="slot-bar-track"><div class="slot-bar-fill" id="slot-bar" style="width:0%"></div></div>
-        </div>
+        <div class="slot-bar-wrap"><div class="slot-bar-track"><div class="slot-bar-fill" id="slot-bar" style="width:0%"></div></div></div>
       </div>
     </div>
 
@@ -637,11 +474,11 @@ body::before {
           <div class="qr-label">Or scan this QR code in person</div>
           <canvas id="qr-canvas"></canvas>
         </div>
-        <p style="font-size:0.76rem;color:var(--muted);margin-top:1rem;line-height:1.6;">When your client opens this link and signs up (or signs in), they'll be automatically connected to your portal. Their birth plan will appear in your client list.</p>
+        <p style="font-size:0.76rem;color:var(--muted);margin-top:1rem;line-height:1.6;">When your client opens this link and signs up (or signs in), they'll be automatically connected to your portal.</p>
       </div>
     </div>
     <div class="modal-footer" id="invite-modal-footer">
-      <button class="btn-secondary" onclick="closeModal('invite-modal')">Cancel</button>
+      <button class="btn-secondary" id="invite-cancel-btn" onclick="closeModal('invite-modal')">Cancel</button>
       <button class="btn-primary" id="invite-submit-btn" onclick="submitInvite()">Generate Link</button>
     </div>
   </div>
@@ -649,18 +486,26 @@ body::before {
 
 <!-- NOTES MODAL -->
 <div class="modal-overlay" id="notes-modal">
-  <div class="modal" style="max-width:480px;">
+  <div class="modal" style="max-width:520px;">
     <div class="modal-head">
       <h3>Client Notes</h3>
       <button class="modal-close" onclick="closeModal('notes-modal')">×</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;">Private notes visible only to you. Not shared with your client.</p>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1.2rem;">Private notes visible only to you. Each entry is timestamped and preserved.</p>
+
+      <!-- History -->
+      <div id="notes-history-wrap">
+        <!-- rendered by JS -->
+      </div>
+
+      <div class="notes-divider"></div>
+      <div class="notes-new-label">Add a new note</div>
       <textarea class="notes-textarea" id="notes-textarea" placeholder="Add notes about this client's preferences, conversations, or anything you want to remember…"></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('notes-modal')">Cancel</button>
-      <button class="btn-primary" onclick="saveNotes()">Save Notes</button>
+      <button class="btn-secondary" onclick="closeModal('notes-modal')">Close</button>
+      <button class="btn-primary" onclick="saveNote()">Save Note</button>
     </div>
   </div>
 </div>
@@ -691,8 +536,8 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
-    storageKey:     'bluumi-app-auth',  // same key as app.html so worker session
-    persistSession: true,               // is already present when portal opens a tab
+    storageKey:     'bluumi-portal-auth',  // separate key from birthplan.html to avoid session collision
+    persistSession: true,
     detectSessionInUrl: true,
   }
 });
@@ -707,88 +552,103 @@ let currentInviteLink = '';
 
 const TIER_LIMITS = { solo: 10, practice: 50, collective: Infinity };
 
-// ── AUTH ────────────────────────────────────────────────────
+// ── Screen management ──────────────────────────────────────────────────
+function showScreen(name) {
+  document.getElementById('signin-screen').style.display  = name === 'signin'  ? 'flex'  : 'none';
+  document.getElementById('signup-screen').style.display  = name === 'signup'  ? 'flex'  : 'none';
+  document.getElementById('app-screen').style.display     = name === 'app'     ? 'block' : 'none';
+}
+
+// ── Password strength ──────────────────────────────────────────────────
+function checkPwStrength(pw) {
+  const el = document.getElementById('pw-strength-msg');
+  if (!pw) { el.textContent = ''; el.className = 'pw-strength'; return; }
+  if (pw.length < 8) { el.textContent = 'Too short — use at least 8 characters'; el.className = 'pw-strength weak'; return; }
+  const score = [/[A-Z]/.test(pw), /[0-9]/.test(pw), /[^A-Za-z0-9]/.test(pw)].filter(Boolean).length;
+  if (score === 0) { el.textContent = 'Weak — try adding numbers or symbols'; el.className = 'pw-strength weak'; }
+  else if (score === 1) { el.textContent = 'Fair — could be stronger'; el.className = 'pw-strength ok'; }
+  else { el.textContent = 'Good password'; el.className = 'pw-strength good'; }
+}
 
 function showMsg(id, text, type) {
   const el = document.getElementById(id);
   el.textContent = text; el.className = 'auth-msg ' + type; el.style.display = 'block';
 }
-function showSignUp() {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('signup-screen').style.display = 'flex';
-}
-function showSignIn() {
-  document.getElementById('signup-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-}
 
+// ── Auth ───────────────────────────────────────────────────────────────
 async function signIn() {
-  const email    = document.getElementById('auth-email').value.trim();
-  const password = document.getElementById('auth-password').value;
-  if (!email || !password) return showMsg('auth-msg', 'Please enter your email and password.', 'error');
+  const email    = document.getElementById('si-email').value.trim();
+  const password = document.getElementById('si-password').value;
+  if (!email || !password) return showMsg('si-msg', 'Please enter your email and password.', 'error');
+  const btn = document.querySelector('#signin-screen .auth-btn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
   const { error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) showMsg('auth-msg', error.message, 'error');
+  btn.disabled = false; btn.textContent = 'Sign In';
+  if (error) showMsg('si-msg', error.message, 'error');
 }
 
 async function signUp() {
   const name     = document.getElementById('su-name').value.trim();
   const email    = document.getElementById('su-email').value.trim();
   const password = document.getElementById('su-password').value;
+  const confirm  = document.getElementById('su-confirm').value;
   const tier     = document.getElementById('su-tier').value;
   if (!email || !password) return showMsg('su-msg', 'Please fill in all required fields.', 'error');
   if (password.length < 8) return showMsg('su-msg', 'Password must be at least 8 characters.', 'error');
+  if (password !== confirm) {
+    document.getElementById('su-confirm').classList.add('error');
+    return showMsg('su-msg', 'Passwords do not match — please check and try again.', 'error');
+  }
+  document.getElementById('su-confirm').classList.remove('error');
+  const btn = document.querySelector('#signup-screen .auth-btn');
+  btn.disabled = true; btn.textContent = 'Creating account…';
   const { error } = await sb.auth.signUp({
     email, password,
     options: { data: { role: 'birth_worker', display_name: name || email, tier } }
   });
+  btn.disabled = false; btn.textContent = 'Create Account';
   if (error) return showMsg('su-msg', error.message, 'error');
-  // Manually set tier since the trigger only sets role/display_name
   showMsg('su-msg', '✓ Account created! Signing you in…', 'success');
 }
 
-// ── Auth state tracking ─────────────────────────────────────────────────
-// _initializedUserId starts as a sentinel so the first real sign-in always
-// passes the dedup guard, even if it's the same account as last session.
-let _initializedUserId = '__none__';
-let _realtimeChannel   = null;
-
-function _resetAuthState() {
-  // Use a sentinel (not null) so signing back in with the same account
-  // always passes the dedup guard on the next INITIAL_SESSION / SIGNED_IN.
-  _initializedUserId = '__signed_out__';
-  // Tear down the realtime channel so we don't accumulate duplicates.
-  if (_realtimeChannel) {
-    sb.removeChannel(_realtimeChannel);
-    _realtimeChannel = null;
-  }
-  currentUser = null; currentProfile = null; allClients = [];
-  document.getElementById('app-screen').style.display    = 'none';
-  document.getElementById('signup-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display   = 'flex';
-}
-
+// ── THE FIX: await signOut before resetting state ──────────────────────
+// Previously signOut() ran synchronously (reset state, hide screens) then
+// called sb.auth.signOut() async. onAuthStateChange would fire SIGNED_OUT
+// AFTER we'd shown the auth screen — causing no visual issue — but then
+// fire INITIAL_SESSION with the cached session still alive, logging the
+// user back in. Awaiting signOut() first ensures SIGNED_OUT fires, our
+// handler resets state, and the old session is truly gone before anything
+// else can fire.
 async function signOut() {
-  _resetAuthState();
-  document.getElementById('auth-email').value    = '';
-  document.getElementById('auth-password').value = '';
   await sb.auth.signOut();
+  // onAuthStateChange SIGNED_OUT handler cleans up the rest
 }
+
+// ── Auth state ─────────────────────────────────────────────────────────
+// _bootedUserId acts as a dedup guard AND a sentinel for sign-out.
+// Using '__none__' (not null) means signing back in with the same
+// account after sign-out always passes the guard.
+let _bootedUserId    = '__none__';
+let _realtimeChannel = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
-    _resetAuthState();
+    _bootedUserId = '__signed_out__';
+    if (_realtimeChannel) { sb.removeChannel(_realtimeChannel); _realtimeChannel = null; }
+    currentUser = null; currentProfile = null; allClients = [];
+    document.getElementById('si-email').value    = '';
+    document.getElementById('si-password').value = '';
+    showScreen('signin');
     return;
   }
 
   if (!session?.user) return;
 
-  // Ignore duplicate events for the same user (TOKEN_REFRESHED, etc.)
-  // The sentinel values '__none__' and '__signed_out__' never match a real UUID,
-  // so the first event after page-load or sign-out always runs the boot sequence.
-  if (session.user.id === _initializedUserId) return;
-  _initializedUserId = session.user.id;
+  // Dedup: same user, same session — ignore TOKEN_REFRESHED etc.
+  if (session.user.id === _bootedUserId) return;
+  _bootedUserId = session.user.id;
+  currentUser   = session.user;
 
-  currentUser = session.user;
   await loadProfile();
 
   // Profile row may not exist yet right after signup — retry once
@@ -797,7 +657,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
     await loadProfile();
   }
 
-  // Set tier from signup metadata if profile has no tier yet
+  // Persist tier from signup metadata if not yet on profile
   if (currentProfile && !currentProfile.tier) {
     const tier = session.user.user_metadata?.tier;
     if (tier) {
@@ -806,32 +666,27 @@ sb.auth.onAuthStateChange(async (event, session) => {
     }
   }
 
-  // Role check — use metadata as fallback if profile row is still missing
+  // Role guard
   const role = currentProfile?.role ?? session.user.user_metadata?.role;
   if (role && role !== 'birth_worker') {
-    showMsg('auth-msg', 'This portal is for Care Providers only. Please use app.html for your birth plan.', 'error');
-    _initializedUserId = null;
+    showMsg('si-msg', 'This portal is for Care Providers only. Please use birthplan.html for your birth plan.', 'error');
+    _bootedUserId = '__none__';
     await sb.auth.signOut();
     return;
   }
 
-  document.getElementById('auth-screen').style.display   = 'none';
-  document.getElementById('signup-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display    = 'block';
-  document.getElementById('topbar-email').textContent    = currentUser.email;
+  showScreen('app');
+  document.getElementById('topbar-email').textContent = currentUser.email;
   renderTierBadge();
   await loadClients();
 
-  // ── Realtime: auto-refresh when any client row changes ──────
-  // Portal updates automatically when a client accepts their invite —
-  // no manual Refresh needed.
-  _realtimeChannel = sb.channel('portal-clients')
+  // Realtime: refresh when any client row changes
+  _realtimeChannel = sb.channel('portal-clients-' + currentUser.id)
     .on('postgres_changes', {
-      event:  '*',
-      schema: 'public',
-      table:  'birth_worker_clients',
+      event: '*', schema: 'public',
+      table: 'birth_worker_clients',
       filter: `birth_worker_id=eq.${currentUser.id}`
-    }, () => { loadClients(); })
+    }, () => loadClients())
     .subscribe();
 });
 
@@ -840,44 +695,35 @@ async function loadProfile() {
   currentProfile = data;
 }
 
-// ── TIER ────────────────────────────────────────────────────
-
+// ── Tier ───────────────────────────────────────────────────────────────
 function renderTierBadge() {
-  const tier = currentProfile?.tier || null;
+  const tier   = currentProfile?.tier || null;
   const labels = { solo: 'Solo', practice: 'Practice', collective: 'Collective' };
-  const el = document.getElementById('topbar-tier-badge');
-  const cls = tier ? `tier-badge tier-${tier}` : 'tier-badge tier-none';
-  el.className = cls;
+  const el     = document.getElementById('topbar-tier-badge');
+  el.className = tier ? `tier-badge tier-${tier}` : 'tier-badge tier-none';
   el.textContent = tier ? labels[tier] : 'No plan';
 }
 
-function getSlotLimit() {
-  return TIER_LIMITS[currentProfile?.tier] ?? 0;
-}
+function getSlotLimit() { return TIER_LIMITS[currentProfile?.tier] ?? 0; }
 
-// ── CLIENTS ─────────────────────────────────────────────────
-
+// ── Clients ────────────────────────────────────────────────────────────
 async function loadClients() {
-  // Single query — no !inner join so pending clients (who have no birth plan yet) are included
-  const { data: data2 } = await sb
+  // NOTE: invite_token is explicitly selected so View Link works
+  const { data } = await sb
     .from('birth_worker_clients')
-    .select(`
-      id, invited_email, status, notes, created_at, invite_token,
-      client:client_id ( id, display_name )
-    `)
+    .select(`id, invited_email, status, notes, created_at, invite_token,
+             client:client_id ( id, display_name )`)
     .eq('birth_worker_id', currentUser.id)
     .order('created_at', { ascending: false });
 
-  allClients = (data2 || []);
+  allClients = data || [];
 
-  // Fetch due dates separately for active clients that have plans
+  // Fetch plan data for active clients
   const activeIds = allClients.filter(r => r.client?.id).map(r => r.client.id);
   let planMap = {};
   if (activeIds.length) {
     const { data: plans } = await sb
-      .from('birth_plans')
-      .select('user_id, plan_data')
-      .in('user_id', activeIds);
+      .from('birth_plans').select('user_id, plan_data').in('user_id', activeIds);
     (plans || []).forEach(p => { planMap[p.user_id] = p.plan_data; });
   }
   allClients = allClients.map(r => ({ ...r, plan_data: r.client?.id ? planMap[r.client.id] : null }));
@@ -900,20 +746,17 @@ function updateStats() {
   document.getElementById('stat-slots-sub').textContent = limit === Infinity ? 'unlimited on your plan' : 'of ' + limit + ' on your plan';
   const pct = limit === Infinity ? 0 : Math.min(100, Math.round((used / limit) * 100));
   document.getElementById('slot-bar').style.width = pct + '%';
-  // Disable invite button if at limit
   const atLimit = limit !== Infinity && used >= limit;
   const btn = document.getElementById('btn-invite-main');
   btn.disabled = atLimit;
-  btn.title = atLimit ? 'You have reached your plan\'s client limit.' : '';
+  btn.title    = atLimit ? 'You have reached your plan\'s client limit.' : '';
 }
 
 async function refreshClients() {
   const btn = document.getElementById('btn-refresh');
-  btn.classList.add('spinning');
-  btn.disabled = true;
+  btn.classList.add('spinning'); btn.disabled = true;
   await loadClients();
-  btn.classList.remove('spinning');
-  btn.disabled = false;
+  btn.classList.remove('spinning'); btn.disabled = false;
   showToast('Client list refreshed.');
 }
 
@@ -925,9 +768,9 @@ function setFilter(f, el) {
 }
 
 function renderTable() {
-  const query  = document.getElementById('search-input').value.toLowerCase();
-  const tbody  = document.getElementById('clients-tbody');
-  const rows   = allClients.filter(r => {
+  const query = document.getElementById('search-input').value.toLowerCase();
+  const tbody = document.getElementById('clients-tbody');
+  const rows  = allClients.filter(r => {
     if (activeFilter !== 'all' && r.status !== activeFilter) return false;
     if (query) {
       const name  = (r.client?.display_name || '').toLowerCase();
@@ -938,28 +781,30 @@ function renderTable() {
   });
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="5">
-      <div class="empty-state">
-        <div class="empty-state-icon">🌿</div>
-        <h3>${activeFilter === 'all' && !query ? 'No clients yet' : 'No clients found'}</h3>
-        <p>${activeFilter === 'all' && !query ? 'Invite your first client to get started.' : 'Try adjusting your search or filter.'}</p>
-      </div>
-    </td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
+      <div class="empty-state-icon">🌿</div>
+      <h3>${activeFilter === 'all' && !query ? 'No clients yet' : 'No clients found'}</h3>
+      <p>${activeFilter === 'all' && !query ? 'Invite your first client to get started.' : 'Try adjusting your search or filter.'}</p>
+    </div></td></tr>`;
     return;
   }
 
   tbody.innerHTML = rows.map((r, i) => {
-    const name      = r.client?.display_name || r.invited_email;
-    const initials  = name.slice(0,2).toUpperCase();
-    const email     = r.invited_email;
-    const statusCls = 'status-pill status-' + r.status;
-    const statusLbl = r.status.charAt(0).toUpperCase() + r.status.slice(1);
-    const dueDate   = r.plan_data?.dueDate || '';
-    const dueFmt    = dueDate ? formatDue(dueDate) : '—';
-    const dueCls    = dueDate && isSoon(dueDate) ? 'due-date-cell soon' : 'due-date-cell';
-    const added     = new Date(r.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
-    const canOpen   = r.status === 'active' && r.client?.id;
-    const canArchive= r.status !== 'archived';
+    const name       = r.client?.display_name || r.invited_email;
+    const initials   = name.slice(0,2).toUpperCase();
+    const email      = r.invited_email;
+    const statusCls  = 'status-pill status-' + r.status;
+    const statusLbl  = r.status.charAt(0).toUpperCase() + r.status.slice(1);
+    const dueDate    = r.plan_data?.dueDate || '';
+    const dueFmt     = dueDate ? formatDue(dueDate) : '—';
+    const dueCls     = dueDate && isSoon(dueDate) ? 'due-date-cell soon' : 'due-date-cell';
+    const added      = new Date(r.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
+    const canOpen    = r.status === 'active' && r.client?.id;
+    const canArchive = r.status !== 'archived';
+
+    // Notes: parse the stored value — could be legacy string or JSON array
+    const notesArr   = parseNotes(r.notes);
+    const hasNotes   = notesArr.length > 0;
 
     return `<tr style="animation-delay:${i * 0.04}s">
       <td>
@@ -978,11 +823,13 @@ function renderTable() {
         <div class="table-actions">
           ${canOpen
             ? `<button class="btn-icon open-plan" onclick="openPlan('${r.client.id}')">Open Plan</button>`
-            : r.status === 'pending'
+            : r.status === 'pending' && r.invite_token
               ? `<button class="btn-icon" onclick="showInviteLink('${r.invite_token}', '${escAttr(r.invited_email)}')">View Link</button>`
               : ''
           }
-          <button class="btn-icon" onclick="openNotesModal('${r.id}')">Notes${r.notes ? ' ✎' : ''}</button>
+          <button class="btn-icon${hasNotes ? ' has-notes' : ''}" onclick="openNotesModal('${r.id}')">
+            Notes${hasNotes ? ' (' + notesArr.length + ')' : ''}
+          </button>
           ${canArchive ? `<button class="btn-icon danger" onclick="openArchiveModal('${r.id}', '${escAttr(name)}')">Archive</button>` : ''}
         </div>
       </td>
@@ -990,107 +837,107 @@ function renderTable() {
   }).join('');
 }
 
-function formatDue(dateStr) {
-  const d = new Date(dateStr + 'T00:00');
-  return d.toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
+// ── Note helpers ───────────────────────────────────────────────────────
+// Notes are stored as a JSON array: [{text, ts}]
+// We handle legacy plain-string notes gracefully.
+function parseNotes(raw) {
+  if (!raw) return [];
+  if (typeof raw === 'object' && Array.isArray(raw)) return raw;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+    // Legacy: was stored as JSON string of a plain string
+    return [{ text: String(parsed), ts: null }];
+  } catch {
+    // Legacy: plain string
+    return [{ text: String(raw), ts: null }];
+  }
 }
-function isSoon(dateStr) {
-  const d    = new Date(dateStr + 'T00:00');
-  const diff = (d - Date.now()) / (1000 * 60 * 60 * 24);
-  return diff >= 0 && diff <= 60;
+
+function formatNoteDate(ts) {
+  if (!ts) return 'Earlier note';
+  return new Date(ts).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
-// ── OPEN PLAN ───────────────────────────────────────────────
-
+// ── Open Plan ──────────────────────────────────────────────────────────
 async function openPlan(clientId) {
   sessionStorage.setItem('portalReturnUrl', location.href);
-  // Pass tokens in the URL so app.html can authenticate even when Edge/Safari
-  // Tracking Prevention blocks localStorage access for CDN-loaded scripts.
   const { data: { session } } = await sb.auth.getSession();
   const at = session?.access_token  || '';
   const rt = session?.refresh_token || '';
-  const url = 'app.html?portalMode=1&clientId=' + clientId
+  const url = 'birthplan.html?portalMode=1&clientId=' + clientId
             + '&at=' + encodeURIComponent(at)
             + '&rt=' + encodeURIComponent(rt);
   window.open(url, '_blank');
 }
 
-// ── INVITE ──────────────────────────────────────────────────
-
+// ── Invite ─────────────────────────────────────────────────────────────
 function openInviteModal() {
   document.getElementById('invite-email').value = '';
   document.getElementById('invite-name').value  = '';
   document.getElementById('invite-result').classList.remove('visible');
   document.getElementById('invite-form-section').style.display = 'block';
-  document.getElementById('invite-submit-btn').style.display = 'inline-block';
-  document.getElementById('invite-submit-btn').textContent = 'Generate Link';
-  document.getElementById('invite-submit-btn').disabled = false;
-  document.querySelector('#invite-modal .btn-secondary').textContent = 'Cancel';
+  document.getElementById('invite-submit-btn').style.display   = 'inline-block';
+  document.getElementById('invite-submit-btn').textContent     = 'Generate Link';
+  document.getElementById('invite-submit-btn').disabled        = false;
+  document.getElementById('invite-cancel-btn').textContent     = 'Cancel';
   openModal('invite-modal');
 }
 
 async function submitInvite() {
   const email = document.getElementById('invite-email').value.trim().toLowerCase();
-  const name  = document.getElementById('invite-name').value.trim();
   if (!email) return showToast('Please enter a client email.');
 
-  // Check slot limit
   const used  = allClients.filter(r => r.status !== 'archived').length;
   const limit = getSlotLimit();
-  if (limit !== Infinity && used >= limit) {
-    return showToast('You\'ve reached your plan\'s client limit.');
-  }
+  if (limit !== Infinity && used >= limit) return showToast('You\'ve reached your plan\'s client limit.');
 
   const btn = document.getElementById('invite-submit-btn');
   btn.disabled = true; btn.textContent = 'Creating…';
 
   const { data, error } = await sb
     .from('birth_worker_clients')
-    .insert({
-      birth_worker_id: currentUser.id,
-      invited_email:   email,
-      status:          'pending'
-    })
+    .insert({ birth_worker_id: currentUser.id, invited_email: email, status: 'pending' })
     .select()
     .single();
 
+  btn.disabled = false; btn.textContent = 'Generate Link';
+
   if (error) {
-    btn.disabled = false; btn.textContent = 'Generate Link';
     if (error.code === '23505') return showToast('This client has already been invited.');
     return showToast('Error: ' + error.message);
   }
 
-  // If name provided and client already has an account, we can't set it — that's fine
   buildInviteUI(data.invite_token, email);
   await loadClients();
 }
 
+// showInviteLink — called from the "View Link" button on pending rows
+// Receives the token directly from the row data (no re-query needed)
 function showInviteLink(token, email) {
-  document.getElementById('invite-result').classList.remove('visible');
   document.getElementById('invite-form-section').style.display = 'none';
   document.getElementById('invite-submit-btn').style.display   = 'none';
-  document.querySelector('#invite-modal .btn-secondary').textContent = 'Close';
+  document.getElementById('invite-cancel-btn').textContent     = 'Close';
+  document.getElementById('invite-result').classList.remove('visible');
   openModal('invite-modal');
-  setTimeout(() => buildInviteUI(token, email), 60);
+  // Small delay so modal animation completes before QR renders
+  setTimeout(() => buildInviteUI(token, email), 80);
 }
 
 function buildInviteUI(token, email) {
-  const link = new URL('app.html?invite=' + token, location.href).href;
+  const link = new URL('birthplan.html?invite=' + token, location.href).href;
   currentInviteLink = link;
   document.getElementById('invite-link-display').textContent = link;
   document.getElementById('invite-result').classList.add('visible');
   document.getElementById('invite-form-section').style.display = 'none';
-  document.getElementById('invite-submit-btn').style.display = 'none';
-  document.querySelector('#invite-modal .btn-secondary').textContent = 'Done';
+  document.getElementById('invite-submit-btn').style.display   = 'none';
+  document.getElementById('invite-cancel-btn').textContent     = 'Done';
 
-  // QR Code
   const canvas = document.getElementById('qr-canvas');
   QRCode.toCanvas(canvas, link, {
     width: 180, margin: 2,
     color: { dark: '#4A5746', light: '#FFFFFF' }
-  }, err => { if (err) console.error(err); });
+  }, err => { if (err) console.error('QR error:', err); });
 }
 
 function copyInviteLink() {
@@ -1101,31 +948,56 @@ function copyInviteLink() {
   });
 }
 
-// ── NOTES ───────────────────────────────────────────────────
-
+// ── Notes ──────────────────────────────────────────────────────────────
 function openNotesModal(rowId) {
   activeNoteRow = rowId;
-  const row = allClients.find(r => r.id === rowId);
-  document.getElementById('notes-textarea').value = row?.notes || '';
+  const row     = allClients.find(r => r.id === rowId);
+  const notes   = parseNotes(row?.notes);
+
+  // Render history
+  const histWrap = document.getElementById('notes-history-wrap');
+  if (notes.length === 0) {
+    histWrap.innerHTML = '<div class="notes-empty">No notes yet. Add your first note below.</div>';
+  } else {
+    histWrap.innerHTML = '<div class="notes-history">' +
+      notes.slice().reverse().map(n => `
+        <div class="note-entry">
+          <div class="note-entry-meta">${formatNoteDate(n.ts)}</div>
+          <div class="note-entry-text">${escHtml(n.text)}</div>
+        </div>
+      `).join('') +
+    '</div>';
+  }
+
+  document.getElementById('notes-textarea').value = '';
   openModal('notes-modal');
 }
 
-async function saveNotes() {
-  const notes = document.getElementById('notes-textarea').value;
+async function saveNote() {
+  const text = document.getElementById('notes-textarea').value.trim();
+  if (!text) return showToast('Please write something before saving.');
+
+  const row      = allClients.find(r => r.id === activeNoteRow);
+  const existing = parseNotes(row?.notes);
+  const updated  = [...existing, { text, ts: new Date().toISOString() }];
+
   const { error } = await sb
     .from('birth_worker_clients')
-    .update({ notes })
+    .update({ notes: JSON.stringify(updated) })
     .eq('id', activeNoteRow)
     .eq('birth_worker_id', currentUser.id);
-  if (error) return showToast('Could not save notes.');
-  const row = allClients.find(r => r.id === activeNoteRow);
-  if (row) row.notes = notes;
+
+  if (error) return showToast('Could not save note.');
+
+  // Update local cache
+  if (row) row.notes = JSON.stringify(updated);
+
   closeModal('notes-modal');
-  showToast('Notes saved.');
+  renderTable();
+  showToast('Note saved.');
 }
 
-// ── ARCHIVE ─────────────────────────────────────────────────
-
+// ── Archive ────────────────────────────────────────────────────────────
 function openArchiveModal(rowId, name) {
   activeArchiveRow = rowId;
   document.getElementById('archive-client-name').textContent = name;
@@ -1144,27 +1016,31 @@ async function confirmArchive() {
   showToast('Client archived.');
 }
 
-// ── MODALS ───────────────────────────────────────────────────
+// ── Modal helpers ──────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-function openModal(id) {
-  document.getElementById(id).classList.add('active');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
-}
-
-// ── TOAST ────────────────────────────────────────────────────
-
+// ── Toast ──────────────────────────────────────────────────────────────
 let toastTimer;
 function showToast(msg) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = msg; el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-// ── CLOSE MODALS ON BACKDROP CLICK ───────────────────────────
+// ── Utility ────────────────────────────────────────────────────────────
+function formatDue(dateStr) {
+  return new Date(dateStr + 'T00:00').toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function isSoon(dateStr) {
+  const diff = (new Date(dateStr + 'T00:00') - Date.now()) / (1000 * 60 * 60 * 24);
+  return diff >= 0 && diff <= 60;
+}
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+// ── Close modals on backdrop click ─────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
