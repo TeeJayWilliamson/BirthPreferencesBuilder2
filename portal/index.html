@@ -298,7 +298,7 @@ body::before {
 <div id="signin-screen" class="auth-screen">
   <div class="auth-card">
     <div class="auth-card-head">
-      <div class="auth-logo"><img src="img/logo.png" alt="Blümi"></div>
+      <div class="auth-logo"><img src="../img/logo.png" alt="Blümi"></div>
       <div class="auth-brand-tag">Care Provider Portal</div>
       <div class="auth-portal-tag">Professional Access</div>
       <p class="auth-sub">Sign in to your Care Provider account to manage clients and birth plans.</p>
@@ -317,7 +317,7 @@ body::before {
       <div class="auth-msg" id="si-msg"></div>
       <div class="auth-switch">New to Blümi? <a onclick="showScreen('signup')">Create a Care Provider account</a></div>
     </div>
-    <a href="index.html" style="position:absolute;bottom:1rem;right:1.2rem;color:var(--muted);font-family:'Jost',sans-serif;font-size:0.75rem;text-decoration:none;display:flex;align-items:center;gap:0.4rem;opacity:0.7;">
+    <a href="../" style="position:absolute;bottom:1rem;right:1.2rem;color:var(--muted);font-family:'Jost',sans-serif;font-size:0.75rem;text-decoration:none;display:flex;align-items:center;gap:0.4rem;opacity:0.7;">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Home
     </a>
@@ -328,7 +328,7 @@ body::before {
 <div id="signup-screen" class="auth-screen" style="display:none;">
   <div class="auth-card" style="max-width:460px;">
     <div class="auth-card-head">
-      <div class="auth-logo"><img src="img/logo.png" alt="Blümi"></div>
+      <div class="auth-logo"><img src="img/" alt="Blümi"></div>
       <div class="auth-brand-tag">Create Your Portal Account</div>
       <p class="auth-sub">All plans are free during our beta. Choose your tier and get started.</p>
     </div>
@@ -371,7 +371,7 @@ body::before {
 <div id="app-screen">
   <nav class="topbar">
     <div class="topbar-left">
-      <div class="topbar-logo"><img src="img/logo.png" alt="Blümi"></div>
+      <div class="topbar-logo"><img src="img/" alt="Blümi"></div>
       <span class="topbar-portal-tag">Portal</span>
     </div>
     <div class="topbar-right">
@@ -536,7 +536,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
-    storageKey:     'bluumi-portal-auth',  // separate key from birthplan.html to avoid session collision
+    storageKey:     'bluumi-portal-auth',  // separate key from /birthplan/ to avoid session collision
     persistSession: true,
     detectSessionInUrl: true,
   }
@@ -669,7 +669,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   // Role guard
   const role = currentProfile?.role ?? session.user.user_metadata?.role;
   if (role && role !== 'birth_worker') {
-    showMsg('si-msg', 'This portal is for Care Providers only. Please use birthplan.html for your birth plan.', 'error');
+    showMsg('si-msg', 'This portal is for Care Providers only. Please use /birthplan/ for your birth plan.', 'error');
     _bootedUserId = '__none__';
     await sb.auth.signOut();
     return;
@@ -865,7 +865,7 @@ async function openPlan(clientId) {
   const { data: { session } } = await sb.auth.getSession();
   const at = session?.access_token  || '';
   const rt = session?.refresh_token || '';
-  const url = 'birthplan.html?portalMode=1&clientId=' + clientId
+  const url = '/birthplan/?portalMode=1&clientId=' + clientId
             + '&at=' + encodeURIComponent(at)
             + '&rt=' + encodeURIComponent(rt);
   window.open(url, '_blank');
@@ -925,7 +925,7 @@ function showInviteLink(token, email) {
 }
 
 function buildInviteUI(token, email) {
-  const link = new URL('birthplan.html?invite=' + token, location.href).href;
+  const link = new URL('/birthplan/?invite=' + token, location.href).href;
   currentInviteLink = link;
   document.getElementById('invite-link-display').textContent = link;
   document.getElementById('invite-result').classList.add('visible');
