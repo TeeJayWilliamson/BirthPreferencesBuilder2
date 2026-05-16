@@ -21,6 +21,9 @@
   --cream:       #F7F3EE;
   --rose:        #7B4040;
   --rose-light:  #F5EDED;
+  --amber:       #B07A00;
+  --amber-light: #FEF9EC;
+  --amber-border:#F0D98C;
   --text:        #2C2C2C;
   --muted:       #7A8591;
   --border:      #D4DDCE;
@@ -164,13 +167,66 @@ body::before {
 /* ── STATS ── */
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
 @media (max-width: 700px) { .stats-row { grid-template-columns: 1fr 1fr; } }
-.stat-card { background: white; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.9); box-shadow: var(--shadow); padding: 1.2rem 1.4rem; }
+.stat-card { background: white; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.9); box-shadow: var(--shadow); padding: 1.2rem 1.4rem; position: relative; }
 .stat-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
 .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; color: var(--olive); line-height: 1; }
 .stat-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
 .slot-bar-wrap { margin-top: 0.5rem; }
 .slot-bar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
 .slot-bar-fill { height: 100%; background: linear-gradient(to right, var(--olive), var(--olive-mid)); border-radius: 2px; transition: width 0.6s ease; }
+
+/* ── UPGRADE NUDGE (appears in slots stat card when near/at limit) ── */
+.upgrade-nudge {
+  display: none;
+  margin-top: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  background: linear-gradient(135deg, var(--olive-pale), #F5EDE8);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  gap: 0.5rem;
+  align-items: center;
+}
+.upgrade-nudge.visible { display: flex; }
+.upgrade-nudge-text { font-size: 0.68rem; color: var(--olive); line-height: 1.4; flex: 1; }
+.upgrade-nudge-text strong { display: block; font-weight: 600; }
+.btn-upgrade {
+  background: var(--olive);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 0.38rem 0.85rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.btn-upgrade:hover { background: var(--olive-mid); transform: translateY(-1px); }
+
+/* ── UNSURE INDICATOR (amber badge on client row) ── */
+.unsure-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--amber-light);
+  border: 1px solid var(--amber-border);
+  color: var(--amber);
+  border-radius: 50px;
+  padding: 0.22rem 0.6rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.unsure-badge:hover { background: #FDF3D0; border-color: var(--amber); }
+.unsure-badge svg { width: 10px; height: 10px; fill: var(--amber); }
 
 /* ── FILTERS ── */
 .filters-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
@@ -206,11 +262,18 @@ body::before {
 .status-archived::before { background: #9CA3AF; }
 .due-date-cell { font-size: 0.8rem; color: var(--muted); }
 .due-date-cell.soon { color: var(--olive); font-weight: 500; }
-.table-actions { display: flex; align-items: center; gap: 0.5rem; }
+.table-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .btn-icon { background: none; border: 1.5px solid var(--border); color: var(--muted); border-radius: 8px; padding: 0.4rem 0.65rem; font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .btn-icon:hover { border-color: var(--olive-mid); color: var(--olive); background: var(--olive-pale); }
-.btn-icon.open-plan { background: var(--olive-pale); border-color: var(--olive-mid); color: var(--olive); }
-.btn-icon.open-plan:hover { background: var(--olive); color: white; border-color: var(--olive); }
+
+/* View Plan — soft green outline */
+.btn-icon.view-plan { border-color: var(--border); color: var(--olive); }
+.btn-icon.view-plan:hover { background: var(--olive-pale); border-color: var(--olive-mid); }
+
+/* Edit Plan — filled olive */
+.btn-icon.edit-plan { background: var(--olive-pale); border-color: var(--olive-mid); color: var(--olive); }
+.btn-icon.edit-plan:hover { background: var(--olive); color: white; border-color: var(--olive); }
+
 .btn-icon.has-notes { border-color: var(--olive-mid); color: var(--olive); }
 .btn-icon.danger:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-light); }
 .empty-state { padding: 4rem 2rem; text-align: center; }
@@ -237,6 +300,69 @@ body::before {
 .btn-danger { background: var(--rose-light); color: var(--rose); border: 1.5px solid #E8C4C4; border-radius: 50px; padding: 0.7rem 1.6rem; font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .btn-danger:hover { background: var(--rose); color: white; border-color: var(--rose); }
 
+/* ── UNSURE ITEMS MODAL ── */
+.unsure-modal-intro {
+  font-size: 0.82rem; color: var(--muted); line-height: 1.65;
+  margin-bottom: 1.4rem;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+}
+.unsure-item-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.unsure-item {
+  display: flex; gap: 0.8rem; align-items: flex-start;
+  background: var(--amber-light);
+  border: 1px solid var(--amber-border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+.unsure-item-icon {
+  font-size: 1rem; flex-shrink: 0; margin-top: 1px;
+}
+.unsure-item-section {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--amber); margin-bottom: 0.2rem;
+}
+.unsure-item-label {
+  font-size: 0.85rem; font-weight: 600; color: var(--text);
+}
+.unsure-empty {
+  text-align: center; padding: 2rem; font-size: 0.85rem; color: var(--muted);
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+}
+
+/* ── VIEW PLAN MODAL (read-only preview) ── */
+.view-plan-banner {
+  background: var(--olive-pale);
+  border-bottom: 1px solid var(--border);
+  padding: 0.7rem 1.8rem;
+  font-size: 0.76rem;
+  color: var(--olive);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.view-plan-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
+.view-plan-body { padding: 1.8rem; }
+.plan-preview-section { margin-bottom: 1.4rem; }
+.plan-preview-section-title {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: white;
+  background: var(--olive); display: inline-block;
+  padding: 0.28rem 0.75rem; border-radius: 5px; margin-bottom: 0.65rem;
+}
+.plan-preview-section-title.alt { background: var(--olive-mid); }
+.plan-preview-section-title.rose { background: var(--rose); }
+.plan-preview-items { display: flex; flex-direction: column; gap: 0.3rem; }
+.plan-preview-item {
+  display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--text); align-items: flex-start;
+}
+.plan-preview-item .check { color: var(--olive); flex-shrink: 0; font-weight: 700; }
+.plan-preview-name { font-size: 1.5rem; font-family: 'Cormorant Garamond', serif; font-weight: 600; color: var(--olive); margin-bottom: 0.3rem; }
+.plan-preview-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.2rem; }
+.plan-preview-story { font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; color: var(--text); line-height: 1.75; font-style: italic; margin-bottom: 1.4rem; padding: 1rem 1.2rem; background: var(--cream); border-radius: 8px; border-left: 3px solid var(--olive-mid); }
+.plan-preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+@media (max-width: 520px) { .plan-preview-grid { grid-template-columns: 1fr; } }
+
 /* ── INVITE MODAL ── */
 .invite-field { margin-bottom: 1.2rem; }
 .invite-label { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--olive); margin-bottom: 0.4rem; }
@@ -256,24 +382,15 @@ body::before {
 
 /* ── NOTES MODAL ── */
 .notes-history { margin-bottom: 1.4rem; max-height: 240px; overflow-y: auto; }
-.note-entry {
-  background: var(--olive-pale); border: 1px solid var(--border);
-  border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.7rem;
-}
+.note-entry { background: var(--olive-pale); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.7rem; }
 .note-entry:last-child { margin-bottom: 0; }
-.note-entry-meta {
-  font-size: 0.65rem; color: var(--muted); font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem;
-}
+.note-entry-meta { font-size: 0.65rem; color: var(--muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
 .note-entry-text { font-size: 0.83rem; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
 .notes-divider { height: 1px; background: var(--border); margin: 1.2rem 0; }
 .notes-new-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--olive); margin-bottom: 0.5rem; }
 .notes-textarea { width: 100%; padding: 0.85rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--text); background: var(--cream); outline: none; resize: vertical; min-height: 100px; line-height: 1.65; transition: border-color 0.2s, box-shadow 0.2s; }
 .notes-textarea:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
 .notes-empty { font-size: 0.82rem; color: var(--muted); font-style: italic; text-align: center; padding: 1rem; }
-
-/* ── ARCHIVE MODAL ── */
-/* uses generic modal styles */
 
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--olive); color: white; border-radius: 50px; padding: 0.7rem 1.6rem; font-size: 0.82rem; font-weight: 500; box-shadow: var(--shadow-lg); z-index: 9999; opacity: 0; transition: all 0.3s ease; pointer-events: none; }
@@ -414,6 +531,14 @@ body::before {
         <div class="stat-value" id="stat-slots">—</div>
         <div class="stat-sub" id="stat-slots-sub">of your plan limit</div>
         <div class="slot-bar-wrap"><div class="slot-bar-track"><div class="slot-bar-fill" id="slot-bar" style="width:0%"></div></div></div>
+        <!-- Upgrade nudge: shown when at 80%+ of limit -->
+        <div class="upgrade-nudge" id="upgrade-nudge">
+          <div class="upgrade-nudge-text">
+            <strong>Running low on slots</strong>
+            Upgrade to add more clients without losing any data.
+          </div>
+          <a href="/pricing/" class="btn-upgrade">Upgrade →</a>
+        </div>
       </div>
     </div>
 
@@ -484,6 +609,45 @@ body::before {
   </div>
 </div>
 
+<!-- VIEW PLAN MODAL (read-only) -->
+<div class="modal-overlay" id="view-plan-modal">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-head">
+      <h3>Birth Plan — Read Only</h3>
+      <button class="modal-close" onclick="closeModal('view-plan-modal')">×</button>
+    </div>
+    <div class="view-plan-banner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      This is a read-only view of the client's current birth plan. To make changes, use <strong style="margin-left:0.25rem;">Edit Plan</strong>.
+    </div>
+    <div class="view-plan-body" id="view-plan-body">
+      <div style="text-align:center;padding:2rem;color:var(--muted);font-style:italic;">Loading plan…</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('view-plan-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNSURE ITEMS MODAL -->
+<div class="modal-overlay" id="unsure-modal">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-head">
+      <h3>Talking Points — Client Unsure</h3>
+      <button class="modal-close" onclick="closeModal('unsure-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="unsure-modal-intro">These are the items your client flagged as uncertain. Use these as discussion starters in your next appointment.</p>
+      <div class="unsure-item-list" id="unsure-item-list">
+        <div class="unsure-empty">Loading…</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('unsure-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- NOTES MODAL -->
 <div class="modal-overlay" id="notes-modal">
   <div class="modal" style="max-width:520px;">
@@ -493,12 +657,7 @@ body::before {
     </div>
     <div class="modal-body">
       <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1.2rem;">Private notes visible only to you. Each entry is timestamped and preserved.</p>
-
-      <!-- History -->
-      <div id="notes-history-wrap">
-        <!-- rendered by JS -->
-      </div>
-
+      <div id="notes-history-wrap"></div>
       <div class="notes-divider"></div>
       <div class="notes-new-label">Add a new note</div>
       <textarea class="notes-textarea" id="notes-textarea" placeholder="Add notes about this client's preferences, conversations, or anything you want to remember…"></textarea>
@@ -536,7 +695,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
-    storageKey:     'bluumi-portal-auth',  // separate key from /birthplan/ to avoid session collision
+    storageKey:     'bluumi-portal-auth',
     persistSession: true,
     detectSessionInUrl: true,
   }
@@ -559,7 +718,6 @@ function showScreen(name) {
   document.getElementById('app-screen').style.display     = name === 'app'     ? 'block' : 'none';
 }
 
-// ── Password strength ──────────────────────────────────────────────────
 function checkPwStrength(pw) {
   const el = document.getElementById('pw-strength-msg');
   if (!pw) { el.textContent = ''; el.className = 'pw-strength'; return; }
@@ -611,23 +769,10 @@ async function signUp() {
   showMsg('su-msg', '✓ Account created! Signing you in…', 'success');
 }
 
-// ── THE FIX: await signOut before resetting state ──────────────────────
-// Previously signOut() ran synchronously (reset state, hide screens) then
-// called sb.auth.signOut() async. onAuthStateChange would fire SIGNED_OUT
-// AFTER we'd shown the auth screen — causing no visual issue — but then
-// fire INITIAL_SESSION with the cached session still alive, logging the
-// user back in. Awaiting signOut() first ensures SIGNED_OUT fires, our
-// handler resets state, and the old session is truly gone before anything
-// else can fire.
 async function signOut() {
   await sb.auth.signOut();
-  // onAuthStateChange SIGNED_OUT handler cleans up the rest
 }
 
-// ── Auth state ─────────────────────────────────────────────────────────
-// _bootedUserId acts as a dedup guard AND a sentinel for sign-out.
-// Using '__none__' (not null) means signing back in with the same
-// account after sign-out always passes the guard.
 let _bootedUserId    = '__none__';
 let _realtimeChannel = null;
 
@@ -641,23 +786,15 @@ sb.auth.onAuthStateChange(async (event, session) => {
     showScreen('signin');
     return;
   }
-
   if (!session?.user) return;
-
-  // Dedup: same user, same session — ignore TOKEN_REFRESHED etc.
   if (session.user.id === _bootedUserId) return;
   _bootedUserId = session.user.id;
   currentUser   = session.user;
-
   await loadProfile();
-
-  // Profile row may not exist yet right after signup — retry once
   if (!currentProfile) {
     await new Promise(r => setTimeout(r, 800));
     await loadProfile();
   }
-
-  // Persist tier from signup metadata if not yet on profile
   if (currentProfile && !currentProfile.tier) {
     const tier = session.user.user_metadata?.tier;
     if (tier) {
@@ -665,28 +802,19 @@ sb.auth.onAuthStateChange(async (event, session) => {
       currentProfile.tier = tier;
     }
   }
-
-  // Role guard
   const role = currentProfile?.role ?? session.user.user_metadata?.role;
   if (role && role !== 'birth_worker') {
-    showMsg('si-msg', 'This portal is for Care Providers only. Please use /birthplan/ for your birth plan.', 'error');
+    showMsg('si-msg', 'This portal is for Care Providers only.', 'error');
     _bootedUserId = '__none__';
     await sb.auth.signOut();
     return;
   }
-
   showScreen('app');
   document.getElementById('topbar-email').textContent = currentUser.email;
   renderTierBadge();
   await loadClients();
-
-  // Realtime: refresh when any client row changes
   _realtimeChannel = sb.channel('portal-clients-' + currentUser.id)
-    .on('postgres_changes', {
-      event: '*', schema: 'public',
-      table: 'birth_worker_clients',
-      filter: `birth_worker_id=eq.${currentUser.id}`
-    }, () => loadClients())
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'birth_worker_clients', filter: `birth_worker_id=eq.${currentUser.id}` }, () => loadClients())
     .subscribe();
 });
 
@@ -695,7 +823,6 @@ async function loadProfile() {
   currentProfile = data;
 }
 
-// ── Tier ───────────────────────────────────────────────────────────────
 function renderTierBadge() {
   const tier   = currentProfile?.tier || null;
   const labels = { solo: 'Solo', practice: 'Practice', collective: 'Collective' };
@@ -708,7 +835,6 @@ function getSlotLimit() { return TIER_LIMITS[currentProfile?.tier] ?? 0; }
 
 // ── Clients ────────────────────────────────────────────────────────────
 async function loadClients() {
-  // NOTE: invite_token is explicitly selected so View Link works
   const { data } = await sb
     .from('birth_worker_clients')
     .select(`id, invited_email, status, notes, created_at, invite_token,
@@ -717,8 +843,6 @@ async function loadClients() {
     .order('created_at', { ascending: false });
 
   allClients = data || [];
-
-  // Fetch plan data for active clients
   const activeIds = allClients.filter(r => r.client?.id).map(r => r.client.id);
   let planMap = {};
   if (activeIds.length) {
@@ -727,7 +851,6 @@ async function loadClients() {
     (plans || []).forEach(p => { planMap[p.user_id] = p.plan_data; });
   }
   allClients = allClients.map(r => ({ ...r, plan_data: r.client?.id ? planMap[r.client.id] : null }));
-
   updateStats();
   renderTable();
 }
@@ -746,6 +869,19 @@ function updateStats() {
   document.getElementById('stat-slots-sub').textContent = limit === Infinity ? 'unlimited on your plan' : 'of ' + limit + ' on your plan';
   const pct = limit === Infinity ? 0 : Math.min(100, Math.round((used / limit) * 100));
   document.getElementById('slot-bar').style.width = pct + '%';
+
+  // Upgrade nudge: show at 80%+ or at limit
+  const nudge = document.getElementById('upgrade-nudge');
+  const showNudge = limit !== Infinity && pct >= 80;
+  nudge.classList.toggle('visible', showNudge);
+  if (showNudge) {
+    const atLimit = used >= limit;
+    nudge.querySelector('.upgrade-nudge-text strong').textContent = atLimit ? "You've reached your limit" : "Running low on slots";
+    nudge.querySelector('.upgrade-nudge-text').childNodes[1].textContent = atLimit
+      ? ' Upgrade to invite more clients — your current data is safe.'
+      : ' Upgrade to add more clients without losing any data.';
+  }
+
   const atLimit = limit !== Infinity && used >= limit;
   const btn = document.getElementById('btn-invite-main');
   btn.disabled = atLimit;
@@ -790,21 +926,23 @@ function renderTable() {
   }
 
   tbody.innerHTML = rows.map((r, i) => {
-    const name       = r.client?.display_name || r.invited_email;
-    const initials   = name.slice(0,2).toUpperCase();
-    const email      = r.invited_email;
-    const statusCls  = 'status-pill status-' + r.status;
-    const statusLbl  = r.status.charAt(0).toUpperCase() + r.status.slice(1);
-    const dueDate    = r.plan_data?.dueDate || '';
-    const dueFmt     = dueDate ? formatDue(dueDate) : '—';
-    const dueCls     = dueDate && isSoon(dueDate) ? 'due-date-cell soon' : 'due-date-cell';
-    const added      = new Date(r.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
-    const canOpen    = r.status === 'active' && r.client?.id;
+    const name      = r.client?.display_name || r.invited_email;
+    const initials  = name.slice(0,2).toUpperCase();
+    const email     = r.invited_email;
+    const statusCls = 'status-pill status-' + r.status;
+    const statusLbl = r.status.charAt(0).toUpperCase() + r.status.slice(1);
+    const dueDate   = r.plan_data?.dueDate || '';
+    const dueFmt    = dueDate ? formatDue(dueDate) : '—';
+    const dueCls    = dueDate && isSoon(dueDate) ? 'due-date-cell soon' : 'due-date-cell';
+    const added     = new Date(r.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
+    const canOpen   = r.status === 'active' && r.client?.id;
     const canArchive = r.status !== 'archived';
+    const notesArr  = parseNotes(r.notes);
+    const hasNotes  = notesArr.length > 0;
 
-    // Notes: parse the stored value — could be legacy string or JSON array
-    const notesArr   = parseNotes(r.notes);
-    const hasNotes   = notesArr.length > 0;
+    // Unsure items — stored in plan_data.unsureItems
+    const unsureItems = r.plan_data?.unsureItems || [];
+    const hasUnsure   = unsureItems.length > 0;
 
     return `<tr style="animation-delay:${i * 0.04}s">
       <td>
@@ -816,13 +954,22 @@ function renderTable() {
           </div>
         </div>
       </td>
-      <td><span class="${statusCls}">${statusLbl}</span></td>
+      <td>
+        <div style="display:flex;flex-direction:column;gap:0.4rem;align-items:flex-start;">
+          <span class="${statusCls}">${statusLbl}</span>
+          ${hasUnsure ? `<span class="unsure-badge" onclick="openUnsureModal('${r.id}')" title="Client flagged ${unsureItems.length} item${unsureItems.length > 1 ? 's' : ''} as unsure">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+            ${unsureItems.length} unsure
+          </span>` : ''}
+        </div>
+      </td>
       <td class="${dueCls}">${dueFmt}</td>
       <td style="font-size:0.78rem;color:var(--muted)">${added}</td>
       <td>
         <div class="table-actions">
           ${canOpen
-            ? `<button class="btn-icon open-plan" onclick="openPlan('${r.client.id}')">Open Plan</button>`
+            ? `<button class="btn-icon view-plan" onclick="openViewPlanModal('${r.id}')">👁 View Plan</button>
+               <button class="btn-icon edit-plan" onclick="openPlan('${r.client.id}')">✏ Edit Plan</button>`
             : r.status === 'pending' && r.invite_token
               ? `<button class="btn-icon" onclick="showInviteLink('${r.invite_token}', '${escAttr(r.invited_email)}')">View Link</button>`
               : ''
@@ -837,29 +984,109 @@ function renderTable() {
   }).join('');
 }
 
-// ── Note helpers ───────────────────────────────────────────────────────
-// Notes are stored as a JSON array: [{text, ts}]
-// We handle legacy plain-string notes gracefully.
-function parseNotes(raw) {
-  if (!raw) return [];
-  if (typeof raw === 'object' && Array.isArray(raw)) return raw;
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-    // Legacy: was stored as JSON string of a plain string
-    return [{ text: String(parsed), ts: null }];
-  } catch {
-    // Legacy: plain string
-    return [{ text: String(raw), ts: null }];
+// ── View Plan (read-only) ───────────────────────────────────────────────
+function openViewPlanModal(rowId) {
+  const row = allClients.find(r => r.id === rowId);
+  const d   = row?.plan_data;
+  const body = document.getElementById('view-plan-body');
+
+  if (!d) {
+    body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-style:italic;">No birth plan data yet — the client hasn\'t started building yet.</div>';
+    openModal('view-plan-modal');
+    return;
   }
+
+  function sec(title, items, cls = '') {
+    if (!items || !items.length) return '';
+    return `<div class="plan-preview-section">
+      <div class="plan-preview-section-title ${cls}">${title}</div>
+      <div class="plan-preview-items">
+        ${items.map(i => `<div class="plan-preview-item"><span class="check">✓</span><span>${escHtml(i)}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  const dueFmt = d.dueDate
+    ? new Date(d.dueDate + 'T00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' })
+    : '';
+
+  const metaParts = [d.birthLocation, dueFmt ? 'Due ' + dueFmt : '', d.pronounsChips?.[0] || d.pronounsOther || ''].filter(Boolean);
+  const health = [...(d.healthChips || []), d.healthOther || ''].filter(Boolean);
+
+  body.innerHTML = `
+    <div class="plan-preview-name">${escHtml(d.name || 'No name yet')}</div>
+    <div class="plan-preview-meta">${escHtml(metaParts.join(' · '))}</div>
+    ${health.length ? `<div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem;">${health.map(h=>`<span style="background:var(--olive-pale);color:var(--olive);font-size:0.7rem;font-weight:500;padding:0.2rem 0.7rem;border-radius:50px;border:1px solid var(--border);">${escHtml(h)}</span>`).join('')}</div>` : ''}
+    ${d.story ? `<div class="plan-preview-story">${escHtml(d.story)}</div>` : ''}
+    <div class="plan-preview-grid">
+      <div>
+        ${sec('Core Values', d.values)}
+        ${sec('Comfort Preference', d.comfortPref ? [d.comfortPref] : [])}
+        ${sec('Natural Comfort', d.naturalComfort)}
+        ${sec('Medical Comfort', d.medicalComfort)}
+        ${sec('Emotional Care', d.emotional)}
+        ${sec('Decision-Making', d.decision)}
+        ${sec('Trauma-Informed Care', d.trauma, 'rose')}
+      </div>
+      <div>
+        ${sec('Labor Interventions', [...(d.induction||[]), ...(d.vaginal||[]), ...(d.otherInterventions||[])])}
+        ${sec('Surgical Birth', d.csection, 'rose')}
+        ${sec('Cord & Bonding', [...(d.cord||[]), ...(d.bonding||[])], 'alt')}
+        ${sec('Placenta', d.placenta, 'alt')}
+        ${sec('Newborn Care', d.newborn, 'alt')}
+        ${sec('Emergency & NICU', [...(d.emergencyDelivery||[]), ...(d.nicuSeparation||[]), ...(d.nicuFeeding||[]), ...(d.nicuCommunication||[])], 'rose')}
+      </div>
+    </div>
+  `;
+  openModal('view-plan-modal');
 }
 
-function formatNoteDate(ts) {
-  if (!ts) return 'Earlier note';
-  return new Date(ts).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+// ── Unsure Items Modal ─────────────────────────────────────────────────
+// Section labels for display
+const SECTION_LABELS = {
+  values: 'Core Values',
+  comfortPref: 'Comfort Preference',
+  naturalComfort: 'Natural Comfort',
+  medicalComfort: 'Medical Comfort',
+  induction: 'Labor Interventions',
+  vaginal: 'Vaginal Birth',
+  csection: 'Surgical Birth',
+  otherInterventions: 'Other Interventions',
+  cord: 'Umbilical Cord',
+  placenta: 'Placenta',
+  bonding: 'Immediate Bonding',
+  newborn: 'Newborn Care',
+  emotional: 'Emotional Care',
+  decision: 'Decision-Making',
+  trauma: 'Trauma-Informed Care',
+  emergencyDelivery: 'Emergency Delivery',
+  nicuSeparation: 'NICU — Separation',
+  nicuFeeding: 'NICU — Feeding',
+  nicuCommunication: 'NICU — Communication',
+};
+
+function openUnsureModal(rowId) {
+  const row   = allClients.find(r => r.id === rowId);
+  const items = row?.plan_data?.unsureItems || [];
+  const list  = document.getElementById('unsure-item-list');
+
+  if (!items.length) {
+    list.innerHTML = '<div class="unsure-empty">No items flagged as unsure right now.</div>';
+  } else {
+    list.innerHTML = items.map(item => `
+      <div class="unsure-item">
+        <div class="unsure-item-icon">❓</div>
+        <div class="unsure-item-content">
+          <div class="unsure-item-section">${escHtml(SECTION_LABELS[item.section] || item.section)}</div>
+          <div class="unsure-item-label">${escHtml(item.label)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  openModal('unsure-modal');
 }
 
-// ── Open Plan ──────────────────────────────────────────────────────────
+// ── Open Plan (editable) ───────────────────────────────────────────────
 async function openPlan(clientId) {
   sessionStorage.setItem('portalReturnUrl', location.href);
   const { data: { session } } = await sb.auth.getSession();
@@ -887,40 +1114,31 @@ function openInviteModal() {
 async function submitInvite() {
   const email = document.getElementById('invite-email').value.trim().toLowerCase();
   if (!email) return showToast('Please enter a client email.');
-
   const used  = allClients.filter(r => r.status !== 'archived').length;
   const limit = getSlotLimit();
   if (limit !== Infinity && used >= limit) return showToast('You\'ve reached your plan\'s client limit.');
-
   const btn = document.getElementById('invite-submit-btn');
   btn.disabled = true; btn.textContent = 'Creating…';
-
   const { data, error } = await sb
     .from('birth_worker_clients')
     .insert({ birth_worker_id: currentUser.id, invited_email: email, status: 'pending' })
     .select()
     .single();
-
   btn.disabled = false; btn.textContent = 'Generate Link';
-
   if (error) {
     if (error.code === '23505') return showToast('This client has already been invited.');
     return showToast('Error: ' + error.message);
   }
-
   buildInviteUI(data.invite_token, email);
   await loadClients();
 }
 
-// showInviteLink — called from the "View Link" button on pending rows
-// Receives the token directly from the row data (no re-query needed)
 function showInviteLink(token, email) {
   document.getElementById('invite-form-section').style.display = 'none';
   document.getElementById('invite-submit-btn').style.display   = 'none';
   document.getElementById('invite-cancel-btn').textContent     = 'Close';
   document.getElementById('invite-result').classList.remove('visible');
   openModal('invite-modal');
-  // Small delay so modal animation completes before QR renders
   setTimeout(() => buildInviteUI(token, email), 80);
 }
 
@@ -932,12 +1150,8 @@ function buildInviteUI(token, email) {
   document.getElementById('invite-form-section').style.display = 'none';
   document.getElementById('invite-submit-btn').style.display   = 'none';
   document.getElementById('invite-cancel-btn').textContent     = 'Done';
-
   const canvas = document.getElementById('qr-canvas');
-  QRCode.toCanvas(canvas, link, {
-    width: 180, margin: 2,
-    color: { dark: '#4A5746', light: '#FFFFFF' }
-  }, err => { if (err) console.error('QR error:', err); });
+  QRCode.toCanvas(canvas, link, { width: 180, margin: 2, color: { dark: '#4A5746', light: '#FFFFFF' } }, err => { if (err) console.error('QR error:', err); });
 }
 
 function copyInviteLink() {
@@ -949,12 +1163,24 @@ function copyInviteLink() {
 }
 
 // ── Notes ──────────────────────────────────────────────────────────────
+function parseNotes(raw) {
+  if (!raw) return [];
+  if (typeof raw === 'object' && Array.isArray(raw)) return raw;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+    return [{ text: String(parsed), ts: null }];
+  } catch { return [{ text: String(raw), ts: null }]; }
+}
+function formatNoteDate(ts) {
+  if (!ts) return 'Earlier note';
+  return new Date(ts).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
 function openNotesModal(rowId) {
   activeNoteRow = rowId;
-  const row     = allClients.find(r => r.id === rowId);
-  const notes   = parseNotes(row?.notes);
-
-  // Render history
+  const row   = allClients.find(r => r.id === rowId);
+  const notes = parseNotes(row?.notes);
   const histWrap = document.getElementById('notes-history-wrap');
   if (notes.length === 0) {
     histWrap.innerHTML = '<div class="notes-empty">No notes yet. Add your first note below.</div>';
@@ -968,7 +1194,6 @@ function openNotesModal(rowId) {
       `).join('') +
     '</div>';
   }
-
   document.getElementById('notes-textarea').value = '';
   openModal('notes-modal');
 }
@@ -976,22 +1201,16 @@ function openNotesModal(rowId) {
 async function saveNote() {
   const text = document.getElementById('notes-textarea').value.trim();
   if (!text) return showToast('Please write something before saving.');
-
   const row      = allClients.find(r => r.id === activeNoteRow);
   const existing = parseNotes(row?.notes);
   const updated  = [...existing, { text, ts: new Date().toISOString() }];
-
   const { error } = await sb
     .from('birth_worker_clients')
     .update({ notes: JSON.stringify(updated) })
     .eq('id', activeNoteRow)
     .eq('birth_worker_id', currentUser.id);
-
   if (error) return showToast('Could not save note.');
-
-  // Update local cache
   if (row) row.notes = JSON.stringify(updated);
-
   closeModal('notes-modal');
   renderTable();
   showToast('Note saved.');
@@ -1030,17 +1249,11 @@ function showToast(msg) {
 }
 
 // ── Utility ────────────────────────────────────────────────────────────
-function formatDue(dateStr) {
-  return new Date(dateStr + 'T00:00').toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-function isSoon(dateStr) {
-  const diff = (new Date(dateStr + 'T00:00') - Date.now()) / (1000 * 60 * 60 * 24);
-  return diff >= 0 && diff <= 60;
-}
+function formatDue(dateStr) { return new Date(dateStr + 'T00:00').toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }); }
+function isSoon(dateStr) { const diff = (new Date(dateStr + 'T00:00') - Date.now()) / (1000 * 60 * 60 * 24); return diff >= 0 && diff <= 60; }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
-// ── Close modals on backdrop click ─────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
