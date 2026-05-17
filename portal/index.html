@@ -139,6 +139,60 @@ body::before {
 }
 .topbar-signout:hover { border-color: var(--rose); color: var(--rose); }
 
+/* ── UPGRADE BANNER ── */
+#upgrade-banner {
+  display: none; /* shown by JS when tier < collective */
+  background: linear-gradient(135deg, #F0F7F0 0%, #FAFCFA 50%, #F7F3EE 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 2rem;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+#upgrade-banner.visible { display: flex; }
+.upgrade-banner-left {
+  display: flex; align-items: center; gap: 0.7rem; flex: 1; min-width: 0;
+}
+.upgrade-banner-tier-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 50px; padding: 0.3rem 0.8rem;
+  font-size: 0.68rem; font-weight: 700; color: var(--olive);
+  letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+  flex-shrink: 0;
+}
+.upgrade-banner-tier-pill .tier-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--olive-mid);
+}
+.upgrade-banner-msg {
+  font-size: 0.78rem; color: var(--muted); line-height: 1.4;
+}
+.upgrade-banner-msg strong { color: var(--olive); font-weight: 600; }
+.upgrade-banner-options {
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; flex-shrink: 0;
+}
+.upgrade-tier-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  border-radius: 50px; padding: 0.42rem 1rem;
+  font-family: 'Jost', sans-serif; font-size: 0.74rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap; text-decoration: none;
+  border: 1.5px solid var(--border); background: white; color: var(--olive);
+}
+.upgrade-tier-btn:hover { border-color: var(--olive-mid); background: var(--olive-pale); transform: translateY(-1px); }
+.upgrade-tier-btn.primary {
+  background: linear-gradient(135deg, var(--olive) 0%, var(--olive-mid) 100%);
+  border-color: var(--olive); color: white;
+  box-shadow: 0 3px 10px rgba(74,87,70,0.22);
+}
+.upgrade-tier-btn.primary:hover { box-shadow: 0 5px 16px rgba(74,87,70,0.32); background: linear-gradient(135deg, #3d4b3a 0%, var(--olive) 100%); }
+.upgrade-tier-btn .tier-price { opacity: 0.75; font-weight: 400; font-size: 0.68rem; }
+.upgrade-banner-dismiss {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-size: 1rem; padding: 0.2rem; transition: color 0.15s; flex-shrink: 0;
+  line-height: 1;
+}
+.upgrade-banner-dismiss:hover { color: var(--text); }
+
 /* ── LAYOUT ── */
 .portal-layout { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
 
@@ -175,7 +229,7 @@ body::before {
 .slot-bar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
 .slot-bar-fill { height: 100%; background: linear-gradient(to right, var(--olive), var(--olive-mid)); border-radius: 2px; transition: width 0.6s ease; }
 
-/* ── UPGRADE NUDGE (appears in slots stat card when near/at limit) ── */
+/* ── UPGRADE NUDGE (in stat card) ── */
 .upgrade-nudge {
   display: none;
   margin-top: 0.75rem;
@@ -190,40 +244,20 @@ body::before {
 .upgrade-nudge-text { font-size: 0.68rem; color: var(--olive); line-height: 1.4; flex: 1; }
 .upgrade-nudge-text strong { display: block; font-weight: 600; }
 .btn-upgrade {
-  background: var(--olive);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 0.38rem 0.85rem;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  cursor: pointer;
-  white-space: nowrap;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.2s;
-  flex-shrink: 0;
+  background: var(--olive); color: white; border: none; border-radius: 50px;
+  padding: 0.38rem 0.85rem; font-family: 'Jost', sans-serif; font-size: 0.68rem;
+  font-weight: 600; letter-spacing: 0.03em; cursor: pointer; white-space: nowrap;
+  text-decoration: none; display: inline-block; transition: all 0.2s; flex-shrink: 0;
 }
 .btn-upgrade:hover { background: var(--olive-mid); transform: translateY(-1px); }
 
-/* ── UNSURE INDICATOR (amber badge on client row) ── */
+/* ── UNSURE INDICATOR ── */
 .unsure-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  background: var(--amber-light);
-  border: 1px solid var(--amber-border);
-  color: var(--amber);
-  border-radius: 50px;
-  padding: 0.22rem 0.6rem;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: var(--amber-light); border: 1px solid var(--amber-border);
+  color: var(--amber); border-radius: 50px; padding: 0.22rem 0.6rem;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
 }
 .unsure-badge:hover { background: #FDF3D0; border-color: var(--amber); }
 .unsure-badge svg { width: 10px; height: 10px; fill: var(--amber); }
@@ -265,15 +299,10 @@ body::before {
 .table-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .btn-icon { background: none; border: 1.5px solid var(--border); color: var(--muted); border-radius: 8px; padding: 0.4rem 0.65rem; font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .btn-icon:hover { border-color: var(--olive-mid); color: var(--olive); background: var(--olive-pale); }
-
-/* View Plan — soft green outline */
 .btn-icon.view-plan { border-color: var(--border); color: var(--olive); }
 .btn-icon.view-plan:hover { background: var(--olive-pale); border-color: var(--olive-mid); }
-
-/* Edit Plan — filled olive */
 .btn-icon.edit-plan { background: var(--olive-pale); border-color: var(--olive-mid); color: var(--olive); }
 .btn-icon.edit-plan:hover { background: var(--olive); color: white; border-color: var(--olive); }
-
 .btn-icon.has-notes { border-color: var(--olive-mid); color: var(--olive); }
 .btn-icon.danger:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-light); }
 .empty-state { padding: 4rem 2rem; text-align: center; }
@@ -300,62 +329,49 @@ body::before {
 .btn-danger { background: var(--rose-light); color: var(--rose); border: 1.5px solid #E8C4C4; border-radius: 50px; padding: 0.7rem 1.6rem; font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .btn-danger:hover { background: var(--rose); color: white; border-color: var(--rose); }
 
-/* ── UNSURE ITEMS MODAL ── */
-.unsure-modal-intro {
-  font-size: 0.82rem; color: var(--muted); line-height: 1.65;
-  margin-bottom: 1.4rem;
-  font-family: 'Cormorant Garamond', serif; font-style: italic;
+/* ── UPGRADE MODAL ── */
+.upgrade-modal-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 0.4rem; }
+@media (max-width: 500px) { .upgrade-modal-tiers { grid-template-columns: 1fr; } }
+.upgrade-modal-tier {
+  border: 1.5px solid var(--border); border-radius: 12px; padding: 1.1rem 1rem;
+  display: flex; flex-direction: column; gap: 0.5rem; cursor: pointer;
+  transition: all 0.2s; background: var(--cream);
 }
-.unsure-item-list { display: flex; flex-direction: column; gap: 0.7rem; }
-.unsure-item {
-  display: flex; gap: 0.8rem; align-items: flex-start;
-  background: var(--amber-light);
-  border: 1px solid var(--amber-border);
-  border-radius: 10px;
-  padding: 0.85rem 1rem;
-}
-.unsure-item-icon {
-  font-size: 1rem; flex-shrink: 0; margin-top: 1px;
-}
-.unsure-item-section {
-  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--amber); margin-bottom: 0.2rem;
-}
-.unsure-item-label {
-  font-size: 0.85rem; font-weight: 600; color: var(--text);
-}
-.unsure-empty {
-  text-align: center; padding: 2rem; font-size: 0.85rem; color: var(--muted);
-  font-family: 'Cormorant Garamond', serif; font-style: italic;
-}
+.upgrade-modal-tier:hover { border-color: var(--olive-mid); background: var(--olive-pale); }
+.upgrade-modal-tier.current { border-color: var(--border); background: #F9FAFB; cursor: default; opacity: 0.65; }
+.upgrade-modal-tier.recommended { border-color: var(--olive); background: var(--olive-pale); box-shadow: 0 0 0 3px rgba(107,143,113,0.12); }
+.umt-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--olive); }
+.umt-price { font-size: 0.78rem; color: var(--muted); }
+.umt-price strong { font-size: 1.3rem; font-family: 'Cormorant Garamond', serif; color: var(--olive); font-weight: 600; }
+.umt-slots { font-size: 0.7rem; color: var(--olive); background: white; border: 1px solid var(--border); border-radius: 5px; padding: 0.22rem 0.5rem; display: inline-block; font-weight: 600; }
+.umt-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-mid); }
+.umt-current-badge { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: var(--sage-light); color: var(--olive); padding: 0.18rem 0.5rem; border-radius: 4px; display: inline-block; margin-top: 0.2rem; width: fit-content; }
+.umt-cta { margin-top: auto; padding: 0.5rem; border-radius: 8px; border: none; font-family: 'Jost', sans-serif; font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.umt-cta.active { background: var(--olive); color: white; }
+.umt-cta.active:hover { background: var(--olive-mid); }
+.umt-cta.disabled { background: var(--border); color: var(--muted); cursor: default; }
+.upgrade-assurance { margin-top: 1.2rem; padding: 0.9rem 1rem; background: var(--sage-light); border-radius: 10px; font-size: 0.78rem; color: var(--olive); line-height: 1.6; }
+.upgrade-assurance strong { font-weight: 600; }
 
-/* ── VIEW PLAN MODAL (read-only preview) ── */
-.view-plan-banner {
-  background: var(--olive-pale);
-  border-bottom: 1px solid var(--border);
-  padding: 0.7rem 1.8rem;
-  font-size: 0.76rem;
-  color: var(--olive);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+/* ── UNSURE ITEMS MODAL ── */
+.unsure-modal-intro { font-size: 0.82rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.4rem; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+.unsure-item-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.unsure-item { display: flex; gap: 0.8rem; align-items: flex-start; background: var(--amber-light); border: 1px solid var(--amber-border); border-radius: 10px; padding: 0.85rem 1rem; }
+.unsure-item-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.unsure-item-section { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.2rem; }
+.unsure-item-label { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+.unsure-empty { text-align: center; padding: 2rem; font-size: 0.85rem; color: var(--muted); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+/* ── VIEW PLAN MODAL ── */
+.view-plan-banner { background: var(--olive-pale); border-bottom: 1px solid var(--border); padding: 0.7rem 1.8rem; font-size: 0.76rem; color: var(--olive); font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
 .view-plan-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
 .view-plan-body { padding: 1.8rem; }
 .plan-preview-section { margin-bottom: 1.4rem; }
-.plan-preview-section-title {
-  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
-  text-transform: uppercase; color: white;
-  background: var(--olive); display: inline-block;
-  padding: 0.28rem 0.75rem; border-radius: 5px; margin-bottom: 0.65rem;
-}
+.plan-preview-section-title { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: white; background: var(--olive); display: inline-block; padding: 0.28rem 0.75rem; border-radius: 5px; margin-bottom: 0.65rem; }
 .plan-preview-section-title.alt { background: var(--olive-mid); }
 .plan-preview-section-title.rose { background: var(--rose); }
 .plan-preview-items { display: flex; flex-direction: column; gap: 0.3rem; }
-.plan-preview-item {
-  display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--text); align-items: flex-start;
-}
+.plan-preview-item { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--text); align-items: flex-start; }
 .plan-preview-item .check { color: var(--olive); flex-shrink: 0; font-weight: 700; }
 .plan-preview-name { font-size: 1.5rem; font-family: 'Cormorant Garamond', serif; font-weight: 600; color: var(--olive); margin-bottom: 0.3rem; }
 .plan-preview-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.2rem; }
@@ -391,6 +407,8 @@ body::before {
 .notes-textarea { width: 100%; padding: 0.85rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--text); background: var(--cream); outline: none; resize: vertical; min-height: 100px; line-height: 1.65; transition: border-color 0.2s, box-shadow 0.2s; }
 .notes-textarea:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
 .notes-empty { font-size: 0.82rem; color: var(--muted); font-style: italic; text-align: center; padding: 1rem; }
+
+/* ── ARCHIVE MODAL ── */
 
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--olive); color: white; border-radius: 50px; padding: 0.7rem 1.6rem; font-size: 0.82rem; font-weight: 500; box-shadow: var(--shadow-lg); z-index: 9999; opacity: 0; transition: all 0.3s ease; pointer-events: none; }
@@ -498,6 +516,24 @@ body::before {
     </div>
   </nav>
 
+  <!-- UPGRADE BANNER — sits just below topbar, hidden for Collective -->
+  <div id="upgrade-banner">
+    <div class="upgrade-banner-left">
+      <div class="upgrade-banner-tier-pill">
+        <span class="tier-dot"></span>
+        <span id="upgrade-banner-tier-name">Solo</span>
+      </div>
+      <div class="upgrade-banner-msg" id="upgrade-banner-msg">
+        You're on the <strong id="upgrade-banner-tier-strong">Solo</strong> plan.
+        Upgrade to invite more clients — <strong>your existing clients and plans are always kept.</strong>
+      </div>
+    </div>
+    <div class="upgrade-banner-options" id="upgrade-banner-options">
+      <!-- Populated by renderUpgradeBanner() -->
+    </div>
+    <button class="upgrade-banner-dismiss" onclick="dismissUpgradeBanner()" title="Dismiss">×</button>
+  </div>
+
   <div class="portal-layout">
     <div class="portal-header">
       <div class="portal-header-text">
@@ -531,13 +567,12 @@ body::before {
         <div class="stat-value" id="stat-slots">—</div>
         <div class="stat-sub" id="stat-slots-sub">of your plan limit</div>
         <div class="slot-bar-wrap"><div class="slot-bar-track"><div class="slot-bar-fill" id="slot-bar" style="width:0%"></div></div></div>
-        <!-- Upgrade nudge: shown when at 80%+ of limit -->
         <div class="upgrade-nudge" id="upgrade-nudge">
           <div class="upgrade-nudge-text">
             <strong>Running low on slots</strong>
             Upgrade to add more clients without losing any data.
           </div>
-          <a href="/pricing/" class="btn-upgrade">Upgrade →</a>
+          <button class="btn-upgrade" onclick="openUpgradeModal()">Upgrade →</button>
         </div>
       </div>
     </div>
@@ -566,6 +601,31 @@ body::before {
         </thead>
         <tbody id="clients-tbody"></tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div class="modal-overlay" id="upgrade-modal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-head">
+      <h3>Upgrade Your Plan</h3>
+      <button class="modal-close" onclick="closeModal('upgrade-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.4rem;font-family:'Cormorant Garamond',serif;font-style:italic;">
+        Choose the plan that fits your practice. Upgrading is instant — all your current clients, plans, and notes stay exactly as they are.
+      </p>
+      <div class="upgrade-modal-tiers" id="upgrade-modal-tiers">
+        <!-- populated by renderUpgradeModal() -->
+      </div>
+      <div class="upgrade-assurance">
+        <strong>🌿 No data is ever lost when upgrading.</strong>
+        Your existing clients, birth plans, notes, and invite history are fully preserved. Upgrading simply unlocks more slots so you can keep inviting.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('upgrade-modal')">Maybe later</button>
     </div>
   </div>
 </div>
@@ -609,7 +669,7 @@ body::before {
   </div>
 </div>
 
-<!-- VIEW PLAN MODAL (read-only) -->
+<!-- VIEW PLAN MODAL -->
 <div class="modal-overlay" id="view-plan-modal">
   <div class="modal" style="max-width:680px;">
     <div class="modal-head">
@@ -695,7 +755,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
-    storageKey:     'bluumi-portal-auth',
+    storageKey:     'bluumi-portal-auth',   // portal-only storage key
     persistSession: true,
     detectSessionInUrl: true,
   }
@@ -708,8 +768,12 @@ let activeFilter   = 'all';
 let activeNoteRow  = null;
 let activeArchiveRow = null;
 let currentInviteLink = '';
+let _upgradeBannerDismissed = false;
 
-const TIER_LIMITS = { solo: 10, practice: 50, collective: Infinity };
+const TIER_LIMITS  = { solo: 10, practice: 50, collective: Infinity };
+const TIER_PRICES  = { solo: '$29/mo', practice: '$59/mo', collective: '$99/mo' };
+const TIER_SLOTS   = { solo: '10 client slots', practice: '50 client slots', collective: 'Unlimited' };
+const TIER_ORDER   = ['solo', 'practice', 'collective'];
 
 // ── Screen management ──────────────────────────────────────────────────
 function showScreen(name) {
@@ -770,6 +834,8 @@ async function signUp() {
 }
 
 async function signOut() {
+  // Clear portal-specific storage key explicitly so it doesn't bleed into birthplan
+  try { localStorage.removeItem('bluumi-portal-auth'); } catch(e) {}
   await sb.auth.signOut();
 }
 
@@ -812,6 +878,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   showScreen('app');
   document.getElementById('topbar-email').textContent = currentUser.email;
   renderTierBadge();
+  renderUpgradeBanner();
   await loadClients();
   _realtimeChannel = sb.channel('portal-clients-' + currentUser.id)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'birth_worker_clients', filter: `birth_worker_id=eq.${currentUser.id}` }, () => loadClients())
@@ -829,6 +896,88 @@ function renderTierBadge() {
   const el     = document.getElementById('topbar-tier-badge');
   el.className = tier ? `tier-badge tier-${tier}` : 'tier-badge tier-none';
   el.textContent = tier ? labels[tier] : 'No plan';
+}
+
+// ── UPGRADE BANNER ─────────────────────────────────────────────────────
+function renderUpgradeBanner() {
+  const tier = currentProfile?.tier;
+  const banner = document.getElementById('upgrade-banner');
+
+  // Hide for Collective (top tier) or if dismissed this session
+  if (!tier || tier === 'collective' || _upgradeBannerDismissed) {
+    banner.classList.remove('visible');
+    return;
+  }
+
+  const tierNames = { solo: 'Solo', practice: 'Practice' };
+  document.getElementById('upgrade-banner-tier-name').textContent = tierNames[tier] || tier;
+  document.getElementById('upgrade-banner-tier-strong').textContent = tierNames[tier] || tier;
+
+  // Build upgrade buttons for tiers above current
+  const currentIdx = TIER_ORDER.indexOf(tier);
+  const options    = document.getElementById('upgrade-banner-options');
+  options.innerHTML = TIER_ORDER.slice(currentIdx + 1).map(t => {
+    const isPrimary = TIER_ORDER.indexOf(t) === currentIdx + 1; // next tier up = primary
+    return `<button class="upgrade-tier-btn${isPrimary ? ' primary' : ''}" onclick="openUpgradeModal()">
+      Upgrade to ${t.charAt(0).toUpperCase() + t.slice(1)}
+      <span class="tier-price">${TIER_PRICES[t]}</span>
+    </button>`;
+  }).join('');
+
+  banner.classList.add('visible');
+}
+
+function dismissUpgradeBanner() {
+  _upgradeBannerDismissed = true;
+  document.getElementById('upgrade-banner').classList.remove('visible');
+}
+
+// ── UPGRADE MODAL ──────────────────────────────────────────────────────
+function openUpgradeModal() {
+  const currentTier = currentProfile?.tier;
+  const container   = document.getElementById('upgrade-modal-tiers');
+
+  container.innerHTML = TIER_ORDER.map(t => {
+    const isCurrent  = t === currentTier;
+    const isDowngrade = TIER_ORDER.indexOf(t) < TIER_ORDER.indexOf(currentTier);
+    const isRecommended = TIER_ORDER.indexOf(t) === TIER_ORDER.indexOf(currentTier) + 1;
+    let cardClass = 'upgrade-modal-tier';
+    if (isCurrent)     cardClass += ' current';
+    if (isRecommended) cardClass += ' recommended';
+
+    const ctaLabel = isCurrent ? 'Current plan' : isDowngrade ? 'Lower tier' : `Upgrade to ${t.charAt(0).toUpperCase() + t.slice(1)}`;
+    const ctaClass = isCurrent || isDowngrade ? 'umt-cta disabled' : 'umt-cta active';
+    const onclick  = isCurrent || isDowngrade ? '' : `onclick="selectUpgradeTier('${t}')"`;
+
+    return `<div class="${cardClass}">
+      <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '🌿 Best value' : 'Professional'}</div>
+      <div class="umt-name">${t.charAt(0).toUpperCase() + t.slice(1)}</div>
+      <div class="umt-price"><strong>${t === 'collective' ? '$99' : t === 'practice' ? '$59' : '$29'}</strong> /mo</div>
+      <div class="umt-slots">${TIER_SLOTS[t]}</div>
+      ${isCurrent ? '<div class="umt-current-badge">✓ Your current plan</div>' : ''}
+      <button class="${ctaClass}" ${onclick}>${ctaLabel}</button>
+    </div>`;
+  }).join('');
+
+  openModal('upgrade-modal');
+}
+
+async function selectUpgradeTier(newTier) {
+  // In a real system this would go to Stripe / billing.
+  // For now: update the profile tier in Supabase and reflect immediately.
+  const { error } = await sb
+    .from('profiles')
+    .update({ tier: newTier })
+    .eq('id', currentUser.id);
+
+  if (error) { showToast('Could not upgrade. Please try again.'); return; }
+
+  currentProfile.tier = newTier;
+  renderTierBadge();
+  renderUpgradeBanner();
+  updateStats();
+  closeModal('upgrade-modal');
+  showToast('✓ Plan updated to ' + newTier.charAt(0).toUpperCase() + newTier.slice(1) + '. Your clients are all still here.');
 }
 
 function getSlotLimit() { return TIER_LIMITS[currentProfile?.tier] ?? 0; }
@@ -870,8 +1019,7 @@ function updateStats() {
   const pct = limit === Infinity ? 0 : Math.min(100, Math.round((used / limit) * 100));
   document.getElementById('slot-bar').style.width = pct + '%';
 
-  // Upgrade nudge: show at 80%+ or at limit
-  const nudge = document.getElementById('upgrade-nudge');
+  const nudge    = document.getElementById('upgrade-nudge');
   const showNudge = limit !== Infinity && pct >= 80;
   nudge.classList.toggle('visible', showNudge);
   if (showNudge) {
@@ -939,8 +1087,6 @@ function renderTable() {
     const canArchive = r.status !== 'archived';
     const notesArr  = parseNotes(r.notes);
     const hasNotes  = notesArr.length > 0;
-
-    // Unsure items — stored in plan_data.unsureItems
     const unsureItems = r.plan_data?.unsureItems || [];
     const hasUnsure   = unsureItems.length > 0;
 
@@ -984,18 +1130,15 @@ function renderTable() {
   }).join('');
 }
 
-// ── View Plan (read-only) ───────────────────────────────────────────────
+// ── View Plan ──────────────────────────────────────────────────────────
 function openViewPlanModal(rowId) {
   const row = allClients.find(r => r.id === rowId);
   const d   = row?.plan_data;
   const body = document.getElementById('view-plan-body');
-
   if (!d) {
-    body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-style:italic;">No birth plan data yet — the client hasn\'t started building yet.</div>';
-    openModal('view-plan-modal');
-    return;
+    body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-style:italic;">No birth plan data yet.</div>';
+    openModal('view-plan-modal'); return;
   }
-
   function sec(title, items, cls = '') {
     if (!items || !items.length) return '';
     return `<div class="plan-preview-section">
@@ -1005,14 +1148,9 @@ function openViewPlanModal(rowId) {
       </div>
     </div>`;
   }
-
-  const dueFmt = d.dueDate
-    ? new Date(d.dueDate + 'T00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' })
-    : '';
-
+  const dueFmt = d.dueDate ? new Date(d.dueDate + 'T00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
   const metaParts = [d.birthLocation, dueFmt ? 'Due ' + dueFmt : '', d.pronounsChips?.[0] || d.pronounsOther || ''].filter(Boolean);
   const health = [...(d.healthChips || []), d.healthOther || ''].filter(Boolean);
-
   body.innerHTML = `
     <div class="plan-preview-name">${escHtml(d.name || 'No name yet')}</div>
     <div class="plan-preview-meta">${escHtml(metaParts.join(' · '))}</div>
@@ -1041,48 +1179,23 @@ function openViewPlanModal(rowId) {
   openModal('view-plan-modal');
 }
 
-// ── Unsure Items Modal ─────────────────────────────────────────────────
-// Section labels for display
+// ── Unsure Modal ───────────────────────────────────────────────────────
 const SECTION_LABELS = {
-  values: 'Core Values',
-  comfortPref: 'Comfort Preference',
-  naturalComfort: 'Natural Comfort',
-  medicalComfort: 'Medical Comfort',
-  induction: 'Labor Interventions',
-  vaginal: 'Vaginal Birth',
-  csection: 'Surgical Birth',
-  otherInterventions: 'Other Interventions',
-  cord: 'Umbilical Cord',
-  placenta: 'Placenta',
-  bonding: 'Immediate Bonding',
-  newborn: 'Newborn Care',
-  emotional: 'Emotional Care',
-  decision: 'Decision-Making',
-  trauma: 'Trauma-Informed Care',
-  emergencyDelivery: 'Emergency Delivery',
-  nicuSeparation: 'NICU — Separation',
-  nicuFeeding: 'NICU — Feeding',
-  nicuCommunication: 'NICU — Communication',
+  values: 'Core Values', comfortPref: 'Comfort Preference', naturalComfort: 'Natural Comfort',
+  medicalComfort: 'Medical Comfort', induction: 'Labor Interventions', vaginal: 'Vaginal Birth',
+  csection: 'Surgical Birth', otherInterventions: 'Other Interventions', cord: 'Umbilical Cord',
+  placenta: 'Placenta', bonding: 'Immediate Bonding', newborn: 'Newborn Care',
+  emotional: 'Emotional Care', decision: 'Decision-Making', trauma: 'Trauma-Informed Care',
+  emergencyDelivery: 'Emergency Delivery', nicuSeparation: 'NICU — Separation',
+  nicuFeeding: 'NICU — Feeding', nicuCommunication: 'NICU — Communication',
 };
-
 function openUnsureModal(rowId) {
   const row   = allClients.find(r => r.id === rowId);
   const items = row?.plan_data?.unsureItems || [];
   const list  = document.getElementById('unsure-item-list');
-
-  if (!items.length) {
-    list.innerHTML = '<div class="unsure-empty">No items flagged as unsure right now.</div>';
-  } else {
-    list.innerHTML = items.map(item => `
-      <div class="unsure-item">
-        <div class="unsure-item-icon">❓</div>
-        <div class="unsure-item-content">
-          <div class="unsure-item-section">${escHtml(SECTION_LABELS[item.section] || item.section)}</div>
-          <div class="unsure-item-label">${escHtml(item.label)}</div>
-        </div>
-      </div>
-    `).join('');
-  }
+  list.innerHTML = !items.length
+    ? '<div class="unsure-empty">No items flagged as unsure right now.</div>'
+    : items.map(item => `<div class="unsure-item"><div class="unsure-item-icon">❓</div><div><div class="unsure-item-section">${escHtml(SECTION_LABELS[item.section] || item.section)}</div><div class="unsure-item-label">${escHtml(item.label)}</div></div></div>`).join('');
   openModal('unsure-modal');
 }
 
@@ -1110,7 +1223,6 @@ function openInviteModal() {
   document.getElementById('invite-cancel-btn').textContent     = 'Cancel';
   openModal('invite-modal');
 }
-
 async function submitInvite() {
   const email = document.getElementById('invite-email').value.trim().toLowerCase();
   if (!email) return showToast('Please enter a client email.');
@@ -1122,8 +1234,7 @@ async function submitInvite() {
   const { data, error } = await sb
     .from('birth_worker_clients')
     .insert({ birth_worker_id: currentUser.id, invited_email: email, status: 'pending' })
-    .select()
-    .single();
+    .select().single();
   btn.disabled = false; btn.textContent = 'Generate Link';
   if (error) {
     if (error.code === '23505') return showToast('This client has already been invited.');
@@ -1132,7 +1243,6 @@ async function submitInvite() {
   buildInviteUI(data.invite_token, email);
   await loadClients();
 }
-
 function showInviteLink(token, email) {
   document.getElementById('invite-form-section').style.display = 'none';
   document.getElementById('invite-submit-btn').style.display   = 'none';
@@ -1141,7 +1251,6 @@ function showInviteLink(token, email) {
   openModal('invite-modal');
   setTimeout(() => buildInviteUI(token, email), 80);
 }
-
 function buildInviteUI(token, email) {
   const link = new URL('/birthplan/?invite=' + token, location.href).href;
   currentInviteLink = link;
@@ -1153,7 +1262,6 @@ function buildInviteUI(token, email) {
   const canvas = document.getElementById('qr-canvas');
   QRCode.toCanvas(canvas, link, { width: 180, margin: 2, color: { dark: '#4A5746', light: '#FFFFFF' } }, err => { if (err) console.error('QR error:', err); });
 }
-
 function copyInviteLink() {
   navigator.clipboard.writeText(currentInviteLink).then(() => {
     const btn = document.getElementById('invite-copy-btn');
@@ -1166,17 +1274,13 @@ function copyInviteLink() {
 function parseNotes(raw) {
   if (!raw) return [];
   if (typeof raw === 'object' && Array.isArray(raw)) return raw;
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-    return [{ text: String(parsed), ts: null }];
-  } catch { return [{ text: String(raw), ts: null }]; }
+  try { const p = JSON.parse(raw); return Array.isArray(p) ? p : [{ text: String(p), ts: null }]; }
+  catch { return [{ text: String(raw), ts: null }]; }
 }
 function formatNoteDate(ts) {
   if (!ts) return 'Earlier note';
   return new Date(ts).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
-
 function openNotesModal(rowId) {
   activeNoteRow = rowId;
   const row   = allClients.find(r => r.id === rowId);
@@ -1186,18 +1290,12 @@ function openNotesModal(rowId) {
     histWrap.innerHTML = '<div class="notes-empty">No notes yet. Add your first note below.</div>';
   } else {
     histWrap.innerHTML = '<div class="notes-history">' +
-      notes.slice().reverse().map(n => `
-        <div class="note-entry">
-          <div class="note-entry-meta">${formatNoteDate(n.ts)}</div>
-          <div class="note-entry-text">${escHtml(n.text)}</div>
-        </div>
-      `).join('') +
+      notes.slice().reverse().map(n => `<div class="note-entry"><div class="note-entry-meta">${formatNoteDate(n.ts)}</div><div class="note-entry-text">${escHtml(n.text)}</div></div>`).join('') +
     '</div>';
   }
   document.getElementById('notes-textarea').value = '';
   openModal('notes-modal');
 }
-
 async function saveNote() {
   const text = document.getElementById('notes-textarea').value.trim();
   if (!text) return showToast('Please write something before saving.');
@@ -1211,9 +1309,7 @@ async function saveNote() {
     .eq('birth_worker_id', currentUser.id);
   if (error) return showToast('Could not save note.');
   if (row) row.notes = JSON.stringify(updated);
-  closeModal('notes-modal');
-  renderTable();
-  showToast('Note saved.');
+  closeModal('notes-modal'); renderTable(); showToast('Note saved.');
 }
 
 // ── Archive ────────────────────────────────────────────────────────────
@@ -1222,7 +1318,6 @@ function openArchiveModal(rowId, name) {
   document.getElementById('archive-client-name').textContent = name;
   openModal('archive-modal');
 }
-
 async function confirmArchive() {
   const { error } = await sb
     .from('birth_worker_clients')
@@ -1230,9 +1325,7 @@ async function confirmArchive() {
     .eq('id', activeArchiveRow)
     .eq('birth_worker_id', currentUser.id);
   if (error) return showToast('Could not archive client.');
-  await loadClients();
-  closeModal('archive-modal');
-  showToast('Client archived.');
+  await loadClients(); closeModal('archive-modal'); showToast('Client archived.');
 }
 
 // ── Modal helpers ──────────────────────────────────────────────────────
