@@ -7,7 +7,6 @@
 <link rel="icon" type="image/png" href="img/flavicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
 :root {
   --olive:       #4A5746;
@@ -862,8 +861,6 @@ async function signUp() {
 }
 
 async function signOut() {
-  // Clear portal-specific storage key explicitly so it doesn't bleed into birthplan
-  try { localStorage.removeItem('bluumi-portal-auth'); } catch(e) {}
   await sb.auth.signOut();
 }
 
