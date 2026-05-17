@@ -684,7 +684,7 @@ body::before {
         </div>
         <div class="qr-wrap">
           <div class="qr-label">Or scan this QR code in person</div>
-          <canvas id="qr-canvas"></canvas>
+          <img id="qr-canvas" style="border-radius:12px;border:6px solid white;box-shadow:var(--shadow);width:180px;height:180px;">
         </div>
         <p style="font-size:0.76rem;color:var(--muted);margin-top:1rem;line-height:1.6;">When your client opens this link and signs up (or signs in), they'll be automatically connected to your portal.</p>
       </div>
@@ -1345,8 +1345,8 @@ function buildInviteUI(token, email) {
   document.getElementById('invite-form-section').style.display = 'none';
   document.getElementById('invite-submit-btn').style.display   = 'none';
   document.getElementById('invite-cancel-btn').textContent     = 'Done';
-  const canvas = document.getElementById('qr-canvas');
-  QRCode.toCanvas(canvas, link, { width: 180, margin: 2, color: { dark: '#4A5746', light: '#FFFFFF' } }, err => { if (err) console.error('QR error:', err); });
+  const qrImg = document.getElementById('qr-canvas');
+  qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=4A5746&data=' + encodeURIComponent(link);
 }
 function copyInviteLink() {
   navigator.clipboard.writeText(currentInviteLink).then(() => {
