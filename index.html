@@ -70,9 +70,56 @@ nav {
   box-shadow: 0 4px 14px rgba(74,87,70,0.25);
 }
 .nav-cta:hover { background: var(--navy-light) !important; transform: translateY(-1px) !important; }
+/* ── HAMBURGER MENU ── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column; justify-content: center; gap: 5px;
+  width: 36px; height: 36px; cursor: pointer;
+  background: none; border: none; padding: 4px;
+}
+.nav-hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--sage-dark); border-radius: 2px;
+  transition: all 0.25s;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-menu {
+  display: none;
+  position: fixed; top: 65px; left: 0; right: 0; z-index: 99;
+  background: rgba(247,243,238,0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(168,185,158,0.2);
+  padding: 1rem 1.5rem 1.5rem;
+  flex-direction: column; gap: 0.2rem;
+  box-shadow: 0 8px 24px rgba(74,87,70,0.08);
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  display: block; padding: 0.75rem 0.5rem;
+  font-family: 'Jost', sans-serif; font-size: 0.95rem; font-weight: 400;
+  color: var(--text); text-decoration: none;
+  border-bottom: 1px solid rgba(168,185,158,0.15);
+  transition: color 0.2s;
+}
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu a:hover { color: var(--sage-dark); }
+.mobile-menu .mobile-cta {
+  margin-top: 0.5rem; display: block; text-align: center;
+  background: var(--sage-dark); color: white !important;
+  padding: 0.85rem !important; border-radius: 50px;
+  font-weight: 500 !important; font-size: 0.9rem !important;
+  border-bottom: none !important;
+}
+.mobile-menu .mobile-provider {
+  color: var(--muted) !important; font-size: 0.82rem !important;
+}
+
 @media (max-width: 700px) {
-  nav { padding: 1rem 1.2rem; gap: 0.5rem; } /* FIX: tighter padding, add gap */
-  .nav-links li:not(:last-child) { display: none; }
+  nav { padding: 1rem 1.2rem; gap: 0.5rem; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
 }
 
 /* ── HERO ─────────────────────────────────────── */
@@ -481,7 +528,16 @@ footer span { color: rgba(235,196,190,1); }
     <li><a href="/birthplan/">Log in</a></li>
     <li><a href="/birthplan/" class="nav-cta">Get Started</a></li>
   </ul>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="/birthplan/">Log in</a>
+  <a href="/portal/" class="mobile-provider">Care Provider Portal</a>
+  <a href="/pricing/" class="mobile-provider">Pricing</a>
+</div>
 
 <!-- HERO -->
 <!-- FIX: wrapper div is now .hero-bg class with overflow:hidden to contain blobs -->
@@ -666,6 +722,21 @@ footer span { color: rgba(235,196,190,1); }
   </div>
   <div>© 2026 Blümi. Built with <span>♥</span> for birthing families.</div>
 </footer>
+
+<script>
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const btn  = document.getElementById('nav-hamburger');
+  const open = menu.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+document.getElementById('mobile-menu').querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('nav-hamburger').classList.remove('open');
+  });
+});
+</script>
 
 </body>
 </html>
