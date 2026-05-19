@@ -109,6 +109,93 @@ body::before {
 .pw-strength.ok    { color: #B08000; }
 .pw-strength.good  { color: var(--olive-mid); }
 
+/* ── PRACTICE SIGNUP EXTRAS ── */
+.admin-setup-box {
+  background: var(--olive-pale); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem;
+}
+.admin-setup-box-title {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--olive); margin-bottom: 0.6rem;
+}
+.pin-input-row { display: flex; gap: 0.5rem; }
+.pin-digit {
+  width: 52px; height: 52px; text-align: center;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 1.4rem; font-weight: 600;
+  color: var(--olive); background: white; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.pin-digit:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); }
+.pin-digit.error { border-color: var(--rose); }
+
+/* ── PIN SELECTOR SCREEN ── */
+#pin-screen {
+  min-height: 100vh;
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 2rem 1.5rem;
+}
+.pin-card {
+  background: white; border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255,255,255,0.9);
+  max-width: 400px; width: 100%;
+  overflow: hidden;
+}
+.pin-card-head {
+  background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%);
+  padding: 1.8rem 2rem 1.4rem;
+  text-align: center; border-bottom: 1px solid var(--border);
+}
+.pin-practice-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 600; color: var(--olive);
+  margin-bottom: 0.3rem;
+}
+.pin-card-body { padding: 1.8rem 2rem; }
+.pin-provider-select {
+  width: 100%; padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 0.88rem;
+  color: var(--text); background: var(--cream); outline: none;
+  transition: border-color 0.2s; margin-bottom: 1rem;
+  cursor: pointer;
+}
+.pin-provider-select:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
+.pin-entry-section { display: none; }
+.pin-entry-section.visible { display: block; }
+.pin-entry-label {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--olive); margin-bottom: 0.8rem;
+  text-align: center;
+}
+.pin-dots-row { display: flex; gap: 0.6rem; justify-content: center; margin-bottom: 1.2rem; }
+.pin-dot {
+  width: 48px; height: 48px; text-align: center;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 1.4rem; font-weight: 600;
+  color: var(--olive); background: var(--cream); outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-text-security: disc;
+}
+.pin-dot:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
+.pin-dot.error { border-color: var(--rose); animation: pinShake 0.35s ease; }
+@keyframes pinShake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+.pin-msg { font-size: 0.78rem; color: var(--rose); text-align: center; min-height: 1.2rem; margin-bottom: 0.5rem; }
+.pin-signout-link {
+  display: block; text-align: center; margin-top: 1rem;
+  font-size: 0.75rem; color: var(--muted); cursor: pointer;
+  text-decoration: none;
+}
+.pin-signout-link:hover { color: var(--rose); }
+
 /* ── APP ── */
 #app-screen { display: none; }
 
@@ -130,6 +217,16 @@ body::before {
 .topbar-left { display: flex; align-items: center; gap: 0.5rem; }
 .topbar-right { display: flex; align-items: center; gap: 1rem; }
 .topbar-email { font-size: 0.75rem; color: var(--muted); }
+/* provider chip shown in topbar for practice/collective */
+.topbar-provider-chip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--olive-pale); border: 1px solid var(--border);
+  border-radius: 50px; padding: 0.28rem 0.8rem;
+  font-size: 0.72rem; font-weight: 600; color: var(--olive);
+  cursor: pointer; transition: all 0.18s;
+}
+.topbar-provider-chip:hover { background: var(--olive); color: white; border-color: var(--olive); }
+.topbar-provider-chip svg { width: 10px; height: 10px; }
 .topbar-signout {
   background: none; border: 1.5px solid var(--border); color: var(--muted);
   border-radius: 50px; padding: 0.38rem 0.9rem;
@@ -138,9 +235,18 @@ body::before {
 }
 .topbar-signout:hover { border-color: var(--rose); color: var(--rose); }
 
+/* ── ADMIN MANAGE PROVIDERS BUTTON ── */
+.btn-manage-providers {
+  background: white; border: 1.5px solid var(--olive-mid); color: var(--olive);
+  border-radius: 50px; padding: 0.38rem 0.9rem;
+  font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-manage-providers:hover { background: var(--olive); color: white; border-color: var(--olive); }
+
 /* ── UPGRADE BANNER ── */
 #upgrade-banner {
-  display: none; /* shown by JS when tier < collective */
+  display: none;
   background: linear-gradient(135deg, #F0F7F0 0%, #FAFCFA 50%, #F7F3EE 100%);
   border-bottom: 1px solid var(--border);
   padding: 0.65rem 2rem;
@@ -163,9 +269,7 @@ body::before {
 .upgrade-banner-tier-pill .tier-dot {
   width: 6px; height: 6px; border-radius: 50%; background: var(--olive-mid);
 }
-.upgrade-banner-msg {
-  font-size: 0.78rem; color: var(--muted); line-height: 1.4;
-}
+.upgrade-banner-msg { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
 .upgrade-banner-msg strong { color: var(--olive); font-weight: 600; }
 .upgrade-banner-options {
   display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; flex-shrink: 0;
@@ -228,16 +332,12 @@ body::before {
 .slot-bar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
 .slot-bar-fill { height: 100%; background: linear-gradient(to right, var(--olive), var(--olive-mid)); border-radius: 2px; transition: width 0.6s ease; }
 
-/* ── UPGRADE NUDGE (in stat card) ── */
+/* ── UPGRADE NUDGE ── */
 .upgrade-nudge {
-  display: none;
-  margin-top: 0.75rem;
-  padding: 0.55rem 0.75rem;
+  display: none; margin-top: 0.75rem; padding: 0.55rem 0.75rem;
   background: linear-gradient(135deg, var(--olive-pale), #F5EDE8);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  gap: 0.5rem;
-  align-items: center;
+  border: 1px solid var(--border); border-radius: 8px;
+  gap: 0.5rem; align-items: center;
 }
 .upgrade-nudge.visible { display: flex; }
 .upgrade-nudge-text { font-size: 0.68rem; color: var(--olive); line-height: 1.4; flex: 1; }
@@ -245,8 +345,7 @@ body::before {
 .btn-upgrade {
   background: var(--olive); color: white; border: none; border-radius: 50px;
   padding: 0.38rem 0.85rem; font-family: 'Jost', sans-serif; font-size: 0.68rem;
-  font-weight: 600; letter-spacing: 0.03em; cursor: pointer; white-space: nowrap;
-  text-decoration: none; display: inline-block; transition: all 0.2s; flex-shrink: 0;
+  font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
 }
 .btn-upgrade:hover { background: var(--olive-mid); transform: translateY(-1px); }
 
@@ -285,6 +384,12 @@ body::before {
 .client-avatar { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--olive-pale), var(--sage-light)); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: var(--olive); }
 .client-name { font-weight: 500; color: var(--text); }
 .client-email { font-size: 0.75rem; color: var(--muted); margin-top: 0.1rem; }
+/* unassigned tag shown on client rows for admin */
+.unassigned-tag {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--amber); background: var(--amber-light); border: 1px solid var(--amber-border);
+  border-radius: 4px; padding: 0.15rem 0.5rem; display: inline-block; margin-top: 0.2rem;
+}
 .status-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.28rem 0.75rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; }
 .status-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
 .status-active   { background: var(--sage-light); color: #2D5A30; }
@@ -331,11 +436,7 @@ body::before {
 /* ── UPGRADE MODAL ── */
 .upgrade-modal-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 0.4rem; }
 @media (max-width: 500px) { .upgrade-modal-tiers { grid-template-columns: 1fr; } }
-.upgrade-modal-tier {
-  border: 1.5px solid var(--border); border-radius: 12px; padding: 1.1rem 1rem;
-  display: flex; flex-direction: column; gap: 0.5rem; cursor: pointer;
-  transition: all 0.2s; background: var(--cream);
-}
+.upgrade-modal-tier { border: 1.5px solid var(--border); border-radius: 12px; padding: 1.1rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; cursor: pointer; transition: all 0.2s; background: var(--cream); }
 .upgrade-modal-tier:hover { border-color: var(--olive-mid); background: var(--olive-pale); }
 .upgrade-modal-tier.current { border-color: var(--border); background: #F9FAFB; cursor: default; opacity: 0.65; }
 .upgrade-modal-tier.recommended { border-color: var(--olive); background: var(--olive-pale); box-shadow: 0 0 0 3px rgba(107,143,113,0.12); }
@@ -349,34 +450,21 @@ body::before {
 .umt-cta.active { background: var(--olive); color: white; }
 .umt-cta.active:hover { background: var(--olive-mid); }
 .umt-cta.disabled { background: var(--border); color: var(--muted); cursor: default; }
-.umt-cta.downgrade-btn {
-  background: white; color: var(--muted); border: 1.5px solid var(--border);
-  font-size: 0.72rem;
-}
+.umt-cta.downgrade-btn { background: white; color: var(--muted); border: 1.5px solid var(--border); font-size: 0.72rem; }
 .umt-cta.downgrade-btn:hover { background: var(--rose-light); color: var(--rose); border-color: #E8C4C4; cursor: pointer; }
 .upgrade-modal-tier.downgrade { opacity: 0.7; }
 .upgrade-modal-tier.downgrade:hover { opacity: 1; border-color: #E8C4C4; background: var(--rose-light); }
 
 /* ── DOWNGRADE CONFIRM ── */
-.downgrade-confirm-box {
-  grid-column: 1 / -1;
-  background: var(--rose-light); border: 1.5px solid #E8C4C4;
-  border-radius: 12px; padding: 1.6rem; display: flex; flex-direction: column; gap: 0.9rem;
-  animation: modalIn 0.22s ease;
-}
+.downgrade-confirm-box { grid-column: 1 / -1; background: var(--rose-light); border: 1.5px solid #E8C4C4; border-radius: 12px; padding: 1.6rem; display: flex; flex-direction: column; gap: 0.9rem; animation: modalIn 0.22s ease; }
 .downgrade-confirm-icon { font-size: 1.6rem; }
 .downgrade-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--rose); }
 .downgrade-confirm-body { font-size: 0.82rem; color: var(--text); line-height: 1.7; }
 .downgrade-confirm-actions { display: flex; gap: 0.8rem; margin-top: 0.3rem; flex-wrap: wrap; }
 
 /* ── TIER BADGE CLICKABLE ── */
-.tier-badge-clickable {
-  cursor: pointer; transition: all 0.18s;
-}
-.tier-badge-clickable:hover {
-  opacity: 0.8; transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(74,87,70,0.18);
-}
+.tier-badge-clickable { cursor: pointer; transition: all 0.18s; }
+.tier-badge-clickable:hover { opacity: 0.8; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(74,87,70,0.18); }
 .upgrade-assurance { margin-top: 1.2rem; padding: 0.9rem 1rem; background: var(--sage-light); border-radius: 10px; font-size: 0.78rem; color: var(--olive); line-height: 1.6; }
 .upgrade-assurance strong { font-weight: 600; }
 
@@ -424,18 +512,107 @@ body::before {
 #qr-canvas { border-radius: 12px; border: 6px solid white; box-shadow: var(--shadow); }
 
 /* ── NOTES MODAL ── */
-.notes-history { margin-bottom: 1.4rem; max-height: 240px; overflow-y: auto; }
-.note-entry { background: var(--olive-pale); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.7rem; }
+.notes-history { margin-bottom: 1.4rem; max-height: 260px; overflow-y: auto; }
+.note-entry {
+  background: var(--olive-pale); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.7rem;
+  position: relative;
+}
 .note-entry:last-child { margin-bottom: 0; }
-.note-entry-meta { font-size: 0.65rem; color: var(--muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.note-entry-meta { font-size: 0.65rem; color: var(--muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; padding-right: 1.8rem; }
 .note-entry-text { font-size: 0.83rem; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+.note-delete-btn {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: 0.85rem; line-height: 1;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; padding: 0;
+}
+.note-delete-btn:hover { background: var(--rose-light); color: var(--rose); }
 .notes-divider { height: 1px; background: var(--border); margin: 1.2rem 0; }
 .notes-new-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--olive); margin-bottom: 0.5rem; }
 .notes-textarea { width: 100%; padding: 0.85rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--text); background: var(--cream); outline: none; resize: vertical; min-height: 100px; line-height: 1.65; transition: border-color 0.2s, box-shadow 0.2s; }
 .notes-textarea:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
 .notes-empty { font-size: 0.82rem; color: var(--muted); font-style: italic; text-align: center; padding: 1rem; }
 
-/* ── ARCHIVE MODAL ── */
+/* ── MANAGE PROVIDERS MODAL ── */
+.providers-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.4rem; }
+.provider-row {
+  display: flex; align-items: center; gap: 0.8rem;
+  background: var(--olive-pale); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.8rem 1rem;
+}
+.provider-row-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--olive), var(--olive-mid));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700; color: white;
+}
+.provider-row-info { flex: 1; min-width: 0; }
+.provider-row-name { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+.provider-row-meta { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+.provider-row-pin {
+  font-family: 'Jost', sans-serif; font-size: 0.78rem; font-weight: 600;
+  color: var(--olive); background: white; border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.2rem 0.6rem; letter-spacing: 0.15em;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.provider-row-pin:hover { border-color: var(--olive-mid); background: var(--olive-pale); }
+.provider-admin-badge {
+  font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--olive); color: white; padding: 0.18rem 0.5rem; border-radius: 4px;
+  flex-shrink: 0;
+}
+.provider-remove-btn {
+  background: none; border: none; cursor: pointer; color: var(--muted);
+  font-size: 1rem; padding: 0.2rem; transition: color 0.15s; flex-shrink: 0;
+  line-height: 1;
+}
+.provider-remove-btn:hover { color: var(--rose); }
+.add-provider-box {
+  border: 1.5px dashed var(--border); border-radius: 10px;
+  padding: 1rem 1.2rem; background: white;
+}
+.add-provider-box-title {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--olive); margin-bottom: 0.8rem;
+}
+.add-provider-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: flex-end; }
+.add-provider-field { flex: 1; min-width: 130px; }
+.add-provider-field label { display: block; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+.add-provider-field input {
+  width: 100%; padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-family: 'Jost', sans-serif; font-size: 0.85rem;
+  color: var(--text); background: var(--cream); outline: none;
+  transition: border-color 0.2s;
+}
+.add-provider-field input:focus { border-color: var(--olive-mid); background: white; }
+.add-provider-field input.pin-field {
+  letter-spacing: 0.3em; font-size: 1rem; font-weight: 700; text-align: center;
+  max-width: 90px;
+}
+.btn-add-provider {
+  background: var(--olive); color: white; border: none; border-radius: 8px;
+  padding: 0.6rem 1.2rem; font-family: 'Jost', sans-serif; font-size: 0.8rem;
+  font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  align-self: flex-end;
+}
+.btn-add-provider:hover { background: var(--olive-mid); }
+.providers-pool-note {
+  margin-top: 1rem; padding: 0.7rem 0.9rem;
+  background: var(--sage-light); border-radius: 8px;
+  font-size: 0.75rem; color: var(--olive); line-height: 1.5;
+}
+
+/* ── REASSIGN SELECT ── */
+.reassign-select {
+  padding: 0.3rem 0.5rem; border: 1.5px solid var(--border); border-radius: 6px;
+  font-family: 'Jost', sans-serif; font-size: 0.72rem; color: var(--text);
+  background: white; outline: none; cursor: pointer; transition: border-color 0.2s;
+}
+.reassign-select:focus { border-color: var(--olive-mid); }
 
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--olive); color: white; border-radius: 50px; padding: 0.7rem 1.6rem; font-size: 0.82rem; font-weight: 500; box-shadow: var(--shadow-lg); z-index: 9999; opacity: 0; transition: all 0.3s ease; pointer-events: none; }
@@ -451,62 +628,32 @@ body::before {
 @media (max-width: 700px) {
   .clients-table th:nth-child(3), .clients-table td:nth-child(3),
   .clients-table th:nth-child(4), .clients-table td:nth-child(4) { display: none; }
-
-  /* Topbar */
   .topbar { padding: 0 1rem; height: 54px; }
   .topbar-email { display: none; }
   .topbar-portal-tag { display: none; }
   .topbar-signout { font-size: 0.72rem; padding: 0.3rem 0.7rem; }
   #topbar-tier-badge { font-size: 0.55rem; padding: 0.2rem 0.5rem; }
-
-  /* Upgrade banner */
   #upgrade-banner { flex-direction: column; gap: 0.6rem; padding: 0.8rem 1rem; }
   .upgrade-banner-options { flex-wrap: wrap; gap: 0.4rem; }
   .upgrade-banner-msg { font-size: 0.75rem; }
-
-  /* Layout */
   .portal-layout { padding: 1rem; }
   .portal-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
   .portal-header h1 { font-size: 1.4rem; }
-  .portal-header p { font-size: 0.8rem; }
   .portal-header > div:last-child { width: 100%; }
-  .btn-invite { width: 100%; justify-content: center; }
-  .btn-refresh { width: 100%; justify-content: center; }
-
-  /* Stats */
+  .btn-invite, .btn-refresh { width: 100%; justify-content: center; }
   .stats-row { grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1rem; }
   .stat-card { padding: 0.9rem; }
   .stat-value { font-size: 1.6rem; }
-
-  /* Filters */
-  .filter-bar { flex-direction: column; gap: 0.5rem; }
-  .filter-bar input, .filter-bar select { width: 100%; }
-
-  /* Table → card style on mobile */
   .clients-table { font-size: 0.78rem; }
   .clients-table thead { display: none; }
-  .clients-table tbody tr {
-    display: flex; flex-direction: column;
-    border: 1px solid var(--border); border-radius: 10px;
-    margin-bottom: 0.6rem; padding: 0.8rem;
-    background: white;
-  }
-  .clients-table td {
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.2rem 0; border: none;
-  }
-  .clients-table td:first-child { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
-  .clients-table td .action-btn { font-size: 0.7rem; padding: 0.25rem 0.6rem; }
-
-  /* Modals */
-  .modal-box { margin: 0; border-radius: 16px 16px 0 0; max-height: 90vh; overflow-y: auto; }
-  .modal-backdrop { align-items: flex-end; }
+  .clients-table tbody tr { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.6rem; padding: 0.8rem; background: white; }
+  .clients-table td { display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0; border: none; }
   .upgrade-modal-tiers { grid-template-columns: 1fr; }
   .modal-head { padding: 1rem 1.2rem; }
   .modal-body { padding: 1rem 1.2rem; }
-
-  /* Signin screen */
-  .auth-card { margin: 1rem; padding: 1.5rem; }
+  .auth-card { margin: 1rem; }
+  .pin-card { margin: 1rem; }
+  .add-provider-row { flex-direction: column; }
 }
 </style>
 </head>
@@ -544,7 +691,7 @@ body::before {
 
 <!-- ── SIGN UP SCREEN ── -->
 <div id="signup-screen" class="auth-screen" style="display:none;">
-  <div class="auth-card" style="max-width:460px;">
+  <div class="auth-card" style="max-width:480px;">
     <div class="auth-card-head">
       <div class="auth-logo"><img src="../img/logo.png" alt="Blümi"></div>
       <div class="auth-brand-tag">Create Your Portal Account</div>
@@ -552,8 +699,8 @@ body::before {
     </div>
     <div class="auth-body">
       <div class="auth-field">
-        <label class="auth-label">Your Name</label>
-        <input type="text" class="auth-input" id="su-name" placeholder="e.g. Jane Smith">
+        <label class="auth-label">Practice / Business Name <span style="font-weight:400;color:var(--muted)" id="practice-name-hint">(optional for Solo)</span></label>
+        <input type="text" class="auth-input" id="su-practice-name" placeholder="e.g. Greater Toronto Doulas">
       </div>
       <div class="auth-field">
         <label class="auth-label">Email Address</label>
@@ -567,20 +714,75 @@ body::before {
       </div>
       <div class="auth-field">
         <label class="auth-label">Confirm Password</label>
-        <input type="password" class="auth-input" id="su-confirm" placeholder="Re-enter your password" autocomplete="new-password"
-          onkeydown="if(event.key==='Enter') signUp()">
+        <input type="password" class="auth-input" id="su-confirm" placeholder="Re-enter your password" autocomplete="new-password">
       </div>
       <div class="auth-field">
         <label class="auth-label">Plan</label>
-        <select class="auth-input" id="su-tier">
+        <select class="auth-input" id="su-tier" onchange="onTierChange()">
           <option value="solo">Solo — up to 10 active clients</option>
-          <option value="practice" selected>Practice — up to 50 active clients</option>
-          <option value="collective">Collective — unlimited clients</option>
+          <option value="practice" selected>Practice — shared account, up to 50 clients</option>
+          <option value="collective">Collective — shared account, unlimited clients</option>
         </select>
       </div>
+
+      <!-- Admin setup — shown for practice/collective -->
+      <div class="admin-setup-box" id="admin-setup-box">
+        <div class="admin-setup-box-title">🔑 Your Admin Account</div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.9rem;line-height:1.55;">
+          As the account owner, you'll be the first care provider. Everyone signs in with the shared email &amp; password above, then selects their name and enters their 4-digit PIN. Set yours now.
+        </p>
+        <div class="auth-field" style="margin-bottom:0.8rem;">
+          <label class="auth-label">Your Name (Admin)</label>
+          <input type="text" class="auth-input" id="su-admin-name" placeholder="e.g. Jane Smith">
+        </div>
+        <div class="auth-field" style="margin-bottom:0;">
+          <label class="auth-label">Your 4-Digit PIN</label>
+          <div class="pin-input-row" id="su-pin-row">
+            <input class="pin-digit" id="sup0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'sup1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="sup1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'sup2')" onkeydown="pinBack(event,this,'sup0')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="sup2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'sup3')" onkeydown="pinBack(event,this,'sup1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="sup3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'sup2')" oninput="pinOnlyNum(this)">
+          </div>
+        </div>
+      </div>
+
       <button class="auth-btn" onclick="signUp()">Create Account</button>
       <div class="auth-msg" id="su-msg"></div>
       <div class="auth-switch">Already have an account? <a onclick="showScreen('signin')">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PIN SELECTOR SCREEN (practice/collective only) ── -->
+<div id="pin-screen" class="auth-screen" style="display:none;">
+  <div class="pin-card">
+    <div class="pin-card-head">
+      <div class="auth-logo" style="margin-bottom:0.6rem;"><img src="../img/logo.png" alt="Blümi"></div>
+      <div class="pin-practice-name" id="pin-practice-name">Greater Toronto Doulas</div>
+      <p class="auth-sub" style="margin-top:0.3rem;">Who are you? Select your name and enter your PIN.</p>
+    </div>
+    <div class="pin-card-body">
+      <label class="auth-label">Select your name</label>
+      <select class="pin-provider-select" id="pin-provider-select" onchange="onProviderSelect()">
+        <option value="">— Choose your name —</option>
+      </select>
+
+      <div class="pin-entry-section" id="pin-entry-section">
+        <div class="pin-entry-label">Enter your 4-digit PIN</div>
+        <div class="pin-dots-row">
+          <input class="pin-dot" id="pd0" maxlength="1" inputmode="numeric" pattern="[0-9]" type="password"
+            onkeyup="pinNext(this,'pd1')" oninput="pinOnlyNum(this); tryAutoSubmitPin()">
+          <input class="pin-dot" id="pd1" maxlength="1" inputmode="numeric" pattern="[0-9]" type="password"
+            onkeyup="pinNext(this,'pd2')" onkeydown="pinBack(event,this,'pd0')" oninput="pinOnlyNum(this); tryAutoSubmitPin()">
+          <input class="pin-dot" id="pd2" maxlength="1" inputmode="numeric" pattern="[0-9]" type="password"
+            onkeyup="pinNext(this,'pd3')" onkeydown="pinBack(event,this,'pd1')" oninput="pinOnlyNum(this); tryAutoSubmitPin()">
+          <input class="pin-dot" id="pd3" maxlength="1" inputmode="numeric" pattern="[0-9]" type="password"
+            onkeydown="pinBack(event,this,'pd2')" oninput="pinOnlyNum(this); tryAutoSubmitPin()">
+        </div>
+        <div class="pin-msg" id="pin-msg"></div>
+      </div>
+
+      <a class="pin-signout-link" onclick="signOut()">← Sign out of this account</a>
     </div>
   </div>
 </div>
@@ -590,18 +792,24 @@ body::before {
   <nav class="topbar">
     <div class="topbar-left">
       <a href="../" class="nav-logo">
-  <img src="../img/logo.png" alt="Blümi" style="height:30px;width:auto;object-fit:contain;">
-</a>
+        <img src="../img/logo.png" alt="Blümi" style="height:30px;width:auto;object-fit:contain;">
+      </a>
       <span class="topbar-portal-tag">Portal</span>
     </div>
     <div class="topbar-right">
       <span class="topbar-email" id="topbar-email"></span>
+      <!-- Provider chip shown for practice/collective -->
+      <span id="topbar-provider-chip" class="topbar-provider-chip" style="display:none;" onclick="switchProvider()" title="Switch care provider">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="topbar-provider-name"></span>
+      </span>
+      <button class="btn-manage-providers" id="btn-manage-providers" style="display:none;" onclick="openManageProvidersModal()">⚙ Manage Team</button>
       <span id="topbar-tier-badge"></span>
       <button class="topbar-signout" onclick="signOut()">Sign out</button>
     </div>
   </nav>
 
-  <!-- UPGRADE BANNER — sits just below topbar, hidden for Collective -->
+  <!-- UPGRADE BANNER -->
   <div id="upgrade-banner">
     <div class="upgrade-banner-left">
       <div class="upgrade-banner-tier-pill">
@@ -613,17 +821,15 @@ body::before {
         Upgrade to invite more clients — <strong>your existing clients and plans are always kept.</strong>
       </div>
     </div>
-    <div class="upgrade-banner-options" id="upgrade-banner-options">
-      <!-- Populated by renderUpgradeBanner() -->
-    </div>
+    <div class="upgrade-banner-options" id="upgrade-banner-options"></div>
     <button class="upgrade-banner-dismiss" onclick="dismissUpgradeBanner()" title="Dismiss">×</button>
   </div>
 
   <div class="portal-layout">
     <div class="portal-header">
       <div class="portal-header-text">
-        <h1>Your Clients</h1>
-        <p>Invite, support, and co-create birth plans alongside your clients.</p>
+        <h1 id="portal-header-title">Your Clients</h1>
+        <p id="portal-header-sub">Invite, support, and co-create birth plans alongside your clients.</p>
       </div>
       <div style="display:flex;gap:0.7rem;align-items:center;flex-wrap:wrap;">
         <button class="btn-refresh" id="btn-refresh" onclick="refreshClients()">↻ Refresh</button>
@@ -667,6 +873,8 @@ body::before {
       <div class="filter-chip" data-filter="active" onclick="setFilter('active', this)">Active</div>
       <div class="filter-chip" data-filter="pending" onclick="setFilter('pending', this)">Pending</div>
       <div class="filter-chip" data-filter="archived" onclick="setFilter('archived', this)">Archived</div>
+      <!-- Admin-only: unassigned filter -->
+      <div class="filter-chip" data-filter="unassigned" id="filter-unassigned" onclick="setFilter('unassigned', this)" style="display:none;">Unassigned</div>
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
         <input type="text" class="search-input" id="search-input" placeholder="Search clients…" oninput="renderTable()">
@@ -701,9 +909,7 @@ body::before {
       <p style="font-size:0.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.4rem;font-family:'Cormorant Garamond',serif;font-style:italic;">
         Choose the plan that fits your practice. Upgrading is instant — all your current clients, plans, and notes stay exactly as they are.
       </p>
-      <div class="upgrade-modal-tiers" id="upgrade-modal-tiers">
-        <!-- populated by renderUpgradeModal() -->
-      </div>
+      <div class="upgrade-modal-tiers" id="upgrade-modal-tiers"></div>
       <div class="upgrade-assurance">
         <strong>🌿 No data is ever lost when upgrading.</strong>
         Your existing clients, birth plans, notes, and invite history are fully preserved. Upgrading simply unlocks more slots so you can keep inviting.
@@ -801,7 +1007,7 @@ body::before {
       <button class="modal-close" onclick="closeModal('notes-modal')">×</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1.2rem;">Private notes visible only to you. Each entry is timestamped and preserved.</p>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1.2rem;">Private notes visible only to you. Each entry is timestamped.</p>
       <div id="notes-history-wrap"></div>
       <div class="notes-divider"></div>
       <div class="notes-new-label">Add a new note</div>
@@ -832,6 +1038,63 @@ body::before {
   </div>
 </div>
 
+<!-- MANAGE PROVIDERS MODAL (admin only) -->
+<div class="modal-overlay" id="providers-modal">
+  <div class="modal" style="max-width:580px;">
+    <div class="modal-head">
+      <h3>Manage Care Providers</h3>
+      <button class="modal-close" onclick="closeModal('providers-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.2rem;font-family:'Cormorant Garamond',serif;font-style:italic;">
+        Everyone on your team shares this account login. Each person selects their name at sign-in and uses their own 4-digit PIN. You can see and reset all PINs here.
+      </p>
+      <div class="providers-list" id="providers-list">
+        <!-- populated by renderProvidersList() -->
+      </div>
+
+      <div class="add-provider-box">
+        <div class="add-provider-box-title">Add a Care Provider</div>
+        <div class="add-provider-row">
+          <div class="add-provider-field" style="flex:2;">
+            <label>Name</label>
+            <input type="text" id="new-provider-name" placeholder="e.g. Sarah Mensah">
+          </div>
+          <div class="add-provider-field">
+            <label>4-digit PIN</label>
+            <input type="text" class="pin-field" id="new-provider-pin" maxlength="4" inputmode="numeric" placeholder="····">
+          </div>
+          <button class="btn-add-provider" onclick="addProvider()">Add</button>
+        </div>
+      </div>
+
+      <div class="providers-pool-note">
+        🌿 All care providers share the same invite pool. Each provider only sees their own clients unless you (the admin) view unassigned clients.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('providers-modal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE NOTE CONFIRM MODAL -->
+<div class="modal-overlay" id="delete-note-modal">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-head">
+      <h3>Delete Note</h3>
+      <button class="modal-close" onclick="closeModal('delete-note-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.85rem;color:var(--text);line-height:1.7;">Delete this note permanently? This cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('delete-note-modal')">Cancel</button>
+      <button class="btn-danger" onclick="confirmDeleteNote()">Delete Note</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -840,32 +1103,57 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
-    storageKey:     'bluumi-portal-auth',   // portal-only storage key
+    storageKey:     'bluumi-portal-auth',
     persistSession: true,
     detectSessionInUrl: true,
   }
 });
 
-let currentUser    = null;
-let currentProfile = null;
-let allClients     = [];
-let activeFilter   = 'all';
-let activeNoteRow  = null;
-let activeArchiveRow = null;
+let currentUser       = null;
+let currentProfile    = null;
+let allClients        = [];
+let activeFilter      = 'all';
+let activeNoteRow     = null;
+let pendingDeleteNoteIdx = null;
+let activeArchiveRow  = null;
 let currentInviteLink = '';
 let _upgradeBannerDismissed = false;
+
+// Practice/Collective state
+let currentProvider   = null;  // { id, name, pin, is_admin } — null for solo
+let allProviders      = [];    // all providers for this account
 
 const TIER_LIMITS  = { solo: 10, practice: 50, collective: Infinity };
 const TIER_PRICES  = { solo: '$29/mo', practice: '$59/mo', collective: '$99/mo' };
 const TIER_SLOTS   = { solo: '10 client slots', practice: '50 client slots', collective: 'Unlimited' };
 const TIER_ORDER   = ['solo', 'practice', 'collective'];
+const TEAM_TIERS   = ['practice', 'collective'];
+
+function isTeamTier() { return TEAM_TIERS.includes(currentProfile?.tier); }
+function isAdmin()    { return isTeamTier() && currentProvider?.is_admin; }
 
 // ── Screen management ──────────────────────────────────────────────────
 function showScreen(name) {
-  document.getElementById('signin-screen').style.display  = name === 'signin'  ? 'flex'  : 'none';
-  document.getElementById('signup-screen').style.display  = name === 'signup'  ? 'flex'  : 'none';
-  document.getElementById('app-screen').style.display     = name === 'app'     ? 'block' : 'none';
+  document.getElementById('signin-screen').style.display = name === 'signin' ? 'flex' : 'none';
+  document.getElementById('signup-screen').style.display = name === 'signup' ? 'flex' : 'none';
+  document.getElementById('pin-screen').style.display    = name === 'pin'    ? 'flex' : 'none';
+  document.getElementById('app-screen').style.display    = name === 'app'    ? 'block': 'none';
 }
+
+// ── Signup tier toggle ─────────────────────────────────────────────────
+function onTierChange() {
+  const tier = document.getElementById('su-tier').value;
+  const isTeam = TEAM_TIERS.includes(tier);
+  document.getElementById('admin-setup-box').style.display = isTeam ? 'block' : 'none';
+  document.getElementById('practice-name-hint').textContent = isTeam ? '(required)' : '(optional for Solo)';
+}
+// Init on load
+window.addEventListener('DOMContentLoaded', () => {
+  onTierChange();
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+  });
+});
 
 function checkPwStrength(pw) {
   const el = document.getElementById('pw-strength-msg');
@@ -882,6 +1170,31 @@ function showMsg(id, text, type) {
   el.textContent = text; el.className = 'auth-msg ' + type; el.style.display = 'block';
 }
 
+// ── PIN input helpers ──────────────────────────────────────────────────
+function pinOnlyNum(el) { el.value = el.value.replace(/\D/g, ''); }
+function pinNext(el, nextId) {
+  if (el.value.length === 1) {
+    const next = document.getElementById(nextId);
+    if (next) next.focus();
+  }
+}
+function pinBack(e, el, prevId) {
+  if (e.key === 'Backspace' && !el.value) {
+    const prev = document.getElementById(prevId);
+    if (prev) { prev.focus(); prev.value = ''; }
+  }
+}
+function getSignupPin() {
+  return ['sup0','sup1','sup2','sup3'].map(id => document.getElementById(id).value).join('');
+}
+function getPinEntryValue() {
+  return ['pd0','pd1','pd2','pd3'].map(id => document.getElementById(id).value).join('');
+}
+function clearPinEntry() {
+  ['pd0','pd1','pd2','pd3'].forEach(id => { document.getElementById(id).value = ''; document.getElementById(id).classList.remove('error'); });
+  document.getElementById('pin-msg').textContent = '';
+}
+
 // ── Auth ───────────────────────────────────────────────────────────────
 async function signIn() {
   const email    = document.getElementById('si-email').value.trim();
@@ -895,23 +1208,45 @@ async function signIn() {
 }
 
 async function signUp() {
-  const name     = document.getElementById('su-name').value.trim();
-  const email    = document.getElementById('su-email').value.trim();
-  const password = document.getElementById('su-password').value;
-  const confirm  = document.getElementById('su-confirm').value;
-  const tier     = document.getElementById('su-tier').value;
+  const practiceName = document.getElementById('su-practice-name').value.trim();
+  const email        = document.getElementById('su-email').value.trim();
+  const password     = document.getElementById('su-password').value;
+  const confirm      = document.getElementById('su-confirm').value;
+  const tier         = document.getElementById('su-tier').value;
+  const isTeam       = TEAM_TIERS.includes(tier);
+  const adminName    = isTeam ? document.getElementById('su-admin-name').value.trim() : '';
+  const adminPin     = isTeam ? getSignupPin() : '';
+
   if (!email || !password) return showMsg('su-msg', 'Please fill in all required fields.', 'error');
   if (password.length < 8) return showMsg('su-msg', 'Password must be at least 8 characters.', 'error');
   if (password !== confirm) {
     document.getElementById('su-confirm').classList.add('error');
-    return showMsg('su-msg', 'Passwords do not match — please check and try again.', 'error');
+    return showMsg('su-msg', 'Passwords do not match.', 'error');
   }
   document.getElementById('su-confirm').classList.remove('error');
+  if (isTeam) {
+    if (!practiceName) return showMsg('su-msg', 'Please enter your practice or business name.', 'error');
+    if (!adminName)    return showMsg('su-msg', 'Please enter your name as the admin.', 'error');
+    if (adminPin.length !== 4) return showMsg('su-msg', 'Please enter all 4 digits of your PIN.', 'error');
+  }
+
   const btn = document.querySelector('#signup-screen .auth-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
+
   const { error } = await sb.auth.signUp({
     email, password,
-    options: { data: { role: 'birth_worker', display_name: name || email, tier } }
+    options: {
+      data: {
+        role: 'birth_worker',
+        display_name: practiceName || email,
+        tier,
+        practice_name: practiceName || null,
+        // For team tiers: store admin provider as first provider in metadata
+        // The actual providers table row is created after profile is ready (in onAuthStateChange)
+        admin_name: adminName || null,
+        admin_pin:  adminPin  || null,
+      }
+    }
   });
   btn.disabled = false; btn.textContent = 'Create Account';
   if (error) return showMsg('su-msg', error.message, 'error');
@@ -919,9 +1254,17 @@ async function signUp() {
 }
 
 async function signOut() {
+  currentProvider = null;
   await sb.auth.signOut();
 }
 
+// ── Switch provider (go back to PIN screen) ────────────────────────────
+function switchProvider() {
+  currentProvider = null;
+  showPinScreen();
+}
+
+// ── Auth state ─────────────────────────────────────────────────────────
 let _bootedUserId    = '__none__';
 let _realtimeChannel = null;
 
@@ -929,7 +1272,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
     _bootedUserId = '__signed_out__';
     if (_realtimeChannel) { sb.removeChannel(_realtimeChannel); _realtimeChannel = null; }
-    currentUser = null; currentProfile = null; allClients = [];
+    currentUser = null; currentProfile = null; allClients = []; currentProvider = null; allProviders = [];
     document.getElementById('si-email').value    = '';
     document.getElementById('si-password').value = '';
     showScreen('signin');
@@ -939,11 +1282,14 @@ sb.auth.onAuthStateChange(async (event, session) => {
   if (session.user.id === _bootedUserId) return;
   _bootedUserId = session.user.id;
   currentUser   = session.user;
+
   await loadProfile();
   if (!currentProfile) {
     await new Promise(r => setTimeout(r, 800));
     await loadProfile();
   }
+
+  // Patch tier from metadata if missing
   if (currentProfile && !currentProfile.tier) {
     const tier = session.user.user_metadata?.tier;
     if (tier) {
@@ -951,6 +1297,8 @@ sb.auth.onAuthStateChange(async (event, session) => {
       currentProfile.tier = tier;
     }
   }
+
+  // Role check
   const role = currentProfile?.role ?? session.user.user_metadata?.role;
   if (role && role !== 'birth_worker') {
     showMsg('si-msg', 'This portal is for Care Providers only.', 'error');
@@ -958,19 +1306,162 @@ sb.auth.onAuthStateChange(async (event, session) => {
     await sb.auth.signOut();
     return;
   }
-  showScreen('app');
-  document.getElementById('topbar-email').textContent = currentUser.email;
-  renderTierBadge();
-  renderUpgradeBanner();
-  await loadClients();
-  _realtimeChannel = sb.channel('portal-clients-' + currentUser.id)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'birth_worker_clients', filter: `birth_worker_id=eq.${currentUser.id}` }, () => loadClients())
-    .subscribe();
+
+  // For team tiers: load providers, create admin row if first time
+  if (isTeamTier()) {
+    await loadProviders();
+    if (allProviders.length === 0) {
+      // First login — seed admin provider from signup metadata
+      const meta = session.user.user_metadata;
+      if (meta?.admin_name && meta?.admin_pin) {
+        await sb.from('practice_providers').insert({
+          birth_worker_id: currentUser.id,
+          name: meta.admin_name,
+          pin:  meta.admin_pin,
+          is_admin: true,
+        });
+        // Give Supabase a moment to commit before re-fetching
+        await new Promise(r => setTimeout(r, 500));
+        await loadProviders();
+      }
+    }
+    // If no provider selected yet, show PIN screen
+    if (!currentProvider) {
+      showPinScreen();
+      return;
+    }
+  }
+
+  await bootApp();
 });
 
 async function loadProfile() {
   const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
   currentProfile = data;
+}
+
+async function loadProviders() {
+  const { data } = await sb
+    .from('practice_providers')
+    .select('*')
+    .eq('birth_worker_id', currentUser.id)
+    .order('is_admin', { ascending: false })
+    .order('name');
+  allProviders = data || [];
+}
+
+// ── PIN screen ─────────────────────────────────────────────────────────
+function showPinScreen() {
+  // Set practice name
+  const practiceName = currentProfile?.practice_name
+    || currentUser?.user_metadata?.practice_name
+    || currentUser?.email || 'Your Practice';
+  document.getElementById('pin-practice-name').textContent = practiceName;
+
+  // Populate dropdown
+  const sel = document.getElementById('pin-provider-select');
+  sel.innerHTML = '<option value="">— Choose your name —</option>' +
+    allProviders.map(p => `<option value="${p.id}">${escHtml(p.name)}${p.is_admin ? ' (Admin)' : ''}</option>`).join('');
+
+  if (!allProviders.length) {
+    sel.innerHTML = '<option value="">— No providers found. Please refresh the page. —</option>';
+  }
+
+  clearPinEntry();
+  document.getElementById('pin-entry-section').classList.remove('visible');
+  showScreen('pin');
+}
+
+function onProviderSelect() {
+  const sel = document.getElementById('pin-provider-select');
+  const section = document.getElementById('pin-entry-section');
+  clearPinEntry();
+  if (sel.value) {
+    section.classList.add('visible');
+    setTimeout(() => document.getElementById('pd0').focus(), 80);
+  } else {
+    section.classList.remove('visible');
+  }
+}
+
+function tryAutoSubmitPin() {
+  const pin = getPinEntryValue();
+  if (pin.length === 4) submitPin();
+}
+
+function submitPin() {
+  const sel = document.getElementById('pin-provider-select');
+  const providerId = sel.value;
+  const pin = getPinEntryValue();
+  const provider = allProviders.find(p => p.id === providerId);
+
+  if (!provider) return;
+  if (pin !== provider.pin) {
+    ['pd0','pd1','pd2','pd3'].forEach(id => document.getElementById(id).classList.add('error'));
+    document.getElementById('pin-msg').textContent = 'Incorrect PIN — please try again.';
+    setTimeout(() => {
+      ['pd0','pd1','pd2','pd3'].forEach(id => {
+        document.getElementById(id).classList.remove('error');
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('pin-msg').textContent = '';
+      document.getElementById('pd0').focus();
+    }, 1000);
+    return;
+  }
+
+  currentProvider = provider;
+  bootApp();
+}
+
+// ── Boot the app ───────────────────────────────────────────────────────
+async function bootApp() {
+  showScreen('app');
+  document.getElementById('topbar-email').textContent = currentUser.email;
+  renderTierBadge();
+  renderTopbarProvider();
+  renderUpgradeBanner();
+  renderPortalHeader();
+
+  // Ensure profile is loaded before clients so isTeamTier() resolves correctly
+  if (!currentProfile) await loadProfile();
+
+  await loadClients();
+
+  // Realtime — for solo: filter by birth_worker_id; for team: filter by birth_worker_id too (same account)
+  if (_realtimeChannel) { sb.removeChannel(_realtimeChannel); }
+  _realtimeChannel = sb.channel('portal-clients-' + currentUser.id)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'birth_worker_clients', filter: `birth_worker_id=eq.${currentUser.id}` }, () => loadClients())
+    .subscribe();
+}
+
+function renderPortalHeader() {
+  if (isTeamTier() && currentProvider) {
+    document.getElementById('portal-header-title').textContent = currentProvider.name + 's Clients';
+    document.getElementById('portal-header-sub').textContent   = 'Invite, support, and co-create birth plans alongside your clients.';
+    if (isAdmin()) {
+      document.getElementById('filter-unassigned').style.display = '';
+    } else {
+      document.getElementById('filter-unassigned').style.display = 'none';
+    }
+  } else {
+    document.getElementById('portal-header-title').textContent = 'Your Clients';
+    document.getElementById('portal-header-sub').textContent   = 'Invite, support, and co-create birth plans alongside your clients.';
+    document.getElementById('filter-unassigned').style.display = 'none';
+  }
+}
+
+function renderTopbarProvider() {
+  const chip = document.getElementById('topbar-provider-chip');
+  const managBtn = document.getElementById('btn-manage-providers');
+  if (isTeamTier() && currentProvider) {
+    chip.style.display = '';
+    document.getElementById('topbar-provider-name').textContent = currentProvider.name;
+    managBtn.style.display = isAdmin() ? '' : 'none';
+  } else {
+    chip.style.display = 'none';
+    managBtn.style.display = 'none';
+  }
 }
 
 function renderTierBadge() {
@@ -979,42 +1470,32 @@ function renderTierBadge() {
   const el     = document.getElementById('topbar-tier-badge');
   el.className = tier ? `tier-badge tier-${tier} tier-badge-clickable` : 'tier-badge tier-none tier-badge-clickable';
   el.textContent = tier ? labels[tier] : 'No plan';
-  el.title = 'View or change your plan';
+  el.title = isAdmin() || !isTeamTier() ? 'View or change your plan' : 'View your plan';
   el.onclick = () => openUpgradeModal();
 }
 
 // ── UPGRADE BANNER ─────────────────────────────────────────────────────
 function renderUpgradeBanner() {
-  const tier = currentProfile?.tier;
+  const tier   = currentProfile?.tier;
   const banner = document.getElementById('upgrade-banner');
+  try { if (localStorage.getItem('bluumi-upgrade-banner-dismissed') === '1') _upgradeBannerDismissed = true; } catch(e) {}
+  if (!tier || tier === 'collective' || _upgradeBannerDismissed) { banner.classList.remove('visible'); return; }
 
-  // Re-read from localStorage each render (persists across logins)
-  try {
-    const stored = localStorage.getItem('bluumi-upgrade-banner-dismissed');
-    if (stored === '1') _upgradeBannerDismissed = true;
-  } catch(e) {}
-
-  // Hide for Collective (top tier) or if dismissed
-  if (!tier || tier === 'collective' || _upgradeBannerDismissed) {
-    banner.classList.remove('visible');
-    return;
-  }
+  // Non-admins on a team tier cannot change the plan — hide the banner entirely
+  if (isTeamTier() && !isAdmin()) { banner.classList.remove('visible'); return; }
 
   const tierNames = { solo: 'Solo', practice: 'Practice' };
-  document.getElementById('upgrade-banner-tier-name').textContent = tierNames[tier] || tier;
+  document.getElementById('upgrade-banner-tier-name').textContent   = tierNames[tier] || tier;
   document.getElementById('upgrade-banner-tier-strong').textContent = tierNames[tier] || tier;
-
-  // Build upgrade buttons for tiers above current
   const currentIdx = TIER_ORDER.indexOf(tier);
   const options    = document.getElementById('upgrade-banner-options');
   options.innerHTML = TIER_ORDER.slice(currentIdx + 1).map(t => {
-    const isPrimary = TIER_ORDER.indexOf(t) === currentIdx + 1; // next tier up = primary
+    const isPrimary = TIER_ORDER.indexOf(t) === currentIdx + 1;
     return `<button class="upgrade-tier-btn${isPrimary ? ' primary' : ''}" onclick="openUpgradeModal()">
       Upgrade to ${t.charAt(0).toUpperCase() + t.slice(1)}
       <span class="tier-price">${TIER_PRICES[t]}</span>
     </button>`;
   }).join('');
-
   banner.classList.add('visible');
 }
 
@@ -1027,16 +1508,21 @@ function dismissUpgradeBanner() {
 // ── UPGRADE MODAL ──────────────────────────────────────────────────────
 function openUpgradeModal() {
   const currentTier = currentProfile?.tier;
-  renderUpgradeModalTiers(currentTier, false);
-  // Update modal title based on tier
+
+  // Non-admins on a team tier can view the plan but not change it
+  if (isTeamTier() && !isAdmin()) {
+    showToast('Only the account admin can change the plan.');
+    return;
+  }
+
+  renderUpgradeModalTiers(currentTier);
   document.querySelector('#upgrade-modal .modal-head h3').textContent =
     currentTier === 'collective' ? 'Your Plan' : 'Upgrade Your Plan';
   openModal('upgrade-modal');
 }
 
-function renderUpgradeModalTiers(currentTier, confirmingDowngrade) {
+function renderUpgradeModalTiers(currentTier) {
   const container = document.getElementById('upgrade-modal-tiers');
-
   container.innerHTML = TIER_ORDER.map(t => {
     const isCurrent    = t === currentTier;
     const isDowngrade  = TIER_ORDER.indexOf(t) < TIER_ORDER.indexOf(currentTier);
@@ -1047,24 +1533,14 @@ function renderUpgradeModalTiers(currentTier, confirmingDowngrade) {
     if (isDowngrade)   cardClass += ' downgrade';
 
     let ctaLabel, ctaClass, onclickAttr;
-    if (isCurrent) {
-      ctaLabel = 'Current plan';
-      ctaClass = 'umt-cta disabled';
-      onclickAttr = '';
-    } else if (isDowngrade) {
-      ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase() + t.slice(1)}`;
-      ctaClass = 'umt-cta downgrade-btn';
-      onclickAttr = `onclick="confirmDowngrade('${t}')"`;
-    } else {
-      ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase() + t.slice(1)}`;
-      ctaClass = 'umt-cta active';
-      onclickAttr = `onclick="selectTier('${t}')"`;
-    }
+    if (isCurrent) { ctaLabel = 'Current plan'; ctaClass = 'umt-cta disabled'; onclickAttr = ''; }
+    else if (isDowngrade) { ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`; ctaClass = 'umt-cta downgrade-btn'; onclickAttr = `onclick="confirmDowngrade('${t}')"` }
+    else { ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`; ctaClass = 'umt-cta active'; onclickAttr = `onclick="selectTier('${t}')"` }
 
     return `<div class="${cardClass}">
       <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '🌿 Best value' : 'Professional'}</div>
-      <div class="umt-name">${t.charAt(0).toUpperCase() + t.slice(1)}</div>
-      <div class="umt-price"><strong>${t === 'collective' ? '$99' : t === 'practice' ? '$59' : '$29'}</strong> /mo</div>
+      <div class="umt-name">${t.charAt(0).toUpperCase()+t.slice(1)}</div>
+      <div class="umt-price"><strong>${t==='collective'?'$99':t==='practice'?'$59':'$29'}</strong> /mo</div>
       <div class="umt-slots">${TIER_SLOTS[t]}</div>
       ${isCurrent ? '<div class="umt-current-badge">✓ Your current plan</div>' : ''}
       <button class="${ctaClass}" ${onclickAttr}>${ctaLabel}</button>
@@ -1077,60 +1553,147 @@ function confirmDowngrade(newTier) {
   const newLimit  = TIER_LIMITS[newTier];
   const used      = allClients.filter(r => r.status !== 'archived').length;
   const overLimit = newLimit !== Infinity && used > newLimit;
-
-  const container = document.getElementById('upgrade-modal-tiers');
-  container.innerHTML = `
+  document.getElementById('upgrade-modal-tiers').innerHTML = `
     <div class="downgrade-confirm-box">
       <div class="downgrade-confirm-icon">⚠️</div>
       <div class="downgrade-confirm-title">Downgrade to ${tierName}?</div>
       <div class="downgrade-confirm-body">
         The ${tierName} plan supports <strong>${TIER_SLOTS[newTier]}</strong>.
         ${overLimit
-          ? `You currently have <strong>${used} active clients</strong> — that's over the ${tierName} limit of <strong>${newLimit}</strong>. You'll need to archive some clients before new invites will work, but <strong>no data will be deleted.</strong>`
-          : `You currently have <strong>${used} active client${used !== 1 ? 's' : ''}</strong>, which is within the ${tierName} limit. Your clients and all their data will be fully preserved.`
+          ? `You currently have <strong>${used} active clients</strong> — over the ${tierName} limit of <strong>${newLimit}</strong>. You'll need to archive some clients before new invites will work, but <strong>no data will be deleted.</strong>`
+          : `You have <strong>${used} active client${used!==1?'s':''}</strong>, within the ${tierName} limit. All data is fully preserved.`
         }
       </div>
       <div class="downgrade-confirm-actions">
-        <button class="btn-secondary" onclick="renderUpgradeModalTiers('${currentProfile?.tier}', false)">← Go back</button>
+        <button class="btn-secondary" onclick="renderUpgradeModalTiers('${currentProfile?.tier}')">← Go back</button>
         <button class="btn-danger" onclick="selectTier('${newTier}')">Yes, downgrade to ${tierName}</button>
       </div>
-    </div>
-  `;
+    </div>`;
+}
+
+// ── Team setup step (shown when solo user upgrades to a team tier) ──────
+function showTeamSetupStep(newTier) {
+  const tierName = newTier.charAt(0).toUpperCase() + newTier.slice(1);
+  document.getElementById('upgrade-modal-tiers').innerHTML = `
+    <div class="downgrade-confirm-box" style="background:var(--olive-pale);border-color:var(--border);">
+      <div class="downgrade-confirm-icon">🔑</div>
+      <div class="downgrade-confirm-title" style="color:var(--olive);">Set Up Your Admin Account</div>
+      <div class="downgrade-confirm-body">
+        Upgrading to <strong>${tierName}</strong> turns this into a shared team account. Everyone signs in with the
+        same email &amp; password, then selects their name and enters their personal 4-digit PIN.<br><br>
+        Set up your admin profile now — you can add other care providers from the portal afterwards.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.3rem;">
+        <div>
+          <label class="auth-label" style="display:block;margin-bottom:0.35rem;">Your Name (Admin)</label>
+          <input type="text" id="team-setup-admin-name" class="auth-input" placeholder="e.g. Jane Smith" style="margin:0;">
+        </div>
+        <div>
+          <label class="auth-label" style="display:block;margin-bottom:0.35rem;">Your 4-Digit PIN</label>
+          <div class="pin-input-row" id="team-setup-pin-row">
+            <input class="pin-digit" id="tsp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'tsp1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="tsp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'tsp2')" onkeydown="pinBack(event,this,'tsp0')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="tsp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'tsp3')" onkeydown="pinBack(event,this,'tsp1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="tsp3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'tsp2')" oninput="pinOnlyNum(this)">
+          </div>
+        </div>
+        <div id="team-setup-msg" style="font-size:0.78rem;color:var(--rose);min-height:1rem;"></div>
+      </div>
+      <div class="downgrade-confirm-actions">
+        <button class="btn-secondary" onclick="renderUpgradeModalTiers('${currentProfile?.tier}')">← Go back</button>
+        <button class="btn-primary" onclick="confirmTeamUpgrade('${newTier}')">Upgrade to ${tierName} →</button>
+      </div>
+    </div>`;
+  setTimeout(() => document.getElementById('team-setup-admin-name')?.focus(), 80);
+}
+
+function getTeamSetupPin() {
+  return ['tsp0','tsp1','tsp2','tsp3'].map(id => document.getElementById(id)?.value || '').join('');
+}
+
+async function confirmTeamUpgrade(newTier) {
+  const adminName = document.getElementById('team-setup-admin-name').value.trim();
+  const adminPin  = getTeamSetupPin();
+  const msgEl     = document.getElementById('team-setup-msg');
+
+  if (!adminName) { msgEl.textContent = 'Please enter your name.'; return; }
+  if (adminPin.length !== 4) { msgEl.textContent = 'Please enter all 4 digits of your PIN.'; return; }
+  msgEl.textContent = '';
+
+  // Close the modal immediately — nothing below should block the UI
+  document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
+
+  // Save tier
+  const { error } = await sb.from('profiles').update({ tier: newTier }).eq('id', currentUser.id);
+  if (error) { showToast('Could not update plan. Please try again.'); return; }
+
+  // Insert the admin provider row (upsert-safe: delete any orphan rows first)
+  await sb.from('practice_providers')
+    .delete()
+    .eq('birth_worker_id', currentUser.id)
+    .eq('is_admin', true);
+
+  const { error: provErr } = await sb.from('practice_providers').insert({
+    birth_worker_id: currentUser.id,
+    name:     adminName,
+    pin:      adminPin,
+    is_admin: true,
+  });
+  if (provErr) { showToast('Plan saved, but could not create provider. Please contact support.'); return; }
+
+  // Update local state
+  currentProfile.tier = newTier;
+  _upgradeBannerDismissed = false;
+  try { localStorage.removeItem('bluumi-upgrade-banner-dismissed'); } catch(e) {}
+
+  // Reload providers so the new admin row is in memory
+  await loadProviders();
+
+  // Auto-login as the admin we just created — no need to go through PIN screen
+  currentProvider = allProviders.find(p => p.is_admin) || allProviders[0];
+
+  renderTierBadge(); renderTopbarProvider(); renderUpgradeBanner(); renderPortalHeader();
+  await loadClients(); // re-fetch so clients show as unassigned immediately
+
+  showToast(`✓ Upgraded to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}! You're now logged in as ${currentProvider?.name || 'Admin'}.`, 5000);
 }
 
 async function selectTier(newTier) {
-  const { error } = await sb
-    .from('profiles')
-    .update({ tier: newTier })
-    .eq('id', currentUser.id);
+  // Upgrading from solo to a team tier needs admin setup first
+  if (TEAM_TIERS.includes(newTier) && !isTeamTier()) {
+    showTeamSetupStep(newTier);
+    return;
+  }
 
+  const { error } = await sb.from('profiles').update({ tier: newTier }).eq('id', currentUser.id);
   if (error) { showToast('Could not update plan. Please try again.'); return; }
-
   const isDowngrade = TIER_ORDER.indexOf(newTier) < TIER_ORDER.indexOf(currentProfile.tier);
   currentProfile.tier = newTier;
-  // If they upgraded, clear any banner dismissal so they see it fresh if they downgrade again later
-  if (!isDowngrade) {
+
+  // Downgrading to solo — clear provider state immediately, no sign-out needed
+  if (newTier === 'solo') {
+    currentProvider = null;
+    allProviders    = [];
+  } else {
     _upgradeBannerDismissed = false;
     try { localStorage.removeItem('bluumi-upgrade-banner-dismissed'); } catch(e) {}
   }
-  renderTierBadge();
-  renderUpgradeBanner();
-  updateStats();
-  closeModal('upgrade-modal');
-  const tierName = newTier.charAt(0).toUpperCase() + newTier.slice(1);
-  showToast(isDowngrade
-    ? `Plan changed to ${tierName}. Your clients and data are all preserved.`
-    : `✓ Upgraded to ${tierName}! Your clients are all still here.`
-  );
+
+  document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
+  renderTierBadge(); renderTopbarProvider(); renderUpgradeBanner(); renderPortalHeader(); updateStats(); renderTable();
+  showToast(isDowngrade ? `✓ Plan changed to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}. Your clients and data are all preserved.` : `✓ Upgraded to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}!`, 5000);
 }
 
 function getSlotLimit() { return TIER_LIMITS[currentProfile?.tier] ?? 0; }
 
 // ── Clients ────────────────────────────────────────────────────────────
 async function loadClients() {
+  if (!currentUser?.id) return; // guard against null user during auth transitions
+  // For solo: all clients belong to this user
+  // For team: load ALL clients for the account (admin sees all; others filter by provider_id client-side)
   const { data } = await sb
     .from('birth_worker_clients')
-    .select(`id, invited_email, status, notes, created_at, invite_token,
+    .select(`id, invited_email, status, notes, created_at, invite_token, provider_id,
              client:client_id ( id, display_name )`)
     .eq('birth_worker_id', currentUser.id)
     .order('created_at', { ascending: false });
@@ -1139,8 +1702,7 @@ async function loadClients() {
   const activeIds = allClients.filter(r => r.client?.id).map(r => r.client.id);
   let planMap = {};
   if (activeIds.length) {
-    const { data: plans } = await sb
-      .from('birth_plans').select('user_id, plan_data').in('user_id', activeIds);
+    const { data: plans } = await sb.from('birth_plans').select('user_id, plan_data').in('user_id', activeIds);
     (plans || []).forEach(p => { planMap[p.user_id] = p.plan_data; });
   }
   allClients = allClients.map(r => ({ ...r, plan_data: r.client?.id ? planMap[r.client.id] : null }));
@@ -1148,33 +1710,58 @@ async function loadClients() {
   renderTable();
 }
 
+function getVisibleClients() {
+  if (!isTeamTier()) return allClients; // solo sees all
+  if (isAdmin() && activeFilter === 'unassigned') {
+    // admin viewing unassigned only
+    return allClients.filter(r => !r.provider_id);
+  }
+  if (isAdmin()) {
+    // admin general view: show only their own clients (they can use unassigned filter for the rest)
+    return allClients.filter(r => r.provider_id === currentProvider.id || !r.provider_id);
+  }
+  // non-admin team member: only their own
+  return allClients.filter(r => r.provider_id === currentProvider.id);
+}
+
 function updateStats() {
-  const active   = allClients.filter(r => r.status === 'active').length;
-  const pending  = allClients.filter(r => r.status === 'pending').length;
-  const archived = allClients.filter(r => r.status === 'archived').length;
-  const used     = active + pending;
-  const limit    = getSlotLimit();
-  const limitStr = limit === Infinity ? '∞' : limit;
+  // Slots = account-wide total (shared pool)
+  const accountActive  = allClients.filter(r => r.status === 'active').length;
+  const accountPending = allClients.filter(r => r.status === 'pending').length;
+
+  // Stats cards show MY clients (filtered)
+  const mine    = getVisibleClients();
+  const active  = mine.filter(r => r.status === 'active').length;
+  const pending = mine.filter(r => r.status === 'pending').length;
+  const archived = mine.filter(r => r.status === 'archived').length;
+
+  const usedTotal = accountActive + accountPending;
+  const limit     = getSlotLimit();
+  const limitStr  = limit === Infinity ? '∞' : limit;
+
   document.getElementById('stat-active').textContent   = active;
   document.getElementById('stat-pending').textContent  = pending;
   document.getElementById('stat-archived').textContent = archived;
-  document.getElementById('stat-slots').textContent    = used + ' / ' + limitStr;
-  document.getElementById('stat-slots-sub').textContent = limit === Infinity ? 'unlimited on your plan' : 'of ' + limit + ' on your plan';
-  const pct = limit === Infinity ? 0 : Math.min(100, Math.round((used / limit) * 100));
+  document.getElementById('stat-slots').textContent    = usedTotal + ' / ' + limitStr;
+  document.getElementById('stat-slots-sub').textContent = isTeamTier()
+    ? (limit === Infinity ? 'shared pool — unlimited' : 'shared pool of ' + limit)
+    : (limit === Infinity ? 'unlimited on your plan' : 'of ' + limit + ' on your plan');
+
+  const pct = limit === Infinity ? 0 : Math.min(100, Math.round((usedTotal / limit) * 100));
   document.getElementById('slot-bar').style.width = pct + '%';
 
   const nudge    = document.getElementById('upgrade-nudge');
   const showNudge = limit !== Infinity && pct >= 80;
   nudge.classList.toggle('visible', showNudge);
   if (showNudge) {
-    const atLimit = used >= limit;
+    const atLimit = usedTotal >= limit;
     nudge.querySelector('.upgrade-nudge-text strong').textContent = atLimit ? "You've reached your limit" : "Running low on slots";
     nudge.querySelector('.upgrade-nudge-text').childNodes[1].textContent = atLimit
       ? ' Upgrade to invite more clients — your current data is safe.'
       : ' Upgrade to add more clients without losing any data.';
   }
 
-  const atLimit = limit !== Infinity && used >= limit;
+  const atLimit = limit !== Infinity && usedTotal >= limit;
   const btn = document.getElementById('btn-invite-main');
   btn.disabled = atLimit;
   btn.title    = atLimit ? 'You have reached your plan\'s client limit.' : '';
@@ -1198,15 +1785,23 @@ function setFilter(f, el) {
 function renderTable() {
   const query = document.getElementById('search-input').value.toLowerCase();
   const tbody = document.getElementById('clients-tbody');
-  const rows  = allClients.filter(r => {
-    if (activeFilter !== 'all' && r.status !== activeFilter) return false;
-    if (query) {
+  let rows = getVisibleClients();
+
+  // Apply status filter
+  if (activeFilter === 'unassigned') {
+    // already filtered in getVisibleClients
+  } else if (activeFilter !== 'all') {
+    rows = rows.filter(r => r.status === activeFilter);
+  }
+
+  // Apply search
+  if (query) {
+    rows = rows.filter(r => {
       const name  = (r.client?.display_name || '').toLowerCase();
       const email = (r.invited_email || '').toLowerCase();
-      if (!name.includes(query) && !email.includes(query)) return false;
-    }
-    return true;
-  });
+      return name.includes(query) || email.includes(query);
+    });
+  }
 
   if (!rows.length) {
     tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
@@ -1233,6 +1828,12 @@ function renderTable() {
     const hasNotes  = notesArr.length > 0;
     const unsureItems = r.plan_data?.unsureItems || [];
     const hasUnsure   = unsureItems.length > 0;
+    const isUnassigned = isTeamTier() && !r.provider_id;
+
+    // For admin: show which provider owns this client
+    const providerName = isTeamTier() && isAdmin() && r.provider_id
+      ? allProviders.find(p => p.id === r.provider_id)?.name || ''
+      : '';
 
     return `<tr style="animation-delay:${i * 0.04}s">
       <td>
@@ -1241,13 +1842,15 @@ function renderTable() {
           <div>
             <div class="client-name">${escHtml(name)}</div>
             <div class="client-email">${escHtml(email)}</div>
+            ${isUnassigned ? '<span class="unassigned-tag">Unassigned</span>' : ''}
+            ${providerName && !isUnassigned ? `<span style="font-size:0.68rem;color:var(--muted);">${escHtml(providerName)}</span>` : ''}
           </div>
         </div>
       </td>
       <td>
         <div style="display:flex;flex-direction:column;gap:0.4rem;align-items:flex-start;">
           <span class="${statusCls}">${statusLbl}</span>
-          ${hasUnsure ? `<span class="unsure-badge" onclick="openUnsureModal('${r.id}')" title="Client flagged ${unsureItems.length} item${unsureItems.length > 1 ? 's' : ''} as unsure">
+          ${hasUnsure ? `<span class="unsure-badge" onclick="openUnsureModal('${r.id}')">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
             ${unsureItems.length} unsure
           </span>` : ''}
@@ -1257,6 +1860,13 @@ function renderTable() {
       <td style="font-size:0.78rem;color:var(--muted)">${added}</td>
       <td>
         <div class="table-actions">
+          ${isUnassigned && isAdmin()
+            ? `<select class="reassign-select" onchange="reassignClient('${r.id}', this.value)">
+                <option value="">Assign to…</option>
+                ${allProviders.map(p => `<option value="${p.id}">${escHtml(p.name)}</option>`).join('')}
+              </select>`
+            : ''
+          }
           ${canOpen
             ? `<button class="btn-icon view-plan" onclick="openViewPlanModal('${r.id}')">👁 View Plan</button>
                <button class="btn-icon edit-plan" onclick="openPlan('${r.client.id}')">✏ Edit Plan</button>`
@@ -1272,6 +1882,22 @@ function renderTable() {
       </td>
     </tr>`;
   }).join('');
+}
+
+// ── Reassign client (admin) ────────────────────────────────────────────
+async function reassignClient(rowId, providerId) {
+  if (!providerId) return;
+  const { error } = await sb
+    .from('birth_worker_clients')
+    .update({ provider_id: providerId })
+    .eq('id', rowId)
+    .eq('birth_worker_id', currentUser.id);
+  if (error) { showToast('Could not reassign client.'); return; }
+  const row = allClients.find(r => r.id === rowId);
+  if (row) row.provider_id = providerId;
+  renderTable(); updateStats();
+  const pName = allProviders.find(p => p.id === providerId)?.name || '';
+  showToast(`Client assigned to ${pName}.`);
 }
 
 // ── View Plan ──────────────────────────────────────────────────────────
@@ -1318,8 +1944,7 @@ function openViewPlanModal(rowId) {
         ${sec('Newborn Care', d.newborn, 'alt')}
         ${sec('Emergency & NICU', [...(d.emergencyDelivery||[]), ...(d.nicuSeparation||[]), ...(d.nicuFeeding||[]), ...(d.nicuCommunication||[])], 'rose')}
       </div>
-    </div>
-  `;
+    </div>`;
   openModal('view-plan-modal');
 }
 
@@ -1370,15 +1995,21 @@ function openInviteModal() {
 async function submitInvite() {
   const email = document.getElementById('invite-email').value.trim().toLowerCase();
   if (!email) return showToast('Please enter a client email.');
+  // Slot check uses account-wide total
   const used  = allClients.filter(r => r.status !== 'archived').length;
   const limit = getSlotLimit();
   if (limit !== Infinity && used >= limit) return showToast('You\'ve reached your plan\'s client limit.');
   const btn = document.getElementById('invite-submit-btn');
   btn.disabled = true; btn.textContent = 'Creating…';
-  const { data, error } = await sb
-    .from('birth_worker_clients')
-    .insert({ birth_worker_id: currentUser.id, invited_email: email, status: 'pending' })
-    .select().single();
+  const insertData = {
+    birth_worker_id: currentUser.id,
+    invited_email: email,
+    status: 'pending',
+  };
+  // Tag with current provider for team tiers
+  if (isTeamTier() && currentProvider) insertData.provider_id = currentProvider.id;
+
+  const { data, error } = await sb.from('birth_worker_clients').insert(insertData).select().single();
   btn.disabled = false; btn.textContent = 'Generate Link';
   if (error) {
     if (error.code === '23505') return showToast('This client has already been invited.');
@@ -1403,8 +2034,7 @@ function buildInviteUI(token, email) {
   document.getElementById('invite-form-section').style.display = 'none';
   document.getElementById('invite-submit-btn').style.display   = 'none';
   document.getElementById('invite-cancel-btn').textContent     = 'Done';
-  const qrImg = document.getElementById('qr-canvas');
-  qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=4A5746&data=' + encodeURIComponent(link);
+  document.getElementById('qr-canvas').src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=4A5746&data=' + encodeURIComponent(link);
 }
 function copyInviteLink() {
   navigator.clipboard.writeText(currentInviteLink).then(() => {
@@ -1414,7 +2044,7 @@ function copyInviteLink() {
   });
 }
 
-// ── Notes ──────────────────────────────────────────────────────────────
+// ── Notes (with delete) ────────────────────────────────────────────────
 function parseNotes(raw) {
   if (!raw) return [];
   if (typeof raw === 'object' && Array.isArray(raw)) return raw;
@@ -1427,18 +2057,51 @@ function formatNoteDate(ts) {
 }
 function openNotesModal(rowId) {
   activeNoteRow = rowId;
-  const row   = allClients.find(r => r.id === rowId);
+  renderNotesHistory();
+  document.getElementById('notes-textarea').value = '';
+  openModal('notes-modal');
+}
+function renderNotesHistory() {
+  const row   = allClients.find(r => r.id === activeNoteRow);
   const notes = parseNotes(row?.notes);
   const histWrap = document.getElementById('notes-history-wrap');
   if (notes.length === 0) {
     histWrap.innerHTML = '<div class="notes-empty">No notes yet. Add your first note below.</div>';
   } else {
+    // Show newest first; index in the notes array (oldest-first) is used for delete
+    const reversed = notes.slice().reverse();
     histWrap.innerHTML = '<div class="notes-history">' +
-      notes.slice().reverse().map(n => `<div class="note-entry"><div class="note-entry-meta">${formatNoteDate(n.ts)}</div><div class="note-entry-text">${escHtml(n.text)}</div></div>`).join('') +
+      reversed.map((n, revIdx) => {
+        const originalIdx = notes.length - 1 - revIdx;
+        return `<div class="note-entry">
+          <button class="note-delete-btn" onclick="promptDeleteNote(${originalIdx})" title="Delete this note">×</button>
+          <div class="note-entry-meta">${formatNoteDate(n.ts)}</div>
+          <div class="note-entry-text">${escHtml(n.text)}</div>
+        </div>`;
+      }).join('') +
     '</div>';
   }
-  document.getElementById('notes-textarea').value = '';
-  openModal('notes-modal');
+}
+function promptDeleteNote(noteIdx) {
+  pendingDeleteNoteIdx = noteIdx;
+  openModal('delete-note-modal');
+}
+async function confirmDeleteNote() {
+  const row      = allClients.find(r => r.id === activeNoteRow);
+  const existing = parseNotes(row?.notes);
+  const updated  = existing.filter((_, i) => i !== pendingDeleteNoteIdx);
+  const { error } = await sb
+    .from('birth_worker_clients')
+    .update({ notes: JSON.stringify(updated) })
+    .eq('id', activeNoteRow)
+    .eq('birth_worker_id', currentUser.id);
+  if (error) { showToast('Could not delete note.'); closeModal('delete-note-modal'); return; }
+  if (row) row.notes = JSON.stringify(updated);
+  pendingDeleteNoteIdx = null;
+  closeModal('delete-note-modal');
+  renderNotesHistory();
+  renderTable();
+  showToast('Note deleted.');
 }
 async function saveNote() {
   const text = document.getElementById('notes-textarea').value.trim();
@@ -1453,7 +2116,10 @@ async function saveNote() {
     .eq('birth_worker_id', currentUser.id);
   if (error) return showToast('Could not save note.');
   if (row) row.notes = JSON.stringify(updated);
-  closeModal('notes-modal'); renderTable(); showToast('Note saved.');
+  document.getElementById('notes-textarea').value = '';
+  renderNotesHistory();
+  renderTable();
+  showToast('Note saved.');
 }
 
 // ── Archive ────────────────────────────────────────────────────────────
@@ -1472,17 +2138,101 @@ async function confirmArchive() {
   await loadClients(); closeModal('archive-modal'); showToast('Client archived.');
 }
 
+// ── Manage Providers ───────────────────────────────────────────────────
+function openManageProvidersModal() {
+  renderProvidersList();
+  document.getElementById('new-provider-name').value = '';
+  document.getElementById('new-provider-pin').value  = '';
+  openModal('providers-modal');
+}
+function renderProvidersList() {
+  const list = document.getElementById('providers-list');
+  if (!allProviders.length) {
+    list.innerHTML = '<div style="font-size:0.82rem;color:var(--muted);font-style:italic;">No providers yet.</div>';
+    return;
+  }
+  list.innerHTML = allProviders.map(p => {
+    const initials = p.name.slice(0,2).toUpperCase();
+    const clientCount = allClients.filter(r => r.provider_id === p.id && r.status !== 'archived').length;
+    return `<div class="provider-row">
+      <div class="provider-row-avatar">${initials}</div>
+      <div class="provider-row-info">
+        <div class="provider-row-name">${escHtml(p.name)}</div>
+        <div class="provider-row-meta">${clientCount} active client${clientCount !== 1 ? 's' : ''}</div>
+      </div>
+      ${p.is_admin ? '<span class="provider-admin-badge">Admin</span>' : ''}
+      <span class="provider-row-pin" title="Click to edit PIN" onclick="editProviderPin('${p.id}', '${escAttr(p.name)}')">${p.pin}</span>
+      ${!p.is_admin ? `<button class="provider-remove-btn" onclick="removeProvider('${p.id}', '${escAttr(p.name)}', ${clientCount})" title="Remove provider">×</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function addProvider() {
+  const name = document.getElementById('new-provider-name').value.trim();
+  const pin  = document.getElementById('new-provider-pin').value.trim();
+  if (!name)          return showToast('Please enter a name.');
+  if (!/^\d{4}$/.test(pin)) return showToast('PIN must be exactly 4 digits.');
+  if (allProviders.some(p => p.pin === pin)) return showToast('That PIN is already in use. Choose a different one.');
+
+  const { error } = await sb.from('practice_providers').insert({
+    birth_worker_id: currentUser.id,
+    name, pin, is_admin: false,
+  });
+  if (error) { showToast('Could not add provider.'); return; }
+  await loadProviders();
+  renderProvidersList();
+  document.getElementById('new-provider-name').value = '';
+  document.getElementById('new-provider-pin').value  = '';
+  showToast(`${name} added to your team.`);
+}
+
+async function removeProvider(providerId, name, clientCount) {
+  if (clientCount > 0) {
+    if (!confirm(`${name} has ${clientCount} active client${clientCount>1?'s':''}. They will become unassigned and visible to you as admin. Remove anyway?`)) return;
+  }
+  const { error } = await sb.from('practice_providers').delete().eq('id', providerId).eq('birth_worker_id', currentUser.id);
+  if (error) { showToast('Could not remove provider.'); return; }
+  // Unassign their clients
+  await sb.from('birth_worker_clients').update({ provider_id: null }).eq('provider_id', providerId).eq('birth_worker_id', currentUser.id);
+  await loadProviders();
+  await loadClients();
+  renderProvidersList();
+  showToast(`${name} removed. Their clients are now unassigned.`);
+}
+
+async function editProviderPin(providerId, name) {
+  const newPin = prompt(`Enter a new 4-digit PIN for ${name}:`);
+  if (!newPin) return;
+  if (!/^\d{4}$/.test(newPin)) { showToast('PIN must be exactly 4 digits.'); return; }
+  if (allProviders.some(p => p.id !== providerId && p.pin === newPin)) { showToast('That PIN is already in use.'); return; }
+  const { error } = await sb.from('practice_providers').update({ pin: newPin }).eq('id', providerId).eq('birth_worker_id', currentUser.id);
+  if (error) { showToast('Could not update PIN.'); return; }
+  // If this is the current provider, update local state
+  if (currentProvider?.id === providerId) currentProvider.pin = newPin;
+  await loadProviders();
+  renderProvidersList();
+  showToast(`PIN updated for ${name}.`);
+}
+
 // ── Modal helpers ──────────────────────────────────────────────────────
-function openModal(id)  { document.getElementById(id).classList.add('active'); }
-function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function openModal(id) {
+  const el = document.getElementById(id);
+  el.style.display = 'flex';
+  requestAnimationFrame(() => el.classList.add('active'));
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('active');
+  el.style.display = 'none';
+}
 
 // ── Toast ──────────────────────────────────────────────────────────────
 let toastTimer;
-function showToast(msg) {
+function showToast(msg, duration = 3000) {
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+  toastTimer = setTimeout(() => el.classList.remove('show'), duration);
 }
 
 // ── Utility ────────────────────────────────────────────────────────────
@@ -1490,12 +2240,6 @@ function formatDue(dateStr) { return new Date(dateStr + 'T00:00').toLocaleDateSt
 function isSoon(dateStr) { const diff = (new Date(dateStr + 'T00:00') - Date.now()) / (1000 * 60 * 60 * 24); return diff >= 0 && diff <= 60; }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-window.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
-  });
-});
 </script>
 </body>
 </html>
