@@ -660,7 +660,7 @@ body::before {
 <body>
 
 <!-- ── SIGN IN SCREEN ── -->
-<div id="signin-screen" class="auth-screen">
+<div id="signin-screen" class="auth-screen" style="display:none;">
   <div class="auth-card">
     <div class="auth-card-head">
       <div class="auth-logo"><img src="../img/logo.png" alt="Blümi"></div>
@@ -1335,49 +1335,65 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // OPTIONAL: warm up session (DO NOT boot UI from this)
+  // On every page load, check if a session already exists.
+  // If it does, go straight to the portal — don't show the login screen at all.
   const { data: { session } } = await sb.auth.getSession();
-  console.log('INITIAL SESSION SNAPSHOT:', session);
+  console.log("DOMContentLoaded session check:", session?.user?.id ?? 'none');
 
-  // DO NOT call _enterPortal here anymore
-  // Just let onAuthStateChange handle everything
-});
-
-// ── onAuthStateChange only handles sign-in and sign-out events ─────────
-sb.auth.onAuthStateChange(async (event, session) => {
-  console.log("auth event:", event, session?.user?.id);
-
-  if (event === 'SIGNED_OUT') {
-    _bootedUserId = null;
-
-    if (_realtimeChannel) {
-      sb.removeChannel(_realtimeChannel);
-      _realtimeChannel = null;
+  if (session?.user) {
+    _bootedUserId = session.user.id;
+    try {
+      await _enterPortal(session.user, session);
+    } catch(err) {
+      console.error('_enterPortal failed:', err);
+      showScreen('signin');
     }
-
-    currentUser = null;
-    currentProfile = null;
-    allClients = [];
-    currentProvider = null;
-    allProviders = [];
-
-    localStorage.removeItem('bluumi_current_provider_id');
-
-    document.getElementById('si-email').value = '';
-    document.getElementById('si-password').value = '';
-
+  } else {
     showScreen('signin');
-    return;
   }
 
-  if (!session?.user) return;
+  // onAuthStateChange handles login and logout events after initial load
+  sb.auth.onAuthStateChange(async (event, session) => {
+    console.log("auth event:", event, session?.user?.id);
 
-  const userId = session.user.id;
+    if (event === 'SIGNED_OUT') {
+      _bootedUserId = null;
 
-  if (_bootedUserId === userId) return;
-  _bootedUserId = userId;
+      if (_realtimeChannel) {
+        sb.removeChannel(_realtimeChannel);
+        _realtimeChannel = null;
+      }
 
-  await _enterPortal(session.user, session);
+      currentUser = null;
+      currentProfile = null;
+      allClients = [];
+      currentProvider = null;
+      allProviders = [];
+
+      localStorage.removeItem('bluumi_current_provider_id');
+
+      document.getElementById('si-email').value = '';
+      document.getElementById('si-password').value = '';
+
+      showScreen('signin');
+      return;
+    }
+
+    if (!session?.user) return;
+
+    const userId = session.user.id;
+
+    // Skip if already booted for this user (e.g. INITIAL_SESSION firing after we already booted above)
+    if (_bootedUserId === userId) return;
+    _bootedUserId = userId;
+
+    try {
+      await _enterPortal(session.user, session);
+    } catch(err) {
+      console.error('_enterPortal failed:', err);
+      showScreen('signin');
+    }
+  });
 });
 
 async function loadProfile() {
