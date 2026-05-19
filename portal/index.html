@@ -1147,13 +1147,7 @@ function onTierChange() {
   document.getElementById('admin-setup-box').style.display = isTeam ? 'block' : 'none';
   document.getElementById('practice-name-hint').textContent = isTeam ? '(required)' : '(optional for Solo)';
 }
-// Init on load
-window.addEventListener('DOMContentLoaded', () => {
-  onTierChange();
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
-  });
-});
+// (onTierChange and modal overlays are initialised in the DOMContentLoaded auth boot below)
 
 function checkPwStrength(pw) {
   const el = document.getElementById('pw-strength-msg');
@@ -1255,33 +1249,24 @@ async function signUp() {
 
 async function signOut() {
   currentProvider = null;
+  localStorage.removeItem('bluumi_current_provider_id');
   await sb.auth.signOut();
 }
 
 // ── Switch provider (go back to PIN screen) ────────────────────────────
 function switchProvider() {
   currentProvider = null;
+  localStorage.removeItem('bluumi_current_provider_id');
   showPinScreen();
 }
 
 // ── Auth state ─────────────────────────────────────────────────────────
-let _bootedUserId    = '__none__';
+let _bootedUserId    = null;
 let _realtimeChannel = null;
 
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_OUT') {
-    _bootedUserId = '__signed_out__';
-    if (_realtimeChannel) { sb.removeChannel(_realtimeChannel); _realtimeChannel = null; }
-    currentUser = null; currentProfile = null; allClients = []; currentProvider = null; allProviders = [];
-    document.getElementById('si-email').value    = '';
-    document.getElementById('si-password').value = '';
-    showScreen('signin');
-    return;
-  }
-  if (!session?.user) return;
-  if (session.user.id === _bootedUserId) return;
-  _bootedUserId = session.user.id;
-  currentUser   = session.user;
+// Core boot function — called both on fresh login and on page refresh
+async function _enterPortal(user, session) {
+  currentUser = user;
 
   await loadProfile();
   if (!currentProfile) {
@@ -1291,7 +1276,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
 
   // Patch tier from metadata if missing
   if (currentProfile && !currentProfile.tier) {
-    const tier = session.user.user_metadata?.tier;
+    const tier = session.user_metadata?.tier;
     if (tier) {
       await sb.from('profiles').update({ tier }).eq('id', currentUser.id);
       currentProfile.tier = tier;
@@ -1299,10 +1284,9 @@ sb.auth.onAuthStateChange(async (event, session) => {
   }
 
   // Role check
-  const role = currentProfile?.role ?? session.user.user_metadata?.role;
+  const role = currentProfile?.role ?? session.user_metadata?.role;
   if (role && role !== 'birth_worker') {
     showMsg('si-msg', 'This portal is for Care Providers only.', 'error');
-    _bootedUserId = '__none__';
     await sb.auth.signOut();
     return;
   }
@@ -1311,8 +1295,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   if (isTeamTier()) {
     await loadProviders();
     if (allProviders.length === 0) {
-      // First login — seed admin provider from signup metadata
-      const meta = session.user.user_metadata;
+      const meta = session.user_metadata;
       if (meta?.admin_name && meta?.admin_pin) {
         await sb.from('practice_providers').insert({
           birth_worker_id: currentUser.id,
@@ -1320,12 +1303,19 @@ sb.auth.onAuthStateChange(async (event, session) => {
           pin:  meta.admin_pin,
           is_admin: true,
         });
-        // Give Supabase a moment to commit before re-fetching
         await new Promise(r => setTimeout(r, 500));
         await loadProviders();
       }
     }
-    // If no provider selected yet, show PIN screen
+
+    // Try to restore active provider from localStorage (survives refresh + tab close)
+    if (!currentProvider) {
+      const savedId = localStorage.getItem('bluumi_current_provider_id');
+      if (savedId) {
+        currentProvider = allProviders.find(p => p.id === savedId) || null;
+      }
+    }
+
     if (!currentProvider) {
       showPinScreen();
       return;
@@ -1333,6 +1323,61 @@ sb.auth.onAuthStateChange(async (event, session) => {
   }
 
   await bootApp();
+}
+
+// ── Eager session check on page load (handles refresh without flickering) ──
+window.addEventListener('DOMContentLoaded', async () => {
+  onTierChange();
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
+  });
+
+  // OPTIONAL: warm up session (DO NOT boot UI from this)
+  const { data: { session } } = await sb.auth.getSession();
+  console.log('INITIAL SESSION SNAPSHOT:', session);
+
+  // DO NOT call _enterPortal here anymore
+  // Just let onAuthStateChange handle everything
+});
+
+// ── onAuthStateChange only handles sign-in and sign-out events ─────────
+sb.auth.onAuthStateChange(async (event, session) => {
+  console.log("auth event:", event, session?.user?.id);
+
+  if (event === 'SIGNED_OUT') {
+    _bootedUserId = null;
+
+    if (_realtimeChannel) {
+      sb.removeChannel(_realtimeChannel);
+      _realtimeChannel = null;
+    }
+
+    currentUser = null;
+    currentProfile = null;
+    allClients = [];
+    currentProvider = null;
+    allProviders = [];
+
+    localStorage.removeItem('bluumi_current_provider_id');
+
+    document.getElementById('si-email').value = '';
+    document.getElementById('si-password').value = '';
+
+    showScreen('signin');
+    return;
+  }
+
+  if (!session?.user) return;
+
+  const userId = session.user.id;
+
+  if (_bootedUserId === userId) return;
+  _bootedUserId = userId;
+
+  await _enterPortal(session.user, session);
 });
 
 async function loadProfile() {
@@ -1411,6 +1456,7 @@ function submitPin() {
   }
 
   currentProvider = provider;
+  localStorage.setItem('bluumi_current_provider_id', provider.id);
   bootApp();
 }
 
@@ -1972,6 +2018,7 @@ function openUnsureModal(rowId) {
 async function openPlan(clientId) {
   sessionStorage.setItem('portalReturnUrl', location.href);
   const { data: { session } } = await sb.auth.getSession();
+  console.log('SESSION:', session);
   const at = session?.access_token  || '';
   const rt = session?.refresh_token || '';
   const url = '/birthplan/?portalMode=1&clientId=' + clientId
