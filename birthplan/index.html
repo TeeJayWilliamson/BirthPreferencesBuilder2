@@ -548,7 +548,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 </div>
 
 <!-- ── SIGN IN SCREEN ── -->
-<div id="signin-screen" class="auth-screen">
+<div id="signin-screen" class="auth-screen" style="display:none;">
   <div class="auth-card">
     <div class="auth-card-head">
       <div class="auth-logo"><img src="../img/logo.png" alt="Blümi"></div>
@@ -1139,39 +1139,7 @@ if (PORTAL_MODE === '1' && PORTAL_CLIENT) {
 
 let _bootedUserId = null;
 
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (PORTAL_MODE === '1') return;
-  if (event === 'SIGNED_OUT') {
-    currentUser    = null;
-    _bootedUserId  = null;
-    resetForm();
-    document.getElementById('si-email').value    = '';
-    document.getElementById('si-password').value = '';
-    showScreen('signin');
-    return;
-  }
-  if (!session?.user) return;
-  if (session.user.id === _bootedUserId) return;
-  _bootedUserId = session.user.id;
-  currentUser   = session.user;
-  if (INVITE_TOKEN && event === 'SIGNED_IN') {
-    const { data: inv } = await sb
-      .from('birth_worker_clients')
-      .select('birth_worker_id, invited_email')
-      .eq('invite_token', INVITE_TOKEN)
-      .maybeSingle();
-    if (inv && inv.birth_worker_id === session.user.id) {
-      _bootedUserId = null;
-      await sb.auth.signOut();
-      document.getElementById('si-email').value = inv.invited_email || '';
-      document.getElementById('signin-sub-text').textContent =
-        'Your Care Provider has shared this link with you. Sign in or create an account to get started.';
-      showScreen('signin');
-      return;
-    }
-  }
-  _enterApp(session.user, false);
-});
+
 
 async function _enterApp(user, isPortalMode) {
   resetForm();
@@ -1250,6 +1218,58 @@ window.addEventListener('DOMContentLoaded', async () => {
         btn.classList.remove('flip-left');
       }
     });
+  });
+
+  // Portal mode is handled separately above — skip session check here
+  if (PORTAL_MODE !== '1') {
+    // Check for existing session on every page load.
+    // If already logged in, go straight to the app — don't flash the login screen.
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user) {
+      _bootedUserId = session.user.id;
+      currentUser   = session.user;
+      await _enterApp(session.user, false);
+    } else {
+      showScreen('signin');
+    }
+  }
+
+  // Register onAuthStateChange after DOM is ready so showScreen() never
+  // tries to access elements that don't exist yet.
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (PORTAL_MODE === '1') return;
+    if (event === 'SIGNED_OUT') {
+      currentUser    = null;
+      _bootedUserId  = null;
+      resetForm();
+      document.getElementById('si-email').value    = '';
+      document.getElementById('si-password').value = '';
+      showScreen('signin');
+      return;
+    }
+    if (!session?.user) return;
+    // Skip if already booted for this user (e.g. INITIAL_SESSION after getSession above)
+    if (event === 'SIGNED_IN') _bootedUserId = null;
+    if (session.user.id === _bootedUserId) return;
+    _bootedUserId = session.user.id;
+    currentUser   = session.user;
+    if (INVITE_TOKEN && event === 'SIGNED_IN') {
+      const { data: inv } = await sb
+        .from('birth_worker_clients')
+        .select('birth_worker_id, invited_email')
+        .eq('invite_token', INVITE_TOKEN)
+        .maybeSingle();
+      if (inv && inv.birth_worker_id === session.user.id) {
+        _bootedUserId = null;
+        await sb.auth.signOut();
+        document.getElementById('si-email').value = inv.invited_email || '';
+        document.getElementById('signin-sub-text').textContent =
+          'Your Care Provider has shared this link with you. Sign in or create an account to get started.';
+        showScreen('signin');
+        return;
+      }
+    }
+    await _enterApp(session.user, false);
   });
 });
 
