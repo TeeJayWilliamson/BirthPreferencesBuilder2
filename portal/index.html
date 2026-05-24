@@ -217,7 +217,6 @@ body::before {
 .topbar-left { display: flex; align-items: center; gap: 0.5rem; }
 .topbar-right { display: flex; align-items: center; gap: 1rem; }
 .topbar-email { font-size: 0.75rem; color: var(--muted); }
-/* provider chip shown in topbar for practice/collective */
 .topbar-provider-chip {
   display: inline-flex; align-items: center; gap: 0.4rem;
   background: var(--olive-pale); border: 1px solid var(--border);
@@ -384,7 +383,6 @@ body::before {
 .client-avatar { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--olive-pale), var(--sage-light)); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: var(--olive); }
 .client-name { font-weight: 500; color: var(--text); }
 .client-email { font-size: 0.75rem; color: var(--muted); margin-top: 0.1rem; }
-/* unassigned tag shown on client rows for admin */
 .unassigned-tag {
   font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--amber); background: var(--amber-light); border: 1px solid var(--amber-border);
@@ -798,7 +796,6 @@ body::before {
     </div>
     <div class="topbar-right">
       <span class="topbar-email" id="topbar-email"></span>
-      <!-- Provider chip shown for practice/collective -->
       <span id="topbar-provider-chip" class="topbar-provider-chip" style="display:none;" onclick="switchProvider()" title="Switch care provider">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span id="topbar-provider-name"></span>
@@ -873,7 +870,6 @@ body::before {
       <div class="filter-chip" data-filter="active" onclick="setFilter('active', this)">Active</div>
       <div class="filter-chip" data-filter="pending" onclick="setFilter('pending', this)">Pending</div>
       <div class="filter-chip" data-filter="archived" onclick="setFilter('archived', this)">Archived</div>
-      <!-- Admin-only: unassigned filter -->
       <div class="filter-chip" data-filter="unassigned" id="filter-unassigned" onclick="setFilter('unassigned', this)" style="display:none;">Unassigned</div>
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
@@ -1049,10 +1045,7 @@ body::before {
       <p style="font-size:0.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.2rem;font-family:'Cormorant Garamond',serif;font-style:italic;">
         Everyone on your team shares this account login. Each person selects their name at sign-in and uses their own 4-digit PIN. You can see and reset all PINs here.
       </p>
-      <div class="providers-list" id="providers-list">
-        <!-- populated by renderProvidersList() -->
-      </div>
-
+      <div class="providers-list" id="providers-list"></div>
       <div class="add-provider-box">
         <div class="add-provider-box-title">Add a Care Provider</div>
         <div class="add-provider-row">
@@ -1067,7 +1060,6 @@ body::before {
           <button class="btn-add-provider" onclick="addProvider()">Add</button>
         </div>
       </div>
-
       <div class="providers-pool-note">
         🌿 All care providers share the same invite pool. Each provider only sees their own clients unless you (the admin) view unassigned clients.
       </div>
@@ -1120,8 +1112,8 @@ let currentInviteLink = '';
 let _upgradeBannerDismissed = false;
 
 // Practice/Collective state
-let currentProvider   = null;  // { id, name, pin, is_admin } — null for solo
-let allProviders      = [];    // all providers for this account
+let currentProvider   = null;
+let allProviders      = [];
 
 const TIER_LIMITS  = { solo: 10, practice: 50, collective: Infinity };
 const TIER_PRICES  = { solo: '$29/mo', practice: '$59/mo', collective: '$99/mo' };
@@ -1147,7 +1139,6 @@ function onTierChange() {
   document.getElementById('admin-setup-box').style.display = isTeam ? 'block' : 'none';
   document.getElementById('practice-name-hint').textContent = isTeam ? '(required)' : '(optional for Solo)';
 }
-// (onTierChange and modal overlays are initialised in the DOMContentLoaded auth boot below)
 
 function checkPwStrength(pw) {
   const el = document.getElementById('pw-strength-msg');
@@ -1185,7 +1176,10 @@ function getPinEntryValue() {
   return ['pd0','pd1','pd2','pd3'].map(id => document.getElementById(id).value).join('');
 }
 function clearPinEntry() {
-  ['pd0','pd1','pd2','pd3'].forEach(id => { document.getElementById(id).value = ''; document.getElementById(id).classList.remove('error'); });
+  ['pd0','pd1','pd2','pd3'].forEach(id => {
+    document.getElementById(id).value = '';
+    document.getElementById(id).classList.remove('error');
+  });
   document.getElementById('pin-msg').textContent = '';
 }
 
@@ -1201,6 +1195,7 @@ async function signIn() {
   if (error) showMsg('si-msg', error.message, 'error');
 }
 
+// ── FIX 1: signUp now explicitly upserts the profiles row with the correct tier ──
 async function signUp() {
   const practiceName = document.getElementById('su-practice-name').value.trim();
   const email        = document.getElementById('su-email').value.trim();
@@ -1227,23 +1222,48 @@ async function signUp() {
   const btn = document.querySelector('#signup-screen .auth-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
 
-  const { error } = await sb.auth.signUp({
+  // Store all signup data so _enterPortal can use it for first-time setup
+  // We tag it onto the user metadata so it's available in the session
+  const { data: signUpData, error } = await sb.auth.signUp({
     email, password,
     options: {
       data: {
-        role: 'birth_worker',
-        display_name: practiceName || email,
+        role:          'birth_worker',
+        display_name:  practiceName || email,
         tier,
         practice_name: practiceName || null,
-        // For team tiers: store admin provider as first provider in metadata
-        // The actual providers table row is created after profile is ready (in onAuthStateChange)
-        admin_name: adminName || null,
-        admin_pin:  adminPin  || null,
+        admin_name:    adminName    || null,
+        admin_pin:     adminPin     || null,
       }
     }
   });
+
   btn.disabled = false; btn.textContent = 'Create Account';
   if (error) return showMsg('su-msg', error.message, 'error');
+
+  // FIX: Immediately upsert the profile row with the chosen tier.
+  // Supabase triggers may create the row but won't know the tier; this ensures it's set.
+  if (signUpData?.user?.id) {
+    await sb.from('profiles').upsert({
+      id:            signUpData.user.id,
+      role:          'birth_worker',
+      tier,
+      display_name:  practiceName || email,
+      practice_name: practiceName || null,
+    }, { onConflict: 'id' });
+
+    // FIX: For team tiers, immediately insert the admin provider row while we have the data.
+    // This is idempotent — _enterPortal will skip creation if the row already exists.
+    if (isTeam && adminName && adminPin.length === 4) {
+      await sb.from('practice_providers').upsert({
+        birth_worker_id: signUpData.user.id,
+        name:     adminName,
+        pin:      adminPin,
+        is_admin: true,
+      }, { onConflict: 'birth_worker_id,is_admin' }).eq('is_admin', true);
+    }
+  }
+
   showMsg('su-msg', '✓ Account created! Signing you in…', 'success');
 }
 
@@ -1253,7 +1273,6 @@ async function signOut() {
   await sb.auth.signOut();
 }
 
-// ── Switch provider (go back to PIN screen) ────────────────────────────
 function switchProvider() {
   currentProvider = null;
   localStorage.removeItem('bluumi_current_provider_id');
@@ -1264,51 +1283,70 @@ function switchProvider() {
 let _bootedUserId    = null;
 let _realtimeChannel = null;
 
-// Core boot function — called both on fresh login and on page refresh
+// ── FIX 2: _enterPortal — robust profile + provider bootstrap ──────────
 async function _enterPortal(user, session) {
   currentUser = user;
 
+  // Load profile, retry once if not yet created by trigger
   await loadProfile();
   if (!currentProfile) {
-    await new Promise(r => setTimeout(r, 800));
+    await new Promise(r => setTimeout(r, 1000));
     await loadProfile();
   }
 
-  // Patch tier from metadata if missing
+  // FIX: If profile still missing, create it from session metadata
+  if (!currentProfile) {
+    const meta = session?.user?.user_metadata || user.user_metadata || {};
+    await sb.from('profiles').upsert({
+      id:            user.id,
+      role:          meta.role          || 'birth_worker',
+      tier:          meta.tier          || 'solo',
+      display_name:  meta.display_name  || user.email,
+      practice_name: meta.practice_name || null,
+    }, { onConflict: 'id' });
+    await loadProfile();
+  }
+
+  // FIX: If profile exists but tier is missing, patch it from metadata
   if (currentProfile && !currentProfile.tier) {
-    const tier = session.user_metadata?.tier;
-    if (tier) {
-      await sb.from('profiles').update({ tier }).eq('id', currentUser.id);
-      currentProfile.tier = tier;
-    }
+    const meta = session?.user?.user_metadata || user.user_metadata || {};
+    const tier = meta.tier || 'solo';
+    await sb.from('profiles').update({ tier }).eq('id', user.id);
+    currentProfile.tier = tier;
   }
 
   // Role check
-  const role = currentProfile?.role ?? session.user_metadata?.role;
+  const role = currentProfile?.role ?? (session?.user?.user_metadata?.role);
   if (role && role !== 'birth_worker') {
     showMsg('si-msg', 'This portal is for Care Providers only.', 'error');
     await sb.auth.signOut();
     return;
   }
 
-  // For team tiers: load providers, create admin row if first time
+  // FIX: Always load providers for team tiers (regardless of count)
   if (isTeamTier()) {
     await loadProviders();
-    if (allProviders.length === 0) {
-      const meta = session.user_metadata;
+
+    // FIX: Create admin provider row if it doesn't exist yet (idempotent upsert)
+    const hasAdmin = allProviders.some(p => p.is_admin);
+    if (!hasAdmin) {
+      const meta = session?.user?.user_metadata || user.user_metadata || {};
       if (meta?.admin_name && meta?.admin_pin) {
-        await sb.from('practice_providers').insert({
-          birth_worker_id: currentUser.id,
-          name: meta.admin_name,
-          pin:  meta.admin_pin,
+        // Use insert with conflict handling rather than upsert (no unique constraint to rely on)
+        const { error: provErr } = await sb.from('practice_providers').insert({
+          birth_worker_id: user.id,
+          name:     meta.admin_name,
+          pin:      meta.admin_pin,
           is_admin: true,
         });
-        await new Promise(r => setTimeout(r, 500));
-        await loadProviders();
+        if (!provErr) {
+          await new Promise(r => setTimeout(r, 400));
+          await loadProviders();
+        }
       }
     }
 
-    // Try to restore active provider from localStorage (survives refresh + tab close)
+    // Restore active provider from localStorage
     if (!currentProvider) {
       const savedId = localStorage.getItem('bluumi_current_provider_id');
       if (savedId) {
@@ -1325,7 +1363,7 @@ async function _enterPortal(user, session) {
   await bootApp();
 }
 
-// ── Eager session check on page load (handles refresh without flickering) ──
+// ── Eager session check on page load ──────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
   onTierChange();
 
@@ -1335,10 +1373,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // On every page load, check if a session already exists.
-  // If it does, go straight to the portal — don't show the login screen at all.
   const { data: { session } } = await sb.auth.getSession();
-  console.log("DOMContentLoaded session check:", session?.user?.id ?? 'none');
+  console.log('DOMContentLoaded session check:', session?.user?.id ?? 'none');
 
   if (session?.user) {
     _bootedUserId = session.user.id;
@@ -1352,38 +1388,23 @@ window.addEventListener('DOMContentLoaded', async () => {
     showScreen('signin');
   }
 
-  // onAuthStateChange handles login and logout events after initial load
   sb.auth.onAuthStateChange(async (event, session) => {
-    console.log("auth event:", event, session?.user?.id);
+    console.log('auth event:', event, session?.user?.id);
 
     if (event === 'SIGNED_OUT') {
       _bootedUserId = null;
-
-      if (_realtimeChannel) {
-        sb.removeChannel(_realtimeChannel);
-        _realtimeChannel = null;
-      }
-
-      currentUser = null;
-      currentProfile = null;
-      allClients = [];
-      currentProvider = null;
-      allProviders = [];
-
+      if (_realtimeChannel) { sb.removeChannel(_realtimeChannel); _realtimeChannel = null; }
+      currentUser = null; currentProfile = null; allClients = [];
+      currentProvider = null; allProviders = [];
       localStorage.removeItem('bluumi_current_provider_id');
-
       document.getElementById('si-email').value = '';
       document.getElementById('si-password').value = '';
-
       showScreen('signin');
       return;
     }
 
     if (!session?.user) return;
-
     const userId = session.user.id;
-
-    // Skip if already booted for this user (e.g. INITIAL_SESSION firing after we already booted above)
     if (_bootedUserId === userId) return;
     _bootedUserId = userId;
 
@@ -1413,13 +1434,11 @@ async function loadProviders() {
 
 // ── PIN screen ─────────────────────────────────────────────────────────
 function showPinScreen() {
-  // Set practice name
   const practiceName = currentProfile?.practice_name
     || currentUser?.user_metadata?.practice_name
     || currentUser?.email || 'Your Practice';
   document.getElementById('pin-practice-name').textContent = practiceName;
 
-  // Populate dropdown
   const sel = document.getElementById('pin-provider-select');
   sel.innerHTML = '<option value="">— Choose your name —</option>' +
     allProviders.map(p => `<option value="${p.id}">${escHtml(p.name)}${p.is_admin ? ' (Admin)' : ''}</option>`).join('');
@@ -1485,27 +1504,23 @@ async function bootApp() {
   renderUpgradeBanner();
   renderPortalHeader();
 
-  // Ensure profile is loaded before clients so isTeamTier() resolves correctly
   if (!currentProfile) await loadProfile();
-
   await loadClients();
 
-  // Realtime — for solo: filter by birth_worker_id; for team: filter by birth_worker_id too (same account)
   if (_realtimeChannel) { sb.removeChannel(_realtimeChannel); }
   _realtimeChannel = sb.channel('portal-clients-' + currentUser.id)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'birth_worker_clients', filter: `birth_worker_id=eq.${currentUser.id}` }, () => loadClients())
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'birth_worker_clients',
+      filter: `birth_worker_id=eq.${currentUser.id}`
+    }, () => loadClients())
     .subscribe();
 }
 
 function renderPortalHeader() {
   if (isTeamTier() && currentProvider) {
-    document.getElementById('portal-header-title').textContent = currentProvider.name + 's Clients';
+    document.getElementById('portal-header-title').textContent = currentProvider.name + "'s Clients";
     document.getElementById('portal-header-sub').textContent   = 'Invite, support, and co-create birth plans alongside your clients.';
-    if (isAdmin()) {
-      document.getElementById('filter-unassigned').style.display = '';
-    } else {
-      document.getElementById('filter-unassigned').style.display = 'none';
-    }
+    document.getElementById('filter-unassigned').style.display = isAdmin() ? '' : 'none';
   } else {
     document.getElementById('portal-header-title').textContent = 'Your Clients';
     document.getElementById('portal-header-sub').textContent   = 'Invite, support, and co-create birth plans alongside your clients.';
@@ -1542,8 +1557,6 @@ function renderUpgradeBanner() {
   const banner = document.getElementById('upgrade-banner');
   try { if (localStorage.getItem('bluumi-upgrade-banner-dismissed') === '1') _upgradeBannerDismissed = true; } catch(e) {}
   if (!tier || tier === 'collective' || _upgradeBannerDismissed) { banner.classList.remove('visible'); return; }
-
-  // Non-admins on a team tier cannot change the plan — hide the banner entirely
   if (isTeamTier() && !isAdmin()) { banner.classList.remove('visible'); return; }
 
   const tierNames = { solo: 'Solo', practice: 'Practice' };
@@ -1570,13 +1583,7 @@ function dismissUpgradeBanner() {
 // ── UPGRADE MODAL ──────────────────────────────────────────────────────
 function openUpgradeModal() {
   const currentTier = currentProfile?.tier;
-
-  // Non-admins on a team tier can view the plan but not change it
-  if (isTeamTier() && !isAdmin()) {
-    showToast('Only the account admin can change the plan.');
-    return;
-  }
-
+  if (isTeamTier() && !isAdmin()) { showToast('Only the account admin can change the plan.'); return; }
   renderUpgradeModalTiers(currentTier);
   document.querySelector('#upgrade-modal .modal-head h3').textContent =
     currentTier === 'collective' ? 'Your Plan' : 'Upgrade Your Plan';
@@ -1596,8 +1603,15 @@ function renderUpgradeModalTiers(currentTier) {
 
     let ctaLabel, ctaClass, onclickAttr;
     if (isCurrent) { ctaLabel = 'Current plan'; ctaClass = 'umt-cta disabled'; onclickAttr = ''; }
-    else if (isDowngrade) { ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`; ctaClass = 'umt-cta downgrade-btn'; onclickAttr = `onclick="confirmDowngrade('${t}')"` }
-    else { ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`; ctaClass = 'umt-cta active'; onclickAttr = `onclick="selectTier('${t}')"` }
+    else if (isDowngrade) {
+      ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`;
+      ctaClass = 'umt-cta downgrade-btn';
+      onclickAttr = `onclick="confirmDowngrade('${t}')"`;
+    } else {
+      ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`;
+      ctaClass = 'umt-cta active';
+      onclickAttr = `onclick="selectTier('${t}')"`;
+    }
 
     return `<div class="${cardClass}">
       <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '🌿 Best value' : 'Professional'}</div>
@@ -1633,7 +1647,7 @@ function confirmDowngrade(newTier) {
     </div>`;
 }
 
-// ── Team setup step (shown when solo user upgrades to a team tier) ──────
+// ── Team setup step (solo → team upgrade) ──────────────────────────────
 function showTeamSetupStep(newTier) {
   const tierName = newTier.charAt(0).toUpperCase() + newTier.slice(1);
   document.getElementById('upgrade-modal-tiers').innerHTML = `
@@ -1682,14 +1696,12 @@ async function confirmTeamUpgrade(newTier) {
   if (adminPin.length !== 4) { msgEl.textContent = 'Please enter all 4 digits of your PIN.'; return; }
   msgEl.textContent = '';
 
-  // Close the modal immediately — nothing below should block the UI
   document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
 
-  // Save tier
   const { error } = await sb.from('profiles').update({ tier: newTier }).eq('id', currentUser.id);
   if (error) { showToast('Could not update plan. Please try again.'); return; }
 
-  // Insert the admin provider row (upsert-safe: delete any orphan rows first)
+  // FIX: Delete any existing non-admin orphan admin rows, then insert cleanly
   await sb.from('practice_providers')
     .delete()
     .eq('birth_worker_id', currentUser.id)
@@ -1703,25 +1715,21 @@ async function confirmTeamUpgrade(newTier) {
   });
   if (provErr) { showToast('Plan saved, but could not create provider. Please contact support.'); return; }
 
-  // Update local state
   currentProfile.tier = newTier;
   _upgradeBannerDismissed = false;
   try { localStorage.removeItem('bluumi-upgrade-banner-dismissed'); } catch(e) {}
 
-  // Reload providers so the new admin row is in memory
   await loadProviders();
-
-  // Auto-login as the admin we just created — no need to go through PIN screen
   currentProvider = allProviders.find(p => p.is_admin) || allProviders[0];
+  if (currentProvider) localStorage.setItem('bluumi_current_provider_id', currentProvider.id);
 
   renderTierBadge(); renderTopbarProvider(); renderUpgradeBanner(); renderPortalHeader();
-  await loadClients(); // re-fetch so clients show as unassigned immediately
+  await loadClients();
 
   showToast(`✓ Upgraded to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}! You're now logged in as ${currentProvider?.name || 'Admin'}.`, 5000);
 }
 
 async function selectTier(newTier) {
-  // Upgrading from solo to a team tier needs admin setup first
   if (TEAM_TIERS.includes(newTier) && !isTeamTier()) {
     showTeamSetupStep(newTier);
     return;
@@ -1732,10 +1740,10 @@ async function selectTier(newTier) {
   const isDowngrade = TIER_ORDER.indexOf(newTier) < TIER_ORDER.indexOf(currentProfile.tier);
   currentProfile.tier = newTier;
 
-  // Downgrading to solo — clear provider state immediately, no sign-out needed
   if (newTier === 'solo') {
     currentProvider = null;
     allProviders    = [];
+    localStorage.removeItem('bluumi_current_provider_id');
   } else {
     _upgradeBannerDismissed = false;
     try { localStorage.removeItem('bluumi-upgrade-banner-dismissed'); } catch(e) {}
@@ -1743,16 +1751,16 @@ async function selectTier(newTier) {
 
   document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
   renderTierBadge(); renderTopbarProvider(); renderUpgradeBanner(); renderPortalHeader(); updateStats(); renderTable();
-  showToast(isDowngrade ? `✓ Plan changed to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}. Your clients and data are all preserved.` : `✓ Upgraded to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}!`, 5000);
+  showToast(isDowngrade
+    ? `✓ Plan changed to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}. Your clients and data are all preserved.`
+    : `✓ Upgraded to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}!`, 5000);
 }
 
 function getSlotLimit() { return TIER_LIMITS[currentProfile?.tier] ?? 0; }
 
 // ── Clients ────────────────────────────────────────────────────────────
 async function loadClients() {
-  if (!currentUser?.id) return; // guard against null user during auth transitions
-  // For solo: all clients belong to this user
-  // For team: load ALL clients for the account (admin sees all; others filter by provider_id client-side)
+  if (!currentUser?.id) return;
   const { data } = await sb
     .from('birth_worker_clients')
     .select(`id, invited_email, status, notes, created_at, invite_token, provider_id,
@@ -1773,28 +1781,23 @@ async function loadClients() {
 }
 
 function getVisibleClients() {
-  if (!isTeamTier()) return allClients; // solo sees all
+  if (!isTeamTier()) return allClients;
   if (isAdmin() && activeFilter === 'unassigned') {
-    // admin viewing unassigned only
     return allClients.filter(r => !r.provider_id);
   }
   if (isAdmin()) {
-    // admin general view: show only their own clients (they can use unassigned filter for the rest)
     return allClients.filter(r => r.provider_id === currentProvider.id || !r.provider_id);
   }
-  // non-admin team member: only their own
   return allClients.filter(r => r.provider_id === currentProvider.id);
 }
 
 function updateStats() {
-  // Slots = account-wide total (shared pool)
   const accountActive  = allClients.filter(r => r.status === 'active').length;
   const accountPending = allClients.filter(r => r.status === 'pending').length;
 
-  // Stats cards show MY clients (filtered)
-  const mine    = getVisibleClients();
-  const active  = mine.filter(r => r.status === 'active').length;
-  const pending = mine.filter(r => r.status === 'pending').length;
+  const mine     = getVisibleClients();
+  const active   = mine.filter(r => r.status === 'active').length;
+  const pending  = mine.filter(r => r.status === 'pending').length;
   const archived = mine.filter(r => r.status === 'archived').length;
 
   const usedTotal = accountActive + accountPending;
@@ -1826,7 +1829,7 @@ function updateStats() {
   const atLimit = limit !== Infinity && usedTotal >= limit;
   const btn = document.getElementById('btn-invite-main');
   btn.disabled = atLimit;
-  btn.title    = atLimit ? 'You have reached your plan\'s client limit.' : '';
+  btn.title    = atLimit ? "You've reached your plan's client limit." : '';
 }
 
 async function refreshClients() {
@@ -1849,14 +1852,10 @@ function renderTable() {
   const tbody = document.getElementById('clients-tbody');
   let rows = getVisibleClients();
 
-  // Apply status filter
-  if (activeFilter === 'unassigned') {
-    // already filtered in getVisibleClients
-  } else if (activeFilter !== 'all') {
+  if (activeFilter !== 'all' && activeFilter !== 'unassigned') {
     rows = rows.filter(r => r.status === activeFilter);
   }
 
-  // Apply search
   if (query) {
     rows = rows.filter(r => {
       const name  = (r.client?.display_name || '').toLowerCase();
@@ -1891,8 +1890,6 @@ function renderTable() {
     const unsureItems = r.plan_data?.unsureItems || [];
     const hasUnsure   = unsureItems.length > 0;
     const isUnassigned = isTeamTier() && !r.provider_id;
-
-    // For admin: show which provider owns this client
     const providerName = isTeamTier() && isAdmin() && r.provider_id
       ? allProviders.find(p => p.id === r.provider_id)?.name || ''
       : '';
@@ -1946,7 +1943,7 @@ function renderTable() {
   }).join('');
 }
 
-// ── Reassign client (admin) ────────────────────────────────────────────
+// ── Reassign client ────────────────────────────────────────────────────
 async function reassignClient(rowId, providerId) {
   if (!providerId) return;
   const { error } = await sb
@@ -2034,7 +2031,6 @@ function openUnsureModal(rowId) {
 async function openPlan(clientId) {
   sessionStorage.setItem('portalReturnUrl', location.href);
   const { data: { session } } = await sb.auth.getSession();
-  console.log('SESSION:', session);
   const at = session?.access_token  || '';
   const rt = session?.refresh_token || '';
   const url = '/birthplan/?portalMode=1&clientId=' + clientId
@@ -2058,10 +2054,9 @@ function openInviteModal() {
 async function submitInvite() {
   const email = document.getElementById('invite-email').value.trim().toLowerCase();
   if (!email) return showToast('Please enter a client email.');
-  // Slot check uses account-wide total
   const used  = allClients.filter(r => r.status !== 'archived').length;
   const limit = getSlotLimit();
-  if (limit !== Infinity && used >= limit) return showToast('You\'ve reached your plan\'s client limit.');
+  if (limit !== Infinity && used >= limit) return showToast("You've reached your plan's client limit.");
   const btn = document.getElementById('invite-submit-btn');
   btn.disabled = true; btn.textContent = 'Creating…';
   const insertData = {
@@ -2069,7 +2064,6 @@ async function submitInvite() {
     invited_email: email,
     status: 'pending',
   };
-  // Tag with current provider for team tiers
   if (isTeamTier() && currentProvider) insertData.provider_id = currentProvider.id;
 
   const { data, error } = await sb.from('birth_worker_clients').insert(insertData).select().single();
@@ -2107,7 +2101,7 @@ function copyInviteLink() {
   });
 }
 
-// ── Notes (with delete) ────────────────────────────────────────────────
+// ── Notes ──────────────────────────────────────────────────────────────
 function parseNotes(raw) {
   if (!raw) return [];
   if (typeof raw === 'object' && Array.isArray(raw)) return raw;
@@ -2131,7 +2125,6 @@ function renderNotesHistory() {
   if (notes.length === 0) {
     histWrap.innerHTML = '<div class="notes-empty">No notes yet. Add your first note below.</div>';
   } else {
-    // Show newest first; index in the notes array (oldest-first) is used for delete
     const reversed = notes.slice().reverse();
     histWrap.innerHTML = '<div class="notes-history">' +
       reversed.map((n, revIdx) => {
@@ -2255,7 +2248,6 @@ async function removeProvider(providerId, name, clientCount) {
   }
   const { error } = await sb.from('practice_providers').delete().eq('id', providerId).eq('birth_worker_id', currentUser.id);
   if (error) { showToast('Could not remove provider.'); return; }
-  // Unassign their clients
   await sb.from('birth_worker_clients').update({ provider_id: null }).eq('provider_id', providerId).eq('birth_worker_id', currentUser.id);
   await loadProviders();
   await loadClients();
@@ -2270,7 +2262,6 @@ async function editProviderPin(providerId, name) {
   if (allProviders.some(p => p.id !== providerId && p.pin === newPin)) { showToast('That PIN is already in use.'); return; }
   const { error } = await sb.from('practice_providers').update({ pin: newPin }).eq('id', providerId).eq('birth_worker_id', currentUser.id);
   if (error) { showToast('Could not update PIN.'); return; }
-  // If this is the current provider, update local state
   if (currentProvider?.id === providerId) currentProvider.pin = newPin;
   await loadProviders();
   renderProvidersList();
