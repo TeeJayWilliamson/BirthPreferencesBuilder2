@@ -466,6 +466,92 @@ body::before {
 .upgrade-assurance { margin-top: 1.2rem; padding: 0.9rem 1rem; background: var(--sage-light); border-radius: 10px; font-size: 0.78rem; color: var(--olive); line-height: 1.6; }
 .upgrade-assurance strong { font-weight: 600; }
 
+/* ── MOBILE MENU ── */
+.topbar-hamburger {
+  display: none;
+  background: none; border: 1.5px solid var(--border);
+  border-radius: 8px; width: 36px; height: 36px;
+  align-items: center; justify-content: center;
+  cursor: pointer; color: var(--olive); transition: all 0.18s;
+  flex-shrink: 0;
+}
+.topbar-hamburger:hover { background: var(--olive-pale); border-color: var(--olive-mid); }
+.topbar-hamburger svg { width: 16px; height: 16px; }
+
+.mobile-menu-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+  z-index: 200;
+}
+.mobile-menu-overlay.open { display: block; }
+
+.mobile-menu-drawer {
+  position: fixed; top: 0; right: -100%; width: 260px; height: 100%;
+  background: white; z-index: 201; box-shadow: -8px 0 32px rgba(74,87,70,0.15);
+  transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+.mobile-menu-drawer.open { right: 0; }
+
+.mobile-menu-head {
+  padding: 1.2rem 1.4rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.mobile-menu-head-logo img { height: 26px; width: auto; object-fit: contain; }
+.mobile-menu-close {
+  background: none; border: none; font-size: 1.3rem; cursor: pointer;
+  color: var(--muted); transition: color 0.15s; padding: 0.2rem; line-height: 1;
+}
+.mobile-menu-close:hover { color: var(--text); }
+
+.mobile-menu-identity {
+  padding: 1rem 1.4rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+.mobile-menu-provider {
+  display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem;
+}
+.mobile-menu-avatar {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--olive), var(--olive-mid));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700; color: white;
+}
+.mobile-menu-provider-name {
+  font-size: 0.88rem; font-weight: 600; color: var(--text);
+}
+.mobile-menu-email {
+  font-size: 0.72rem; color: var(--muted); margin-top: 0.1rem;
+}
+.mobile-menu-tier-row {
+  display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem;
+}
+
+.mobile-menu-actions {
+  padding: 0.8rem 1rem; flex: 1;
+}
+.mobile-menu-btn {
+  display: flex; align-items: center; gap: 0.75rem; width: 100%;
+  padding: 0.85rem 1rem; border-radius: 10px; border: none;
+  background: none; font-family: 'Jost', sans-serif;
+  font-size: 0.85rem; font-weight: 500; color: var(--text);
+  cursor: pointer; transition: all 0.15s; text-align: left;
+  margin-bottom: 0.2rem;
+}
+.mobile-menu-btn:hover { background: var(--olive-pale); color: var(--olive); }
+.mobile-menu-btn svg { width: 16px; height: 16px; color: var(--muted); flex-shrink: 0; }
+.mobile-menu-btn:hover svg { color: var(--olive); }
+.mobile-menu-btn.signout { color: var(--rose); margin-top: 0.5rem; }
+.mobile-menu-btn.signout:hover { background: var(--rose-light); color: var(--rose); }
+.mobile-menu-btn.signout svg { color: var(--rose); opacity: 0.7; }
+.mobile-menu-divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
+.mobile-menu-provider[style*="pointer"]:hover {
+  background: var(--olive-pale); border-radius: 8px; margin: -0.3rem; padding: 0.3rem;
+}
+
 /* ── UNSURE ITEMS MODAL ── */
 .unsure-modal-intro { font-size: 0.82rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.4rem; font-family: 'Cormorant Garamond', serif; font-style: italic; }
 .unsure-item-list { display: flex; flex-direction: column; gap: 0.7rem; }
@@ -554,9 +640,12 @@ body::before {
   font-family: 'Jost', sans-serif; font-size: 0.78rem; font-weight: 600;
   color: var(--olive); background: white; border: 1px solid var(--border);
   border-radius: 6px; padding: 0.2rem 0.6rem; letter-spacing: 0.15em;
-  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap; user-select: none;
+  min-width: 3rem; text-align: center;
 }
 .provider-row-pin:hover { border-color: var(--olive-mid); background: var(--olive-pale); }
+.provider-row-pin.revealed { border-color: var(--olive-mid); background: var(--olive-pale); letter-spacing: 0.25em; }
+.provider-row-pin.revealed:hover { background: white; }
 .provider-admin-badge {
   font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
   background: var(--olive); color: white; padding: 0.18rem 0.5rem; border-radius: 4px;
@@ -590,6 +679,10 @@ body::before {
 .add-provider-field input.pin-field {
   letter-spacing: 0.3em; font-size: 1rem; font-weight: 700; text-align: center;
   max-width: 90px;
+}
+@media (max-width: 700px) {
+  .add-provider-field input.pin-field { max-width: 100%; text-align: left; letter-spacing: 0.2em; }
+  .btn-add-provider { width: 100%; align-self: stretch; }
 }
 .btn-add-provider {
   background: var(--olive); color: white; border: none; border-radius: 8px;
@@ -627,10 +720,8 @@ body::before {
   .clients-table th:nth-child(3), .clients-table td:nth-child(3),
   .clients-table th:nth-child(4), .clients-table td:nth-child(4) { display: none; }
   .topbar { padding: 0 1rem; height: 54px; }
-  .topbar-email { display: none; }
-  .topbar-portal-tag { display: none; }
-  .topbar-signout { font-size: 0.72rem; padding: 0.3rem 0.7rem; }
-  #topbar-tier-badge { font-size: 0.55rem; padding: 0.2rem 0.5rem; }
+  .topbar-right { display: none !important; }
+  .topbar-hamburger { display: inline-flex; }
   #upgrade-banner { flex-direction: column; gap: 0.6rem; padding: 0.8rem 1rem; }
   .upgrade-banner-options { flex-wrap: wrap; gap: 0.4rem; }
   .upgrade-banner-msg { font-size: 0.75rem; }
@@ -652,6 +743,7 @@ body::before {
   .auth-card { margin: 1rem; }
   .pin-card { margin: 1rem; }
   .add-provider-row { flex-direction: column; }
+  .add-provider-field { width: 100%; flex: none; min-width: 0; }
 }
 </style>
 </head>
@@ -804,7 +896,54 @@ body::before {
       <span id="topbar-tier-badge"></span>
       <button class="topbar-signout" onclick="signOut()">Sign out</button>
     </div>
+    <!-- Mobile hamburger -->
+    <button class="topbar-hamburger" id="topbar-hamburger" onclick="openMobileMenu()" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
   </nav>
+
+  <!-- Mobile slide-out menu -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+  <div class="mobile-menu-drawer" id="mobile-menu-drawer">
+    <div class="mobile-menu-head">
+      <div class="mobile-menu-head-logo"><img src="../img/logo.png" alt="Blümi"></div>
+      <button class="mobile-menu-close" onclick="closeMobileMenu()">×</button>
+    </div>
+    <div class="mobile-menu-identity">
+      <div class="mobile-menu-provider" id="mobile-menu-provider-row" style="cursor:default;">
+        <div class="mobile-menu-avatar" id="mobile-menu-avatar">?</div>
+        <div style="flex:1;min-width:0;">
+          <div class="mobile-menu-provider-name" id="mobile-menu-provider-name">—</div>
+          <div class="mobile-menu-email" id="mobile-menu-email"></div>
+        </div>
+        <svg id="mobile-menu-switch-arrow" style="display:none;flex-shrink:0;color:var(--muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="16 10 21 10 21 15"/></svg>
+      </div>
+      <div class="mobile-menu-tier-row">
+        <span id="mobile-menu-tier-badge"></span>
+      </div>
+    </div>
+    <div class="mobile-menu-actions">
+      <button class="mobile-menu-btn" id="mobile-menu-switch-btn" style="display:none;" onclick="closeMobileMenu(); switchProvider();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Switch Provider
+      </button>
+      <button class="mobile-menu-btn" id="mobile-menu-manage-btn" style="display:none;" onclick="closeMobileMenu(); openManageProvidersModal();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        Manage Team
+      </button>
+      <button class="mobile-menu-btn" id="mobile-menu-upgrade-btn" onclick="closeMobileMenu(); openUpgradeModal();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        View / Change Plan
+      </button>
+      <div class="mobile-menu-divider"></div>
+      <button class="mobile-menu-btn signout" onclick="closeMobileMenu(); signOut();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </div>
 
   <!-- UPGRADE BANNER -->
   <div id="upgrade-banner">
@@ -1539,6 +1678,47 @@ function renderTopbarProvider() {
     chip.style.display = 'none';
     managBtn.style.display = 'none';
   }
+  syncMobileDrawerIdentity();
+}
+
+function syncMobileDrawerIdentity() {
+  // Determine display name: provider name for team tiers, email prefix for solo
+  let displayName, emailStr;
+  if (isTeamTier() && currentProvider) {
+    displayName = currentProvider.name;
+  } else {
+    // Solo: use email (or part before @)
+    displayName = currentUser ? currentUser.email : '—';
+  }
+  emailStr = currentUser ? currentUser.email : '';
+
+  const initials = displayName.replace(/@.*/, '').slice(0, 2).toUpperCase();
+
+  const mAvatar = document.getElementById('mobile-menu-avatar');
+  if (!mAvatar) return;
+  mAvatar.textContent = initials;
+  document.getElementById('mobile-menu-provider-name').textContent = displayName;
+  // Show email on second line only if name != email
+  const mEmail = document.getElementById('mobile-menu-email');
+  mEmail.textContent = (displayName !== emailStr) ? emailStr : '';
+
+  // Make identity row clickable (switch provider) for team tiers
+  const providerRow = document.getElementById('mobile-menu-provider-row');
+  const switchArrow = document.getElementById('mobile-menu-switch-arrow');
+  if (providerRow) {
+    const canSwitch = isTeamTier() && currentProvider;
+    providerRow.style.cursor = canSwitch ? 'pointer' : 'default';
+    providerRow.onclick = canSwitch ? () => { closeMobileMenu(); switchProvider(); } : null;
+    if (switchArrow) switchArrow.style.display = canSwitch ? '' : 'none';
+  }
+
+  // Switch provider button: only for team tiers with a provider
+  const switchBtn = document.getElementById('mobile-menu-switch-btn');
+  if (switchBtn) switchBtn.style.display = (isTeamTier() && currentProvider) ? '' : 'none';
+
+  // Manage team button: only for admins on team tiers
+  const manageBtn = document.getElementById('mobile-menu-manage-btn');
+  if (manageBtn) manageBtn.style.display = (isTeamTier() && isAdmin()) ? '' : 'none';
 }
 
 function renderTierBadge() {
@@ -1549,6 +1729,14 @@ function renderTierBadge() {
   el.textContent = tier ? labels[tier] : 'No plan';
   el.title = isAdmin() || !isTeamTier() ? 'View or change your plan' : 'View your plan';
   el.onclick = () => openUpgradeModal();
+  // Sync mobile drawer tier badge
+  const mBadge = document.getElementById('mobile-menu-tier-badge');
+  if (mBadge) {
+    mBadge.className = el.className;
+    mBadge.textContent = el.textContent;
+    mBadge.onclick = () => { closeMobileMenu(); openUpgradeModal(); };
+    mBadge.style.cursor = 'pointer';
+  }
 }
 
 // ── UPGRADE BANNER ─────────────────────────────────────────────────────
@@ -2196,6 +2384,13 @@ async function confirmArchive() {
 
 // ── Manage Providers ───────────────────────────────────────────────────
 function openManageProvidersModal() {
+  // Reset any revealed PINs from last session
+  Object.keys(_pinRevealTimers).forEach(id => {
+    clearTimeout(_pinRevealTimers[id]);
+    const el = document.getElementById('pin-display-' + id);
+    if (el) { el.classList.remove('revealed'); el.textContent = '••••'; el.title = 'Tap to reveal PIN'; }
+  });
+  _pinRevealTimers = {};
   renderProvidersList();
   document.getElementById('new-provider-name').value = '';
   document.getElementById('new-provider-pin').value  = '';
@@ -2217,7 +2412,7 @@ function renderProvidersList() {
         <div class="provider-row-meta">${clientCount} active client${clientCount !== 1 ? 's' : ''}</div>
       </div>
       ${p.is_admin ? '<span class="provider-admin-badge">Admin</span>' : ''}
-      <span class="provider-row-pin" title="Click to edit PIN" onclick="editProviderPin('${p.id}', '${escAttr(p.name)}')">${p.pin}</span>
+      <span class="provider-row-pin" id="pin-display-${p.id}" title="Tap to reveal PIN" onclick="togglePinReveal('${p.id}', '${escAttr(p.pin)}')">••••</span>
       ${!p.is_admin ? `<button class="provider-remove-btn" onclick="removeProvider('${p.id}', '${escAttr(p.name)}', ${clientCount})" title="Remove provider">×</button>` : ''}
     </div>`;
   }).join('');
@@ -2228,7 +2423,6 @@ async function addProvider() {
   const pin  = document.getElementById('new-provider-pin').value.trim();
   if (!name)          return showToast('Please enter a name.');
   if (!/^\d{4}$/.test(pin)) return showToast('PIN must be exactly 4 digits.');
-  if (allProviders.some(p => p.pin === pin)) return showToast('That PIN is already in use. Choose a different one.');
 
   const { error } = await sb.from('practice_providers').insert({
     birth_worker_id: currentUser.id,
@@ -2259,7 +2453,6 @@ async function editProviderPin(providerId, name) {
   const newPin = prompt(`Enter a new 4-digit PIN for ${name}:`);
   if (!newPin) return;
   if (!/^\d{4}$/.test(newPin)) { showToast('PIN must be exactly 4 digits.'); return; }
-  if (allProviders.some(p => p.id !== providerId && p.pin === newPin)) { showToast('That PIN is already in use.'); return; }
   const { error } = await sb.from('practice_providers').update({ pin: newPin }).eq('id', providerId).eq('birth_worker_id', currentUser.id);
   if (error) { showToast('Could not update PIN.'); return; }
   if (currentProvider?.id === providerId) currentProvider.pin = newPin;
@@ -2287,6 +2480,47 @@ function showToast(msg, duration = 3000) {
   el.textContent = msg; el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), duration);
+}
+
+// ── PIN reveal ────────────────────────────────────────────────────────
+let _pinRevealTimers = {};
+function togglePinReveal(providerId, pin) {
+  const el = document.getElementById('pin-display-' + providerId);
+  if (!el) return;
+  if (el.classList.contains('revealed')) {
+    // Second tap = edit
+    clearTimeout(_pinRevealTimers[providerId]);
+    el.classList.remove('revealed');
+    el.textContent = '••••';
+    el.title = 'Tap to reveal PIN';
+    const provider = allProviders.find(p => p.id === providerId);
+    if (provider) editProviderPin(providerId, provider.name);
+  } else {
+    // First tap = reveal, auto-hide after 4s
+    el.classList.add('revealed');
+    el.textContent = pin;
+    el.title = 'Tap again to edit PIN';
+    clearTimeout(_pinRevealTimers[providerId]);
+    _pinRevealTimers[providerId] = setTimeout(() => {
+      if (el.classList.contains('revealed')) {
+        el.classList.remove('revealed');
+        el.textContent = '••••';
+        el.title = 'Tap to reveal PIN';
+      }
+    }, 4000);
+  }
+}
+
+// ── Mobile Menu ───────────────────────────────────────────────────────
+function openMobileMenu() {
+  document.getElementById('mobile-menu-overlay').classList.add('open');
+  document.getElementById('mobile-menu-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu-overlay').classList.remove('open');
+  document.getElementById('mobile-menu-drawer').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // ── Utility ────────────────────────────────────────────────────────────
