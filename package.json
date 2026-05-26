@@ -1,0 +1,9 @@
+{
+  "name": "bluumi",
+  "version": "1.0.0",
+  "description": "Blümi — The Modern Birth Companion",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "stripe": "^14.0.0"
+  }
+}

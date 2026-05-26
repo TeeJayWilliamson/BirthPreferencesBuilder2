@@ -6,6 +6,7 @@
 <title>Pricing — Blümi</title>
 <link rel="icon" type="image/png" href="img/flavicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --sage:       #A8B99E;
@@ -19,12 +20,15 @@
   --navy-light: #4A6B4A;
   --text:       #2C2C2C;
   --muted:      #7A8591;
+  --rose:       #7B4040;
+  --rose-light: #F5EDED;
+  --border:     #D4DDCE;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
 
-/* ── NAV ─────────────────────────────────────── */
+/* ── NAV ── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
@@ -40,8 +44,8 @@ nav {
 .nav-cta {
   background: var(--olive) !important; color: white !important;
   padding: 0.55rem 1.4rem; border-radius: 50px;
-  font-weight: 600 !important; letter-spacing: 0.05em !important;
-  white-space: nowrap; box-shadow: 0 4px 14px rgba(74,87,70,0.25);
+  font-weight: 600 !important; white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(74,87,70,0.25);
   transition: background 0.2s, transform 0.2s !important;
 }
 .nav-cta:hover { background: var(--navy-light) !important; transform: translateY(-1px) !important; }
@@ -50,7 +54,7 @@ nav {
   .nav-links li:not(:last-child) { display: none; }
 }
 
-/* ── HERO ─────────────────────────────────────── */
+/* ── HERO ── */
 .page-hero {
   background: linear-gradient(160deg, #EEF3EE 0%, #FAF7F2 50%, #F5EDE8 100%);
   padding: 9rem 1.5rem 5rem;
@@ -61,12 +65,6 @@ nav {
   content: ''; position: absolute; top: -120px; right: -120px;
   width: min(500px,70vw); height: min(500px,70vw);
   background: radial-gradient(circle, rgba(168,185,158,0.12) 0%, transparent 70%);
-  pointer-events: none;
-}
-.page-hero::after {
-  content: ''; position: absolute; bottom: -60px; left: -80px;
-  width: min(400px,60vw); height: min(400px,60vw);
-  background: radial-gradient(circle, rgba(235,196,190,0.1) 0%, transparent 70%);
   pointer-events: none;
 }
 .hero-eyebrow {
@@ -88,22 +86,16 @@ nav {
   position: relative; z-index: 1;
 }
 
-/* ── PRICING SECTION ──────────────────────────── */
-.pricing-section {
-  max-width: 940px; margin: 0 auto;
-  padding: 5rem 1.5rem 0;
-}
+/* ── PRICING SECTION ── */
+.pricing-section { max-width: 940px; margin: 0 auto; padding: 5rem 1.5rem 0; }
 
-/* Two groups side by side: 1 personal card : 3 pro cards */
 .card-groups {
   display: grid;
   grid-template-columns: 1fr 3fr;
   gap: 1.2rem;
   align-items: start;
 }
-@media (max-width: 740px) {
-  .card-groups { grid-template-columns: 1fr; }
-}
+@media (max-width: 740px) { .card-groups { grid-template-columns: 1fr; } }
 
 .group-label {
   font-size: 0.58rem; font-weight: 700; letter-spacing: 0.24em;
@@ -118,13 +110,11 @@ nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-  align-items: stretch; /* all three pro cards same height */
+  align-items: stretch;
 }
-@media (max-width: 480px) {
-  .pro-group-inner { grid-template-columns: 1fr; }
-}
+@media (max-width: 480px) { .pro-group-inner { grid-template-columns: 1fr; } }
 
-/* ── PLAN CARD ────────────────────────────────── */
+/* ── PLAN CARD ── */
 .plan-card {
   background: white;
   border: 1.5px solid rgba(212,221,206,0.65);
@@ -134,15 +124,11 @@ nav {
   transition: box-shadow 0.2s;
 }
 .plan-card:hover { box-shadow: 0 8px 28px rgba(74,87,70,0.09); }
-.plan-card.featured {
-  border: 2px solid var(--olive);
-  box-shadow: 0 6px 24px rgba(74,87,70,0.12);
-}
+.plan-card.featured { border: 2px solid var(--olive); box-shadow: 0 6px 24px rgba(74,87,70,0.12); }
 
 .plan-eyebrow {
   font-size: 0.56rem; font-weight: 700; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--blush-deep);
-  margin-bottom: 0.25rem;
+  text-transform: uppercase; color: var(--blush-deep); margin-bottom: 0.25rem;
 }
 .plan-eyebrow.is-personal { color: var(--sage-dark); }
 
@@ -161,14 +147,10 @@ nav {
   vertical-align: middle; position: relative; top: -1px;
 }
 
-.plan-divider {
-  height: 1px; background: rgba(212,221,206,0.6);
-  margin: 0.9rem 0;
-}
+.plan-divider { height: 1px; background: rgba(212,221,206,0.6); margin: 0.9rem 0; }
 
 .plan-price-row {
-  display: flex; align-items: baseline; gap: 0.1rem;
-  margin-bottom: 0.2rem;
+  display: flex; align-items: baseline; gap: 0.1rem; margin-bottom: 0.2rem;
 }
 .plan-price-row .cur { font-size: 0.85rem; font-weight: 500; color: var(--olive); margin-top: 0.1rem; }
 .plan-price-row .amt {
@@ -177,18 +159,14 @@ nav {
 }
 .plan-price-row .per { font-size: 0.72rem; color: var(--muted); margin-left: 0.1rem; }
 
-.plan-detail {
-  font-size: 0.7rem; color: var(--muted); line-height: 1.5;
-  margin-bottom: 0.9rem; flex-grow: 1; /* pushes CTA to bottom */
-}
+.plan-detail { font-size: 0.7rem; color: var(--muted); line-height: 1.5; margin-bottom: 0.9rem; flex-grow: 1; }
 
 .slot-pill {
   display: inline-flex; align-items: center; gap: 0.35rem;
   background: var(--sage-light); border-radius: 6px;
   padding: 0.3rem 0.6rem; margin-bottom: 0.9rem;
   font-size: 0.7rem; color: var(--sage-dark); font-weight: 600; line-height: 1.3;
-  flex-grow: 1; 
-  align-self: flex-start; /* but don't stretch */
+  flex-grow: 1; align-self: flex-start;
 }
 .slot-pill .slot-sub { font-weight: 400; color: var(--muted); }
 
@@ -198,14 +176,15 @@ nav {
   font-family: 'Jost', sans-serif;
   font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;
   transition: all 0.2s; cursor: pointer; border: none;
-  margin-top: auto;
+  margin-top: auto; position: relative;
 }
+.plan-cta:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 .cta-primary { background: var(--olive); color: white; box-shadow: 0 4px 14px rgba(74,87,70,0.26); }
-.cta-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(74,87,70,0.32); }
+.cta-primary:hover:not(:disabled) { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(74,87,70,0.32); }
 .cta-outline { background: none; border: 1.5px solid rgba(168,185,158,0.65); color: var(--olive); }
-.cta-outline:hover { border-color: var(--olive); background: rgba(74,87,70,0.04); }
+.cta-outline:hover:not(:disabled) { border-color: var(--olive); background: rgba(74,87,70,0.04); }
 .cta-blush { background: none; border: 1.5px solid rgba(235,196,190,0.75); color: #7B4040; }
-.cta-blush:hover { border-color: var(--blush-deep); background: rgba(235,196,190,0.08); }
+.cta-blush:hover:not(:disabled) { border-color: var(--blush-deep); background: rgba(235,196,190,0.08); }
 
 .invite-nudge {
   margin-top: 0.85rem;
@@ -216,49 +195,29 @@ nav {
   border: 1px solid rgba(235,196,190,0.3);
 }
 
-/* ── FEATURES PANEL ───────────────────────────── */
-.features-wrap {
-  max-width: 940px; margin: 1.8rem auto 0;
-  padding: 0 1.5rem;
-}
+/* ── FEATURES PANEL ── */
+.features-wrap { max-width: 940px; margin: 1.8rem auto 0; padding: 0 1.5rem; }
 .features-inner {
-  background: white;
-  border: 1.5px solid rgba(212,221,206,0.65);
-  border-radius: 16px;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  background: white; border: 1.5px solid rgba(212,221,206,0.65);
+  border-radius: 16px; overflow: hidden;
+  display: grid; grid-template-columns: 1fr 1fr;
 }
-@media (max-width: 580px) {
-  .features-inner { grid-template-columns: 1fr; }
-}
+@media (max-width: 580px) { .features-inner { grid-template-columns: 1fr; } }
 
-.features-col {
-  padding: 1.7rem 2rem;
-}
-.features-col:first-child {
-  border-right: 1px solid rgba(212,221,206,0.55);
-}
-@media (max-width: 580px) {
-  .features-col:first-child {
-    border-right: none;
-    border-bottom: 1px solid rgba(212,221,206,0.55);
-  }
-}
+.features-col { padding: 1.7rem 2rem; }
+.features-col:first-child { border-right: 1px solid rgba(212,221,206,0.55); }
+@media (max-width: 580px) { .features-col:first-child { border-right: none; border-bottom: 1px solid rgba(212,221,206,0.55); } }
 
 .features-col-label {
   font-size: 0.57rem; font-weight: 700; letter-spacing: 0.22em;
   text-transform: uppercase; margin-bottom: 1.1rem;
   display: flex; align-items: center; gap: 0.45rem;
 }
-.features-col-label.personal  { color: var(--sage-dark); }
-.features-col-label.pro       { color: var(--blush-deep); }
+.features-col-label.personal { color: var(--sage-dark); }
+.features-col-label.pro      { color: var(--blush-deep); }
 
 .feature-list { display: flex; flex-direction: column; gap: 0.58rem; }
-.feature-item {
-  display: flex; align-items: flex-start; gap: 0.6rem;
-  font-size: 0.82rem; color: var(--text); line-height: 1.4;
-}
+.feature-item { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.82rem; color: var(--text); line-height: 1.4; }
 .fcheck {
   width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
   display: flex; align-items: center; justify-content: center;
@@ -274,34 +233,24 @@ nav {
   white-space: nowrap; vertical-align: middle;
 }
 
-/* ── CUSTOM NOTE ──────────────────────────────── */
+/* ── CUSTOM NOTE ── */
 .custom-note {
   max-width: 940px; margin: 0 auto;
   text-align: center; padding: 1.5rem 1.5rem 5rem;
   font-size: 0.78rem; color: var(--muted); font-weight: 300;
 }
-.custom-note a {
-  color: var(--olive); font-weight: 500; text-decoration: none;
-  border-bottom: 1px solid rgba(74,87,70,0.3); transition: border-color 0.2s;
-}
+.custom-note a { color: var(--olive); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(74,87,70,0.3); }
 .custom-note a:hover { border-color: var(--olive); }
 
-/* ── PORTAL ───────────────────────────────────── */
+/* ── PORTAL SECTION ── */
 .portal-section { max-width: 940px; margin: 0 auto; padding: 0 1.5rem 4.5rem; }
 .portal-inner {
   background: linear-gradient(135deg, #EEF3EE 0%, #FAF7F2 100%);
-  border: 1.5px solid rgba(168,185,158,0.3);
-  border-radius: 18px; padding: 2rem 2.6rem;
+  border: 1.5px solid rgba(168,185,158,0.3); border-radius: 18px; padding: 2rem 2.6rem;
 }
 @media (max-width: 600px) { .portal-inner { padding: 1.4rem; } }
-.portal-eyebrow {
-  font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em;
-  text-transform: uppercase; color: var(--sage-dark); margin-bottom: 0.35rem;
-}
-.portal-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.35rem; font-weight: 600; color: var(--olive); margin-bottom: 1.4rem;
-}
+.portal-eyebrow { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sage-dark); margin-bottom: 0.35rem; }
+.portal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 600; color: var(--olive); margin-bottom: 1.4rem; }
 .portal-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem 2.5rem; }
 @media (max-width: 620px) { .portal-steps { grid-template-columns: 1fr; gap: 1.1rem; } }
 .portal-step { display: flex; gap: 0.85rem; align-items: flex-start; }
@@ -314,26 +263,16 @@ nav {
   box-shadow: 0 2px 6px rgba(74,87,70,0.07);
 }
 .step-title { font-size: 0.84rem; font-weight: 600; color: var(--olive); margin-bottom: 0.2rem; }
-.step-desc { font-size: 0.77rem; color: var(--muted); line-height: 1.55; }
+.step-desc  { font-size: 0.77rem; color: var(--muted); line-height: 1.55; }
 
-/* ── FAQ ──────────────────────────────────────── */
+/* ── FAQ ── */
 .faq-section { max-width: 640px; margin: 0 auto; padding: 0 1.5rem 6rem; }
 .faq-head { text-align: center; margin-bottom: 2.5rem; }
-.faq-eyebrow {
-  font-size: 0.63rem; font-weight: 600; letter-spacing: 0.28em;
-  text-transform: uppercase; color: var(--sage-dark); margin-bottom: 0.5rem;
-}
-.faq-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 600; color: var(--olive);
-}
+.faq-eyebrow { font-size: 0.63rem; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--sage-dark); margin-bottom: 0.5rem; }
+.faq-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 600; color: var(--olive); }
 .faq-item { border-bottom: 1px solid rgba(212,221,206,0.6); padding: 1.1rem 0; }
 .faq-item:last-child { border-bottom: none; }
-.faq-q {
-  font-size: 0.91rem; font-weight: 500; color: var(--olive);
-  cursor: pointer; display: flex; justify-content: space-between;
-  align-items: center; gap: 1rem; user-select: none;
-}
+.faq-q { font-size: 0.91rem; font-weight: 500; color: var(--olive); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; user-select: none; }
 .faq-icon {
   width: 21px; height: 21px; border-radius: 50%;
   background: var(--sage-light); flex-shrink: 0;
@@ -342,30 +281,18 @@ nav {
   transition: transform 0.25s, background 0.2s;
 }
 .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--olive); color: white; }
-.faq-a {
-  font-size: 0.83rem; color: var(--muted); line-height: 1.75;
-  max-height: 0; overflow: hidden;
-  transition: max-height 0.35s ease, padding 0.25s ease;
-}
+.faq-a { font-size: 0.83rem; color: var(--muted); line-height: 1.75; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.25s ease; }
 .faq-item.open .faq-a { max-height: 300px; padding-top: 0.8rem; }
 
-/* ── TESTIMONIAL ──────────────────────────────── */
+/* ── TESTIMONIAL ── */
 .testimonial-section {
   background: linear-gradient(135deg, #EEF3EE 0%, #F5EDE8 100%);
-  border-top: 1px solid rgba(168,185,158,0.3);
-  border-bottom: 1px solid rgba(168,185,158,0.3);
+  border-top: 1px solid rgba(168,185,158,0.3); border-bottom: 1px solid rgba(168,185,158,0.3);
   padding: 5rem 1.5rem;
 }
 .testimonial-inner { max-width: 600px; margin: 0 auto; text-align: center; }
-.quote-mark {
-  font-family: 'Cormorant Garamond', serif; font-size: 5rem; line-height: 0.5;
-  color: var(--sage-dark); opacity: 0.28; margin-bottom: 1.5rem; display: block;
-}
-.testimonial-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
-  font-style: italic; color: var(--olive); line-height: 1.72; margin-bottom: 2rem;
-}
+.quote-mark { font-family: 'Cormorant Garamond', serif; font-size: 5rem; line-height: 0.5; color: var(--sage-dark); opacity: 0.28; margin-bottom: 1.5rem; display: block; }
+.testimonial-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.1rem, 2.5vw, 1.45rem); font-style: italic; color: var(--olive); line-height: 1.72; margin-bottom: 2rem; }
 .testimonial-author { display: flex; align-items: center; justify-content: center; gap: 1rem; }
 .author-avatar {
   width: 42px; height: 42px; border-radius: 50%;
@@ -377,27 +304,16 @@ nav {
 .author-name { font-size: 0.87rem; font-weight: 600; color: var(--olive); }
 .author-role { font-size: 0.74rem; color: var(--muted); margin-top: 0.1rem; }
 
-/* ── CTA ──────────────────────────────────────── */
-.cta-section {
-  background: var(--cream); text-align: center;
-  position: relative; overflow: hidden; padding: 6rem 1.5rem;
-}
+/* ── CTA ── */
+.cta-section { background: var(--cream); text-align: center; position: relative; overflow: hidden; padding: 6rem 1.5rem; }
 .cta-section::before {
   content: ''; position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(168,185,158,0.15) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 50%, rgba(235,196,190,0.12) 0%, transparent 60%);
+  background: radial-gradient(ellipse at 20% 50%, rgba(168,185,158,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 50%, rgba(235,196,190,0.12) 0%, transparent 60%);
   pointer-events: none;
 }
 .section-eyebrow { display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem; }
-.section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 600; color: var(--olive); line-height: 1.2;
-}
-.section-sub {
-  font-size: 0.92rem; color: var(--muted); font-weight: 300; line-height: 1.75;
-  max-width: 460px; margin: 1rem auto 2.5rem;
-}
+.section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 600; color: var(--olive); line-height: 1.2; }
+.section-sub { font-size: 0.92rem; color: var(--muted); font-weight: 300; line-height: 1.75; max-width: 460px; margin: 1rem auto 2.5rem; }
 .cta-btn-large {
   display: inline-block; background: var(--olive); color: white; text-decoration: none;
   padding: 1rem 2.8rem; border-radius: 50px;
@@ -406,7 +322,70 @@ nav {
 }
 .cta-btn-large:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(74,87,70,0.36); background: var(--navy-light); }
 
-/* ── FOOTER ───────────────────────────────────── */
+/* ── CHECKOUT MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+  z-index: 1000; justify-content: center; align-items: center; padding: 1rem;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: white; border-radius: 20px; width: 100%; max-width: 440px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.25); animation: modalIn 0.28s ease;
+  overflow: hidden;
+}
+@keyframes modalIn { from { transform: scale(0.95) translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-head {
+  padding: 1.4rem 1.8rem; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(135deg, #EEF3EE 0%, white 100%);
+}
+.modal-head h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--olive); }
+.modal-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); transition: color 0.15s; }
+.modal-close:hover { color: var(--text); }
+.modal-body { padding: 1.8rem; }
+
+.plan-summary {
+  background: #EEF3EE; border-radius: 12px; padding: 1rem 1.2rem;
+  margin-bottom: 1.4rem; display: flex; justify-content: space-between; align-items: center;
+}
+.plan-summary-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--olive); }
+.plan-summary-price { font-size: 0.82rem; color: var(--muted); }
+.plan-summary-amount { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--olive); text-align: right; }
+
+.checkout-field { margin-bottom: 1rem; }
+.checkout-label { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--olive); margin-bottom: 0.4rem; }
+.checkout-input {
+  width: 100%; padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 0.88rem;
+  color: var(--text); background: #F7F3EE; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.checkout-input:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
+.checkout-input.error { border-color: var(--rose); }
+
+.checkout-divider { display: flex; align-items: center; gap: 0.8rem; margin: 1rem 0; }
+.checkout-divider::before, .checkout-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.checkout-divider span { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+
+/* For providers who already have an account */
+.checkout-btn {
+  width: 100%; background: linear-gradient(135deg, var(--olive) 0%, var(--olive-mid) 100%);
+  color: white; border: none; border-radius: 50px; padding: 0.9rem 2rem;
+  font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; box-shadow: 0 6px 20px rgba(74,87,70,0.28); transition: all 0.2s; margin-top: 0.3rem;
+}
+.checkout-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(74,87,70,0.35); }
+.checkout-btn:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
+
+.checkout-note { margin-top: 0.9rem; font-size: 0.72rem; color: var(--muted); text-align: center; line-height: 1.55; }
+.checkout-note a { color: var(--olive); }
+.checkout-msg { margin-top: 0.8rem; padding: 0.7rem 0.9rem; border-radius: 8px; font-size: 0.8rem; display: none; }
+.checkout-msg.error   { background: var(--rose-light); color: var(--rose); border: 1px solid #E8C4C4; display: block; }
+.checkout-msg.success { background: var(--sage-light); color: #2D5A30; border: 1px solid #B5D4B8; display: block; }
+
+/* ── FOOTER ── */
 footer {
   background: var(--olive); color: rgba(255,255,255,0.82);
   text-align: center; padding: 2rem 1.5rem;
@@ -425,7 +404,7 @@ footer span { color: #EBC4BE; }
     <img src="../img/logo.png" alt="Blümi" style="height:36px;width:auto;object-fit:contain;">
   </a>
   <ul class="nav-links">
-    <li><a href="#">For Care Providers</a></li>
+    <li><a href="/portal/">For Care Providers</a></li>
     <li><a href="/pricing/" class="active">Pricing</a></li>
     <li><a href="/birthplan/">Log in</a></li>
     <li><a href="/birthplan/" class="nav-cta">Get Started</a></li>
@@ -451,11 +430,10 @@ footer span { color: #EBC4BE; }
         <div class="plan-name">Personal</div>
         <div class="plan-divider"></div>
         <div class="plan-price-row">
-          <span class="cur">$</span>
-          <span class="amt">59</span>
+          <span class="cur">$</span><span class="amt">59</span>
         </div>
-        <div class="plan-detail">Active for 12 months<br>from date of activation</div>
-        <a href="/birthplan/" class="plan-cta cta-primary">Start your birth plan</a>
+        <div class="plan-detail">Active for 12 months from date of activation</div>
+        <button class="plan-cta cta-primary" onclick="openCheckout('personal')">Start your birth plan</button>
         <div class="invite-nudge">💛 Working with a doula or midwife on Blümi? They can invite you at no cost.</div>
       </div>
     </div>
@@ -470,12 +448,10 @@ footer span { color: #EBC4BE; }
           <div class="plan-name">Solo</div>
           <div class="plan-divider"></div>
           <div class="plan-price-row">
-            <span class="cur">$</span>
-            <span class="amt">29</span>
-            <span class="per">/mo</span>
+            <span class="cur">$</span><span class="amt">29</span><span class="per">/mo</span>
           </div>
           <div class="slot-pill">✉️ 10 client slots <span class="slot-sub">/ active</span></div>
-          <a href="/portal/" class="plan-cta cta-outline">Get Started</a>
+          <button class="plan-cta cta-outline" onclick="openCheckout('solo')">Get Started</button>
         </div>
 
         <div class="plan-card featured">
@@ -483,12 +459,10 @@ footer span { color: #EBC4BE; }
           <div class="plan-name">Practice <span class="popular-badge">Popular</span></div>
           <div class="plan-divider"></div>
           <div class="plan-price-row">
-            <span class="cur">$</span>
-            <span class="amt">59</span>
-            <span class="per">/mo</span>
+            <span class="cur">$</span><span class="amt">59</span><span class="per">/mo</span>
           </div>
           <div class="slot-pill">✉️ 50 client slots <span class="slot-sub">/ active</span></div>
-          <a href="/portal/" class="plan-cta cta-primary">Get Started</a>
+          <button class="plan-cta cta-primary" onclick="openCheckout('practice')">Get Started</button>
         </div>
 
         <div class="plan-card">
@@ -496,24 +470,20 @@ footer span { color: #EBC4BE; }
           <div class="plan-name">Collective</div>
           <div class="plan-divider"></div>
           <div class="plan-price-row">
-            <span class="cur">$</span>
-            <span class="amt">149</span>
-            <span class="per">/mo</span>
+            <span class="cur">$</span><span class="amt">149</span><span class="per">/mo</span>
           </div>
           <div class="slot-pill">✉️ Unlimited <span class="slot-sub">/ no cap</span></div>
-          <a href="/portal/" class="plan-cta cta-blush">Get Started</a>
+          <button class="plan-cta cta-blush" onclick="openCheckout('collective')">Get Started</button>
         </div>
 
       </div>
     </div>
-
   </div>
 </div>
 
 <!-- FEATURES PANEL -->
 <div class="features-wrap">
   <div class="features-inner">
-
     <div class="features-col">
       <div class="features-col-label personal">🌸 Every plan includes</div>
       <div class="feature-list">
@@ -525,7 +495,6 @@ footer span { color: #EBC4BE; }
         <div class="feature-item"><div class="fcheck sage">✓</div>Edit history &amp; versioning</div>
       </div>
     </div>
-
     <div class="features-col">
       <div class="features-col-label pro">🌿 Professional plans also include</div>
       <div class="feature-list">
@@ -537,7 +506,6 @@ footer span { color: #EBC4BE; }
         <div class="feature-item"><div class="fcheck olive">✓</div>Multi-provider team access <span class="feature-tag">Collective</span></div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -585,7 +553,7 @@ footer span { color: #EBC4BE; }
   </div>
   <div class="faq-item" onclick="toggleFaq(this)">
     <div class="faq-q">What does my client get when I invite them? <div class="faq-icon">+</div></div>
-    <div class="faq-a">Full access. The guided birth plan builder, Intelligent story generator, PDF downloads, and the shared portal with you. It's the complete product, free for your clients for as long as they're active in your account.</div>
+    <div class="faq-a">Full access. The guided birth plan builder, intelligent story generator, PDF downloads, and the shared portal with you. It's the complete product, free for your clients for as long as they're active in your account.</div>
   </div>
   <div class="faq-item" onclick="toggleFaq(this)">
     <div class="faq-q">What happens to a client's plan when I archive them? <div class="faq-icon">+</div></div>
@@ -637,15 +605,194 @@ footer span { color: #EBC4BE; }
 <!-- FOOTER -->
 <footer>
   <div style="margin-bottom:0.5rem;">
-    <img src="img/" alt="Blümi" style="height:22px;width:auto;object-fit:contain;vertical-align:middle;margin-right:8px;opacity:0.75;filter:brightness(0) invert(1);">
-    &nbsp;·&nbsp;<a href="#">For Care Providers</a>
+    <img src="../img/logo.png" alt="Blümi" style="height:22px;width:auto;object-fit:contain;vertical-align:middle;margin-right:8px;opacity:0.75;filter:brightness(0) invert(1);">
+    &nbsp;·&nbsp;<a href="/portal/">For Care Providers</a>
     &nbsp;·&nbsp;<a href="/pricing/">Pricing</a>
     &nbsp;·&nbsp;<a href="/birthplan/">Log In</a>
   </div>
-  <div>© 2025 Blümi. Built with <span>♥</span> for birthing families.</div>
+  <div>© 2026 Blümi. Built with <span>♥</span> for birthing families.</div>
 </footer>
 
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">Get Started</h3>
+      <button class="modal-close" onclick="closeCheckout()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="plan-summary" id="plan-summary">
+        <div>
+          <div class="plan-summary-name" id="summary-name"></div>
+          <div class="plan-summary-price" id="summary-price"></div>
+        </div>
+        <div class="plan-summary-amount" id="summary-amount"></div>
+      </div>
+
+      <div class="checkout-field">
+        <label class="checkout-label">Email Address</label>
+        <input type="email" class="checkout-input" id="checkout-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="checkout-field">
+        <label class="checkout-label">Password</label>
+        <input type="password" class="checkout-input" id="checkout-password" placeholder="At least 8 characters" autocomplete="new-password">
+      </div>
+
+      <!-- Extra fields shown for Practice/Collective -->
+      <div id="team-fields" style="display:none;">
+        <div class="checkout-field">
+          <label class="checkout-label">Practice / Business Name</label>
+          <input type="text" class="checkout-input" id="checkout-practice-name" placeholder="e.g. Greater Toronto Doulas">
+        </div>
+        <div class="checkout-field">
+          <label class="checkout-label">Your Name (Admin)</label>
+          <input type="text" class="checkout-input" id="checkout-admin-name" placeholder="e.g. Jane Smith">
+        </div>
+        <div class="checkout-field">
+          <label class="checkout-label">Your 4-Digit PIN</label>
+          <input type="text" class="checkout-input" id="checkout-admin-pin" maxlength="4" inputmode="numeric" placeholder="e.g. 1234" style="letter-spacing:0.3em;font-size:1.1rem;font-weight:700;">
+        </div>
+      </div>
+
+      <button class="checkout-btn" id="checkout-btn" onclick="startCheckout()">
+        Continue to Payment →
+      </button>
+
+      <div class="checkout-msg" id="checkout-msg"></div>
+
+      <div class="checkout-note">
+        🔒 Secure checkout via Stripe. Your card details never touch our servers.<br>
+        Already have an account? <a href="/portal/">Sign in here.</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+// ── Supabase (same anon key as the rest of the site) ──────────────────
+const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { storageKey: 'bluumi-pricing-auth', persistSession: false }
+});
+
+const PLAN_META = {
+  personal:   { name: 'Personal',   price: '$59 one-time',  amount: '$59',  billing: 'one-time', isTeam: false, successPath: '/birthplan/' },
+  solo:       { name: 'Solo',       price: '$29 / month',   amount: '$29',  billing: '/mo',      isTeam: false, successPath: '/portal/' },
+  practice:   { name: 'Practice',   price: '$59 / month',   amount: '$59',  billing: '/mo',      isTeam: true,  successPath: '/portal/' },
+  collective: { name: 'Collective', price: '$149 / month',  amount: '$149', billing: '/mo',      isTeam: true,  successPath: '/portal/' },
+};
+
+let _activePlan = null;
+
+function openCheckout(plan) {
+  _activePlan = plan;
+  const meta = PLAN_META[plan];
+  document.getElementById('modal-title').textContent    = `Get Started — ${meta.name}`;
+  document.getElementById('summary-name').textContent   = meta.name;
+  document.getElementById('summary-price').textContent  = meta.price;
+  document.getElementById('summary-amount').textContent = meta.amount + (meta.billing !== 'one-time' ? meta.billing : '');
+  document.getElementById('team-fields').style.display  = meta.isTeam ? 'block' : 'none';
+  document.getElementById('checkout-msg').className     = 'checkout-msg';
+  document.getElementById('checkout-msg').textContent   = '';
+  document.getElementById('checkout-btn').disabled      = false;
+  document.getElementById('checkout-btn').textContent   = 'Continue to Payment →';
+  document.getElementById('checkout-modal').classList.add('active');
+  setTimeout(() => document.getElementById('checkout-email').focus(), 120);
+}
+
+function closeCheckout() {
+  document.getElementById('checkout-modal').classList.remove('active');
+}
+
+document.getElementById('checkout-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('checkout-modal')) closeCheckout();
+});
+
+function showCheckoutMsg(text, type) {
+  const el = document.getElementById('checkout-msg');
+  el.textContent = text;
+  el.className = 'checkout-msg ' + type;
+}
+
+async function startCheckout() {
+  const email    = document.getElementById('checkout-email').value.trim();
+  const password = document.getElementById('checkout-password').value;
+  const meta     = PLAN_META[_activePlan];
+
+  if (!email || !password) return showCheckoutMsg('Please enter your email and a password.', 'error');
+  if (password.length < 8)  return showCheckoutMsg('Password must be at least 8 characters.', 'error');
+
+  let practiceName = '', adminName = '', adminPin = '';
+  if (meta.isTeam) {
+    practiceName = document.getElementById('checkout-practice-name').value.trim();
+    adminName    = document.getElementById('checkout-admin-name').value.trim();
+    adminPin     = document.getElementById('checkout-admin-pin').value.trim();
+    if (!practiceName) return showCheckoutMsg('Please enter your practice name.', 'error');
+    if (!adminName)    return showCheckoutMsg('Please enter your name.', 'error');
+    if (!/^\d{4}$/.test(adminPin)) return showCheckoutMsg('PIN must be exactly 4 digits.', 'error');
+  }
+
+  const btn = document.getElementById('checkout-btn');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+
+  // 1. Create the Supabase account
+  const { data: signUpData, error: signUpError } = await sb.auth.signUp({
+    email, password,
+    options: {
+      data: {
+        role:          _activePlan === 'personal' ? 'client' : 'birth_worker',
+        tier:          _activePlan,
+        practice_name: practiceName || null,
+        admin_name:    adminName    || null,
+        admin_pin:     adminPin     || null,
+      }
+    }
+  });
+
+  if (signUpError) {
+    btn.disabled = false; btn.textContent = 'Continue to Payment →';
+    return showCheckoutMsg(signUpError.message, 'error');
+  }
+
+  const userId = signUpData.user?.id;
+  if (!userId) {
+    btn.disabled = false; btn.textContent = 'Continue to Payment →';
+    return showCheckoutMsg('Could not create account. Please try again.', 'error');
+  }
+
+  btn.textContent = 'Redirecting to payment…';
+
+  // 2. Create the Stripe Checkout session via our serverless function
+  try {
+    const resp = await fetch('/api/create-checkout-session', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan:        _activePlan,
+        userId,
+        email,
+        successPath: meta.successPath + '?paid=1',
+        cancelPath:  '/pricing/',
+      }),
+    });
+
+    const { url, error } = await resp.json();
+    if (error || !url) {
+      btn.disabled = false; btn.textContent = 'Continue to Payment →';
+      return showCheckoutMsg('Could not start checkout. Please try again.', 'error');
+    }
+
+    // 3. Send user to Stripe Checkout
+    window.location.href = url;
+
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Continue to Payment →';
+    showCheckoutMsg('Network error. Please try again.', 'error');
+  }
+}
+
 function toggleFaq(item) {
   const isOpen = item.classList.contains('open');
   document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
