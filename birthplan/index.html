@@ -567,9 +567,15 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <button class="auth-btn" onclick="signIn()">Sign In</button>
       <div class="auth-msg" id="si-msg"></div>
+      <!--
       <div class="auth-switch">
         Don't have an account? <a onclick="showScreen('signup')">Create one</a>
-      </div>
+      </div> 
+      -->
+
+      <div class="auth-switch">
+  Don't have an account? <a onclick="window.location.href='../pricing/'">Create one</a>
+</div>
       <div class="auth-divider"><span>or</span></div>
       <button class="guest-btn" onclick="guestMode()">Continue as Guest — no account needed</button>
     </div>
