@@ -326,13 +326,14 @@ nav {
 .modal-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
-  z-index: 1000; justify-content: center; align-items: center; padding: 1rem;
+  z-index: 1000; justify-content: center; align-items: flex-start; padding: 1rem;
+  overflow-y: auto;
 }
 .modal-overlay.active { display: flex; }
 .modal {
   background: white; border-radius: 20px; width: 100%; max-width: 440px;
   box-shadow: 0 40px 100px rgba(0,0,0,0.25); animation: modalIn 0.28s ease;
-  overflow: hidden;
+  overflow: hidden; margin: auto;
 }
 @keyframes modalIn { from { transform: scale(0.95) translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
 .modal-head {
@@ -350,7 +351,7 @@ nav {
   margin-bottom: 1.4rem; display: flex; justify-content: space-between; align-items: center;
 }
 .plan-summary-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--olive); }
-.plan-summary-price { font-size: 0.82rem; color: var(--muted); }
+.plan-summary-price { font-size: 0.76rem; color: var(--muted); margin-top: 0.15rem; }
 .plan-summary-amount { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--olive); text-align: right; }
 
 .checkout-field { margin-bottom: 1rem; }
@@ -363,13 +364,13 @@ nav {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .checkout-input:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
-.checkout-input.error { border-color: var(--rose); }
+.checkout-input.error { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(123,64,64,0.1); }
 
-.checkout-divider { display: flex; align-items: center; gap: 0.8rem; margin: 1rem 0; }
-.checkout-divider::before, .checkout-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.checkout-divider span { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+.pw-strength { margin-top: 0.35rem; font-size: 0.72rem; color: var(--muted); min-height: 1rem; }
+.pw-strength.weak  { color: var(--rose); }
+.pw-strength.ok    { color: #B08000; }
+.pw-strength.good  { color: var(--olive-mid); }
 
-/* For providers who already have an account */
 .checkout-btn {
   width: 100%; background: linear-gradient(135deg, var(--olive) 0%, var(--olive-mid) 100%);
   color: white; border: none; border-radius: 50px; padding: 0.9rem 2rem;
@@ -379,11 +380,39 @@ nav {
 .checkout-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(74,87,70,0.35); }
 .checkout-btn:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
 
+.checkout-divider { display: flex; align-items: center; gap: 0.8rem; margin: 1rem 0 0.8rem; }
+.checkout-divider::before, .checkout-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.checkout-divider span { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+
+.checkout-signin-link {
+  display: block; width: 100%; text-align: center; text-decoration: none;
+  padding: 0.75rem; border-radius: 50px;
+  border: 1.5px solid var(--border); color: var(--muted);
+  font-family: 'Jost', sans-serif; font-size: 0.84rem; font-weight: 500;
+  transition: all 0.2s; cursor: pointer; background: none;
+}
+.checkout-signin-link:hover { border-color: var(--olive-mid); color: var(--olive); background: #EEF3EE; }
+
 .checkout-note { margin-top: 0.9rem; font-size: 0.72rem; color: var(--muted); text-align: center; line-height: 1.55; }
 .checkout-note a { color: var(--olive); }
-.checkout-msg { margin-top: 0.8rem; padding: 0.7rem 0.9rem; border-radius: 8px; font-size: 0.8rem; display: none; }
+.checkout-msg {
+  margin-top: 0.8rem; padding: 0.7rem 0.9rem; border-radius: 8px;
+  font-size: 0.8rem; line-height: 1.5; display: none;
+}
 .checkout-msg.error   { background: var(--rose-light); color: var(--rose); border: 1px solid #E8C4C4; display: block; }
 .checkout-msg.success { background: var(--sage-light); color: #2D5A30; border: 1px solid #B5D4B8; display: block; }
+
+/* ── PIN INPUT ── */
+.pin-input-row { display: flex; gap: 0.5rem; }
+.pin-digit {
+  width: 52px; height: 52px; text-align: center;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 1.4rem; font-weight: 600;
+  color: var(--olive); background: white; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.pin-digit:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); }
+.pin-digit.error { border-color: var(--rose); }
 
 /* ── FOOTER ── */
 footer {
@@ -621,7 +650,7 @@ footer span { color: #EBC4BE; }
       <button class="modal-close" onclick="closeCheckout()">×</button>
     </div>
     <div class="modal-body">
-      <div class="plan-summary" id="plan-summary">
+      <div class="plan-summary">
         <div>
           <div class="plan-summary-name" id="summary-name"></div>
           <div class="plan-summary-price" id="summary-price"></div>
@@ -635,10 +664,15 @@ footer span { color: #EBC4BE; }
       </div>
       <div class="checkout-field">
         <label class="checkout-label">Password</label>
-        <input type="password" class="checkout-input" id="checkout-password" placeholder="At least 8 characters" autocomplete="new-password">
+        <input type="password" class="checkout-input" id="checkout-password" placeholder="At least 8 characters" autocomplete="new-password" oninput="checkPwStrength(this.value)">
+        <div class="pw-strength" id="pw-strength-msg"></div>
+      </div>
+      <div class="checkout-field">
+        <label class="checkout-label">Confirm Password</label>
+        <input type="password" class="checkout-input" id="checkout-confirm" placeholder="Re-enter your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')startCheckout()">
       </div>
 
-      <!-- Extra fields shown for Practice/Collective -->
+      <!-- Extra fields for Practice / Collective team tiers -->
       <div id="team-fields" style="display:none;">
         <div class="checkout-field">
           <label class="checkout-label">Practice / Business Name</label>
@@ -650,7 +684,12 @@ footer span { color: #EBC4BE; }
         </div>
         <div class="checkout-field">
           <label class="checkout-label">Your 4-Digit PIN</label>
-          <input type="text" class="checkout-input" id="checkout-admin-pin" maxlength="4" inputmode="numeric" placeholder="e.g. 1234" style="letter-spacing:0.3em;font-size:1.1rem;font-weight:700;">
+          <div class="pin-input-row">
+            <input class="pin-digit" id="cp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="cp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp2')" onkeydown="pinBack(event,this,'cp0')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="cp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp3')" onkeydown="pinBack(event,this,'cp1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="cp3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'cp2')" oninput="pinOnlyNum(this)">
+          </div>
         </div>
       </div>
 
@@ -660,16 +699,18 @@ footer span { color: #EBC4BE; }
 
       <div class="checkout-msg" id="checkout-msg"></div>
 
+      <!-- Divider + already have account link -->
+      <div class="checkout-divider"><span>already have an account?</span></div>
+      <a class="checkout-signin-link" id="checkout-signin-link" href="/portal/">Sign in to the Portal →</a>
+
       <div class="checkout-note">
-        🔒 Secure checkout via Stripe. Your card details never touch our servers.<br>
-        Already have an account? <a href="/portal/">Sign in here.</a>
+        🔒 Secure checkout via Stripe. Your card details never touch our servers.
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// ── Supabase (same anon key as the rest of the site) ──────────────────
 const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
 const { createClient } = supabase;
@@ -678,10 +719,10 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
 });
 
 const PLAN_META = {
-  personal:   { name: 'Personal',   price: '$59 one-time',  amount: '$59',  billing: 'one-time', isTeam: false, successPath: '/birthplan/' },
-  solo:       { name: 'Solo',       price: '$29 / month',   amount: '$29',  billing: '/mo',      isTeam: false, successPath: '/portal/' },
-  practice:   { name: 'Practice',   price: '$59 / month',   amount: '$59',  billing: '/mo',      isTeam: true,  successPath: '/portal/' },
-  collective: { name: 'Collective', price: '$149 / month',  amount: '$149', billing: '/mo',      isTeam: true,  successPath: '/portal/' },
+  personal:   { name: 'Personal',   price: '$59 one-time',  amount: '$59',  billing: 'one-time', isTeam: false, signinHref: '/birthplan/' },
+  solo:       { name: 'Solo',       price: '$29 / month',   amount: '$29',  billing: '/mo',      isTeam: false, signinHref: '/portal/' },
+  practice:   { name: 'Practice',   price: '$59 / month',   amount: '$59',  billing: '/mo',      isTeam: true,  signinHref: '/portal/' },
+  collective: { name: 'Collective', price: '$149 / month',  amount: '$149', billing: '/mo',      isTeam: true,  signinHref: '/portal/' },
 };
 
 let _activePlan = null;
@@ -698,6 +739,21 @@ function openCheckout(plan) {
   document.getElementById('checkout-msg').textContent   = '';
   document.getElementById('checkout-btn').disabled      = false;
   document.getElementById('checkout-btn').textContent   = 'Continue to Payment →';
+  document.getElementById('checkout-signin-link').href  = meta.signinHref;
+  document.getElementById('checkout-signin-link').textContent =
+    meta.signinHref === '/portal/' ? 'Sign in to the Portal →' : 'Sign in to birth plan builder →';
+  // Reset inputs
+  ['checkout-email','checkout-password','checkout-confirm',
+   'checkout-practice-name','checkout-admin-name'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('error'); }
+  });
+  ['cp0','cp1','cp2','cp3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('error'); }
+  });
+  document.getElementById('pw-strength-msg').textContent = '';
+  document.getElementById('pw-strength-msg').className   = 'pw-strength';
   document.getElementById('checkout-modal').classList.add('active');
   setTimeout(() => document.getElementById('checkout-email').focus(), 120);
 }
@@ -706,8 +762,10 @@ function closeCheckout() {
   document.getElementById('checkout-modal').classList.remove('active');
 }
 
-document.getElementById('checkout-modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('checkout-modal')) closeCheckout();
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('checkout-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('checkout-modal')) closeCheckout();
+  });
 });
 
 function showCheckoutMsg(text, type) {
@@ -716,43 +774,75 @@ function showCheckoutMsg(text, type) {
   el.className = 'checkout-msg ' + type;
 }
 
+function checkPwStrength(pw) {
+  const el = document.getElementById('pw-strength-msg');
+  if (!pw) { el.textContent = ''; el.className = 'pw-strength'; return; }
+  if (pw.length < 8) { el.textContent = 'Too short — use at least 8 characters'; el.className = 'pw-strength weak'; return; }
+  const score = [/[A-Z]/.test(pw), /[0-9]/.test(pw), /[^A-Za-z0-9]/.test(pw)].filter(Boolean).length;
+  if (score === 0) { el.textContent = 'Weak — try adding numbers or symbols'; el.className = 'pw-strength weak'; }
+  else if (score === 1) { el.textContent = 'Fair — could be stronger'; el.className = 'pw-strength ok'; }
+  else { el.textContent = 'Good password ✓'; el.className = 'pw-strength good'; }
+}
+
+function pinOnlyNum(el) { el.value = el.value.replace(/\D/g, ''); }
+function pinNext(el, nextId) { if (el.value.length === 1) { const n = document.getElementById(nextId); if (n) n.focus(); } }
+function pinBack(e, el, prevId) { if (e.key === 'Backspace' && !el.value) { const p = document.getElementById(prevId); if (p) { p.focus(); p.value = ''; } } }
+function getCheckoutPin() { return ['cp0','cp1','cp2','cp3'].map(id => document.getElementById(id)?.value || '').join(''); }
+
+function markError(id) { document.getElementById(id)?.classList.add('error'); }
+function clearError(id) { document.getElementById(id)?.classList.remove('error'); }
+
 async function startCheckout() {
   const email    = document.getElementById('checkout-email').value.trim();
   const password = document.getElementById('checkout-password').value;
+  const confirm  = document.getElementById('checkout-confirm').value;
   const meta     = PLAN_META[_activePlan];
 
-  if (!email || !password) return showCheckoutMsg('Please enter your email and a password.', 'error');
-  if (password.length < 8)  return showCheckoutMsg('Password must be at least 8 characters.', 'error');
+  // Clear all errors
+  ['checkout-email','checkout-password','checkout-confirm'].forEach(clearError);
+
+  if (!email) { markError('checkout-email'); return showCheckoutMsg('Please enter your email address.', 'error'); }
+  if (!password) { markError('checkout-password'); return showCheckoutMsg('Please enter a password.', 'error'); }
+  if (password.length < 8) { markError('checkout-password'); return showCheckoutMsg('Password must be at least 8 characters.', 'error'); }
+  if (password !== confirm) { markError('checkout-confirm'); return showCheckoutMsg('Passwords do not match — please check and try again.', 'error'); }
 
   let practiceName = '', adminName = '', adminPin = '';
   if (meta.isTeam) {
     practiceName = document.getElementById('checkout-practice-name').value.trim();
     adminName    = document.getElementById('checkout-admin-name').value.trim();
-    adminPin     = document.getElementById('checkout-admin-pin').value.trim();
-    if (!practiceName) return showCheckoutMsg('Please enter your practice name.', 'error');
-    if (!adminName)    return showCheckoutMsg('Please enter your name.', 'error');
-    if (!/^\d{4}$/.test(adminPin)) return showCheckoutMsg('PIN must be exactly 4 digits.', 'error');
+    adminPin     = getCheckoutPin();
+    if (!practiceName) { markError('checkout-practice-name'); return showCheckoutMsg('Please enter your practice or business name.', 'error'); }
+    if (!adminName)    { markError('checkout-admin-name');    return showCheckoutMsg('Please enter your name (Admin).', 'error'); }
+    if (adminPin.length !== 4) return showCheckoutMsg('Please enter all 4 digits of your PIN.', 'error');
   }
 
   const btn = document.getElementById('checkout-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
 
-  // 1. Create the Supabase account
+  // 1. Create the Supabase account — account starts with tier: 'pending_payment'
+  //    The webhook will set the real tier once Stripe confirms payment.
   const { data: signUpData, error: signUpError } = await sb.auth.signUp({
     email, password,
     options: {
       data: {
         role:          _activePlan === 'personal' ? 'client' : 'birth_worker',
-        tier:          _activePlan,
+        tier:          'pending_payment',
         practice_name: practiceName || null,
         admin_name:    adminName    || null,
         admin_pin:     adminPin     || null,
+        pending_tier:  _activePlan, // remember what they intended to buy
       }
     }
   });
 
   if (signUpError) {
     btn.disabled = false; btn.textContent = 'Continue to Payment →';
+    // If account already exists, tell them to sign in instead
+    if (signUpError.message.toLowerCase().includes('already registered') ||
+        signUpError.message.toLowerCase().includes('already been registered') ||
+        signUpError.message.toLowerCase().includes('user already exists')) {
+      return showCheckoutMsg('An account with this email already exists. Please sign in instead.', 'error');
+    }
     return showCheckoutMsg(signUpError.message, 'error');
   }
 
@@ -773,10 +863,12 @@ async function startCheckout() {
         plan:        _activePlan,
         userId,
         email,
-        successPath: meta.successPath + '?paid=1',
+        successPath: _activePlan === 'personal' ? '/birthplan/?paid=1' : '/portal/?paid=1',
         cancelPath:  '/pricing/',
       }),
     });
+
+    if (!resp.ok) { throw new Error('Server error ' + resp.status); }
 
     const { url, error } = await resp.json();
     if (error || !url) {
@@ -784,7 +876,6 @@ async function startCheckout() {
       return showCheckoutMsg('Could not start checkout. Please try again.', 'error');
     }
 
-    // 3. Send user to Stripe Checkout
     window.location.href = url;
 
   } catch (err) {
