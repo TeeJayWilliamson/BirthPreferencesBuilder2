@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Your Account — Blümi</title>
+<link rel="icon" type="image/png" href="../img/flavicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --olive:       #4A5746;
+  --olive-mid:   #6B8F71;
+  --olive-pale:  #EEF3EE;
+  --sage:        #A8B99E;
+  --sage-light:  #EAF1EB;
+  --blush:       #EBC4BE;
+  --cream:       #F7F3EE;
+  --rose:        #7B4040;
+  --rose-light:  #F5EDED;
+  --text:        #2C2C2C;
+  --muted:       #7A8591;
+  --border:      #D4DDCE;
+  --shadow:      0 4px 24px rgba(74,87,70,0.10), 0 1px 4px rgba(0,0,0,0.04);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: linear-gradient(160deg, #EEF3EE 0%, #FAF7F2 50%, #F5EDE8 100%);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 2rem 1.5rem;
+  color: var(--text);
+}
+.invite-banner {
+  background: linear-gradient(135deg, var(--olive), var(--olive-mid));
+  color: white; border-radius: 12px; padding: 1rem 1.4rem;
+  margin-bottom: 1.5rem; max-width: 440px; width: 100%;
+  font-size: 0.82rem; line-height: 1.6;
+  display: flex; align-items: flex-start; gap: 0.7rem;
+}
+.invite-banner-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.05rem; }
+.invite-banner-text strong { display: block; font-weight: 600; margin-bottom: 0.2rem; font-size: 0.88rem; }
+.auth-card {
+  background: white; border-radius: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,0.9);
+  max-width: 440px; width: 100%; overflow: hidden;
+}
+.auth-card-head {
+  background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%);
+  padding: 2.2rem 2rem 1.6rem; text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.auth-logo img { height: 40px; width: auto; object-fit: contain; margin-bottom: 0.6rem; }
+.auth-brand-tag { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--olive-mid); font-weight: 600; margin-bottom: 0.4rem; }
+.auth-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+.auth-body { padding: 2rem; }
+.auth-field { margin-bottom: 1rem; }
+.auth-label { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--olive); margin-bottom: 0.4rem; }
+.auth-input {
+  width: 100%; padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 0.88rem;
+  color: var(--text); background: var(--cream); outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.auth-input:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); background: white; }
+.auth-input.error { border-color: var(--rose); }
+.auth-btn {
+  width: 100%; background: linear-gradient(135deg, var(--olive) 0%, var(--olive-mid) 100%);
+  color: white; border: none; border-radius: 50px; padding: 0.85rem 2rem;
+  font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.04em;
+  cursor: pointer; box-shadow: 0 6px 20px rgba(74,87,70,0.28); transition: all 0.2s; margin-top: 0.5rem;
+}
+.auth-btn:hover { transform: translateY(-2px); }
+.auth-btn:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
+.auth-msg { margin-top: 1rem; padding: 0.8rem 1rem; border-radius: 10px; font-size: 0.82rem; line-height: 1.5; display: none; }
+.auth-msg.success { background: var(--sage-light); color: #2D5A30; border: 1px solid #B5D4B8; display: block; }
+.auth-msg.error   { background: var(--rose-light); color: var(--rose); border: 1px solid #E8C4C4; display: block; }
+.auth-switch { text-align: center; margin-top: 1.2rem; font-size: 0.78rem; color: var(--muted); }
+.auth-switch a { color: var(--olive); font-weight: 600; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+.pw-strength { margin-top: 0.35rem; font-size: 0.72rem; color: var(--muted); min-height: 1rem; }
+.pw-strength.weak  { color: var(--rose); }
+.pw-strength.ok    { color: #B08000; }
+.pw-strength.good  { color: var(--olive-mid); }
+</style>
+</head>
+<body>
+
+<div class="invite-banner" id="invite-banner" style="display:none;">
+  <div class="invite-banner-icon">🌿</div>
+  <div class="invite-banner-text">
+    <strong>You've been invited!</strong>
+    Your care provider has set you up on Blümi. Create your free account below — no payment needed.
+  </div>
+</div>
+
+<div class="auth-card">
+  <div class="auth-card-head">
+    <div class="auth-logo"><img src="../img/logo.png" alt="Blümi"></div>
+    <div class="auth-brand-tag">Create Your Account</div>
+    <p class="auth-sub" id="signup-sub">Your plan will be saved so you can return and edit it any time.</p>
+  </div>
+  <div class="auth-body">
+    <div class="auth-field">
+      <label class="auth-label">Email Address</label>
+      <input type="email" class="auth-input" id="su-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="auth-field">
+      <label class="auth-label">Password</label>
+      <input type="password" class="auth-input" id="su-password" placeholder="At least 8 characters" autocomplete="new-password" oninput="checkPwStrength(this.value)">
+      <div class="pw-strength" id="pw-strength-msg"></div>
+    </div>
+    <div class="auth-field">
+      <label class="auth-label">Confirm Password</label>
+      <input type="password" class="auth-input" id="su-confirm" placeholder="Re-enter your password" autocomplete="new-password"
+        onkeydown="if(event.key==='Enter') signUp()">
+    </div>
+    <button class="auth-btn" id="su-btn" onclick="signUp()">Create Account</button>
+    <div class="auth-msg" id="su-msg"></div>
+    <div class="auth-switch">
+      Already have an account? <a href="/birthplan/">Sign in</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { storageKey: 'bluumi-app-auth', persistSession: true, detectSessionInUrl: true }
+});
+
+const urlParams    = new URLSearchParams(location.search);
+const INVITE_TOKEN = urlParams.get('invite');
+
+// If no invite token, redirect to pricing
+if (!INVITE_TOKEN) {
+  window.location.href = '/pricing/';
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  // Pre-fill email if we can look up the invite
+  if (INVITE_TOKEN) {
+    document.getElementById('invite-banner').style.display = 'flex';
+    document.getElementById('signup-sub').textContent =
+      'Your care provider has already covered your access. Just create a password below.';
+
+    const { data } = await sb
+      .from('birth_worker_clients')
+      .select('invited_email')
+      .eq('invite_token', INVITE_TOKEN)
+      .maybeSingle();
+
+    if (data?.invited_email) {
+      document.getElementById('su-email').value = data.invited_email;
+      document.getElementById('su-email').readOnly = true;
+      document.getElementById('su-email').style.background = '#F3F4F6';
+      document.getElementById('su-email').style.color = '#6B7280';
+    }
+  }
+});
+
+function checkPwStrength(pw) {
+  const el = document.getElementById('pw-strength-msg');
+  if (!pw) { el.textContent = ''; el.className = 'pw-strength'; return; }
+  if (pw.length < 8) { el.textContent = 'Too short — use at least 8 characters'; el.className = 'pw-strength weak'; return; }
+  const score = [/[A-Z]/.test(pw), /[0-9]/.test(pw), /[^A-Za-z0-9]/.test(pw)].filter(Boolean).length;
+  if (score === 0) { el.textContent = 'Weak — try adding numbers or symbols'; el.className = 'pw-strength weak'; }
+  else if (score === 1) { el.textContent = 'Fair'; el.className = 'pw-strength ok'; }
+  else { el.textContent = 'Good password ✓'; el.className = 'pw-strength good'; }
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById('su-msg');
+  el.textContent = text; el.className = 'auth-msg ' + type;
+}
+
+async function signUp() {
+  const email    = document.getElementById('su-email').value.trim();
+  const password = document.getElementById('su-password').value;
+  const confirm  = document.getElementById('su-confirm').value;
+
+  if (!email || !password) return showMsg('Please fill in all fields.', 'error');
+  if (password.length < 8) return showMsg('Password must be at least 8 characters.', 'error');
+  if (password !== confirm) {
+    document.getElementById('su-confirm').classList.add('error');
+    return showMsg('Passwords do not match.', 'error');
+  }
+  document.getElementById('su-confirm').classList.remove('error');
+
+  const btn = document.getElementById('su-btn');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+
+  // Invited users get role:client and tier:invited — no payment required.
+  // The care provider's subscription covers their access.
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: {
+      data: { role: 'client', tier: 'invited' },
+      // Pass invite token so it gets claimed on first sign-in
+      emailRedirectTo: window.location.origin + '/birthplan/?invite=' + INVITE_TOKEN,
+    }
+  });
+
+  btn.disabled = false; btn.textContent = 'Create Account';
+
+  if (error) {
+    if (error.message.toLowerCase().includes('already')) {
+      return showMsg('An account with this email already exists. Please sign in instead.', 'error');
+    }
+    return showMsg(error.message, 'error');
+  }
+
+  // Immediately redirect to birthplan with invite token so the claim happens
+  showMsg('✓ Account created! Taking you to your birth plan…', 'success');
+  setTimeout(() => {
+    window.location.href = '/birthplan/?invite=' + encodeURIComponent(INVITE_TOKEN);
+  }, 1200);
+}
+</script>
+</body>
+</html>

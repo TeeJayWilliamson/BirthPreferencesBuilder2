@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "functions": {
+    "api/stripe-webhook.js": {
+      "bodyParser": false
+    }
+  },
   "headers": [
     {
       "source": "/api/(.*)",

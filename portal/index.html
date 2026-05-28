@@ -1335,6 +1335,31 @@ async function signIn() {
   if (error) showMsg('si-msg', error.message, 'error');
 }
 
+// ── BILLING PORTAL (cancel / manage subscription) ─────────────────────
+async function openBillingPortal() {
+  const btn = event?.currentTarget;
+  if (btn) { btn.disabled = true; btn.textContent = 'Opening…'; }
+ 
+  try {
+    const resp = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action:    'portal',
+        userId:    currentUser.id,
+        returnUrl: window.location.href,
+      }),
+    });
+    const { url, error } = await resp.json();
+    if (error || !url) { showToast('Could not open billing portal. Please try again.'); return; }
+    window.location.href = url;
+  } catch (err) {
+    showToast('Network error. Please try again.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Manage Billing →'; }
+  }
+}
+
 // ── FIX 1: signUp now explicitly upserts the profiles row with the correct tier ──
 async function signUp() {
   const practiceName = document.getElementById('su-practice-name').value.trim();
@@ -1781,6 +1806,8 @@ function openUpgradeModal() {
 
 function renderUpgradeModalTiers(currentTier) {
   const container = document.getElementById('upgrade-modal-tiers');
+  const hasPaidSub = currentProfile?.stripe_subscription || currentProfile?.paid;
+ 
   container.innerHTML = TIER_ORDER.map(t => {
     const isCurrent    = t === currentTier;
     const isDowngrade  = TIER_ORDER.indexOf(t) < TIER_ORDER.indexOf(currentTier);
@@ -1789,29 +1816,66 @@ function renderUpgradeModalTiers(currentTier) {
     if (isCurrent)     cardClass += ' current';
     if (isRecommended) cardClass += ' recommended';
     if (isDowngrade)   cardClass += ' downgrade';
-
+ 
     let ctaLabel, ctaClass, onclickAttr;
-    if (isCurrent) { ctaLabel = 'Current plan'; ctaClass = 'umt-cta disabled'; onclickAttr = ''; }
-    else if (isDowngrade) {
+    if (isCurrent) {
+      ctaLabel = 'Current plan'; ctaClass = 'umt-cta disabled'; onclickAttr = '';
+    } else if (isDowngrade) {
+      // Downgrades go through the billing portal
       ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`;
       ctaClass = 'umt-cta downgrade-btn';
-      onclickAttr = `onclick="confirmDowngrade('${t}')"`;
+      onclickAttr = `onclick="openBillingPortal()"`;
     } else {
-      ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`;
+      // Upgrades go through Stripe Checkout
+      ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)} →`;
       ctaClass = 'umt-cta active';
-      onclickAttr = `onclick="selectTier('${t}')"`;
+      onclickAttr = `onclick="selectTierPaid('${t}')"`;
     }
-
+ 
     return `<div class="${cardClass}">
       <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '🌿 Best value' : 'Professional'}</div>
       <div class="umt-name">${t.charAt(0).toUpperCase()+t.slice(1)}</div>
-      <div class="umt-price"><strong>${t==='collective'?'$99':t==='practice'?'$59':'$29'}</strong> /mo</div>
+      <div class="umt-price"><strong>${t==='collective'?'$149':t==='practice'?'$59':'$29'}</strong> /mo</div>
       <div class="umt-slots">${TIER_SLOTS[t]}</div>
       ${isCurrent ? '<div class="umt-current-badge">✓ Your current plan</div>' : ''}
       <button class="${ctaClass}" ${onclickAttr}>${ctaLabel}</button>
     </div>`;
   }).join('');
+
+    if (hasPaidSub) {
+    container.insertAdjacentHTML('beforeend', `
+      <div style="grid-column:1/-1;margin-top:0.8rem;padding:1rem 1.2rem;background:var(--cream);border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:0.75rem;font-weight:600;color:var(--olive);margin-bottom:0.15rem;">Billing &amp; Subscription</div>
+          <div style="font-size:0.72rem;color:var(--muted);line-height:1.4;">Update payment details, download invoices, or cancel your subscription.</div>
+        </div>
+        <button onclick="openBillingPortal()" style="background:white;border:1.5px solid var(--border);color:var(--olive);border-radius:50px;padding:0.5rem 1.2rem;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--olive-mid)'" onmouseout="this.style.borderColor='var(--border)'">
+          Manage Billing →
+        </button>
+      </div>`);
+  }
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  if (params.get('upgraded') === '1') {
+    history.replaceState({}, '', location.pathname);
+    // Profile will have been updated by the webhook — reload it
+    setTimeout(async () => {
+      await loadProfile();
+      renderTierBadge();
+      renderUpgradeBanner();
+      renderPortalHeader();
+      updateStats();
+      renderTable();
+      showToast('🎉 Plan upgraded! Welcome to your new tier.', 5000);
+    }, 1500);
+  }
+  if (params.get('paid') === '1') {
+    history.replaceState({}, '', location.pathname);
+    setTimeout(() => showToast('🎉 Payment confirmed! Your account is now active.', 5000), 800);
+  }
+});
 
 function confirmDowngrade(newTier) {
   const tierName  = newTier.charAt(0).toUpperCase() + newTier.slice(1);
@@ -1837,25 +1901,24 @@ function confirmDowngrade(newTier) {
 }
 
 // ── Team setup step (solo → team upgrade) ──────────────────────────────
-function showTeamSetupStep(newTier) {
+function showTeamSetupStepPaid(newTier) {
   const tierName = newTier.charAt(0).toUpperCase() + newTier.slice(1);
   document.getElementById('upgrade-modal-tiers').innerHTML = `
     <div class="downgrade-confirm-box" style="background:var(--olive-pale);border-color:var(--border);">
       <div class="downgrade-confirm-icon">🔑</div>
-      <div class="downgrade-confirm-title" style="color:var(--olive);">Set Up Your Admin Account</div>
+      <div class="downgrade-confirm-title" style="color:var(--olive);">Set Up Your Team Account</div>
       <div class="downgrade-confirm-body">
-        Upgrading to <strong>${tierName}</strong> turns this into a shared team account. Everyone signs in with the
-        same email &amp; password, then selects their name and enters their personal 4-digit PIN.<br><br>
-        Set up your admin profile now — you can add other care providers from the portal afterwards.
+        Upgrading to <strong>${tierName}</strong> turns this into a shared team account. Everyone signs in with the same email &amp; password, then selects their name and enters their personal 4-digit PIN.<br><br>
+        Set up your admin profile now — you can add care providers from the portal after payment.
       </div>
       <div style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.3rem;">
         <div>
-          <label class="auth-label" style="display:block;margin-bottom:0.35rem;">Your Name (Admin)</label>
-          <input type="text" id="team-setup-admin-name" class="auth-input" placeholder="e.g. Jane Smith" style="margin:0;">
+          <label class="auth-label" style="display:block;margin-bottom:0.35rem;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--olive);">Your Name (Admin)</label>
+          <input type="text" id="team-setup-admin-name" style="width:100%;padding:0.75rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'Jost',sans-serif;font-size:0.88rem;color:var(--text);background:var(--cream);outline:none;" placeholder="e.g. Jane Smith">
         </div>
         <div>
-          <label class="auth-label" style="display:block;margin-bottom:0.35rem;">Your 4-Digit PIN</label>
-          <div class="pin-input-row" id="team-setup-pin-row">
+          <label class="auth-label" style="display:block;margin-bottom:0.35rem;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--olive);">Your 4-Digit PIN</label>
+          <div class="pin-input-row">
             <input class="pin-digit" id="tsp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'tsp1')" oninput="pinOnlyNum(this)">
             <input class="pin-digit" id="tsp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'tsp2')" onkeydown="pinBack(event,this,'tsp0')" oninput="pinOnlyNum(this)">
             <input class="pin-digit" id="tsp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'tsp3')" onkeydown="pinBack(event,this,'tsp1')" oninput="pinOnlyNum(this)">
@@ -1866,14 +1929,53 @@ function showTeamSetupStep(newTier) {
       </div>
       <div class="downgrade-confirm-actions">
         <button class="btn-secondary" onclick="renderUpgradeModalTiers('${currentProfile?.tier}')">← Go back</button>
-        <button class="btn-primary" onclick="confirmTeamUpgrade('${newTier}')">Upgrade to ${tierName} →</button>
+        <button class="btn-primary" onclick="proceedTeamUpgradePaid('${newTier}')">Continue to Payment →</button>
       </div>
     </div>`;
   setTimeout(() => document.getElementById('team-setup-admin-name')?.focus(), 80);
 }
-
+ 
 function getTeamSetupPin() {
   return ['tsp0','tsp1','tsp2','tsp3'].map(id => document.getElementById(id)?.value || '').join('');
+}
+
+async function proceedTeamUpgradePaid(newTier) {
+  const adminName = document.getElementById('team-setup-admin-name')?.value?.trim();
+  const adminPin  = getTeamSetupPin();
+  const msgEl     = document.getElementById('team-setup-msg');
+ 
+  if (!adminName) { msgEl.textContent = 'Please enter your name.'; return; }
+  if (adminPin.length !== 4) { msgEl.textContent = 'Please enter all 4 digits of your PIN.'; return; }
+  msgEl.textContent = '';
+ 
+  // Store admin details on Supabase user metadata so the webhook can create
+  // the provider row after payment succeeds
+  await sb.auth.updateUser({
+    data: { admin_name: adminName, admin_pin: adminPin, pending_tier: newTier }
+  });
+ 
+  // Close modal and redirect to Stripe
+  document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
+  showToast('Redirecting to checkout…');
+ 
+  try {
+    const resp = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan:        newTier,
+        userId:      currentUser.id,
+        email:       currentUser.email,
+        successPath: '/portal/?upgraded=1',
+        cancelPath:  '/portal/',
+      }),
+    });
+    const { url, error } = await resp.json();
+    if (error || !url) { showToast('Could not start checkout. Please try again.'); return; }
+    window.location.href = url;
+  } catch (err) {
+    showToast('Network error. Please try again.');
+  }
 }
 
 async function confirmTeamUpgrade(newTier) {
@@ -1918,31 +2020,37 @@ async function confirmTeamUpgrade(newTier) {
   showToast(`✓ Upgraded to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}! You're now logged in as ${currentProvider?.name || 'Admin'}.`, 5000);
 }
 
-async function selectTier(newTier) {
-  if (TEAM_TIERS.includes(newTier) && !isTeamTier()) {
-    showTeamSetupStep(newTier);
+async function selectTierPaid(newTier) {
+  // Team upgrades from solo still need the team-setup step first
+  if (['practice', 'collective'].includes(newTier) && !isTeamTier()) {
+    showTeamSetupStepPaid(newTier);
     return;
   }
-
-  const { error } = await sb.from('profiles').update({ tier: newTier }).eq('id', currentUser.id);
-  if (error) { showToast('Could not update plan. Please try again.'); return; }
-  const isDowngrade = TIER_ORDER.indexOf(newTier) < TIER_ORDER.indexOf(currentProfile.tier);
-  currentProfile.tier = newTier;
-
-  if (newTier === 'solo') {
-    currentProvider = null;
-    allProviders    = [];
-    localStorage.removeItem('bluumi_current_provider_id');
-  } else {
-    _upgradeBannerDismissed = false;
-    try { localStorage.removeItem('bluumi-upgrade-banner-dismissed'); } catch(e) {}
-  }
-
+ 
+  // Any change goes through Stripe — close modal and redirect
   document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
-  renderTierBadge(); renderTopbarProvider(); renderUpgradeBanner(); renderPortalHeader(); updateStats(); renderTable();
-  showToast(isDowngrade
-    ? `✓ Plan changed to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}. Your clients and data are all preserved.`
-    : `✓ Upgraded to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}!`, 5000);
+ 
+  const tierName = newTier.charAt(0).toUpperCase() + newTier.slice(1);
+  showToast(`Redirecting to checkout for ${tierName}…`);
+ 
+  try {
+    const resp = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan:        newTier,
+        userId:      currentUser.id,
+        email:       currentUser.email,
+        successPath: '/portal/?upgraded=1',
+        cancelPath:  '/portal/',
+      }),
+    });
+    const { url, error } = await resp.json();
+    if (error || !url) { showToast('Could not start checkout. Please try again.'); return; }
+    window.location.href = url;
+  } catch (err) {
+    showToast('Network error. Please try again.');
+  }
 }
 
 function getSlotLimit() { return TIER_LIMITS[currentProfile?.tier] ?? 0; }

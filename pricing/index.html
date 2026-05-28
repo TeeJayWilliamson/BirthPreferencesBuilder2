@@ -28,7 +28,6 @@
 html { scroll-behavior: smooth; }
 body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
 
-/* ── NAV ── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
@@ -54,7 +53,6 @@ nav {
   .nav-links li:not(:last-child) { display: none; }
 }
 
-/* ── HERO ── */
 .page-hero {
   background: linear-gradient(160deg, #EEF3EE 0%, #FAF7F2 50%, #F5EDE8 100%);
   padding: 9rem 1.5rem 5rem;
@@ -86,7 +84,16 @@ nav {
   position: relative; z-index: 1;
 }
 
-/* ── PRICING SECTION ── */
+/* ── TEST MODE BANNER ── */
+.test-banner {
+  background: #FEF9EC; border-bottom: 1px solid #F0D98C;
+  padding: 0.6rem 1.5rem; text-align: center;
+  font-size: 0.78rem; color: #7A5800; font-weight: 500;
+  display: none;
+}
+.test-banner.visible { display: block; }
+.test-banner code { background: rgba(0,0,0,0.08); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.78rem; }
+
 .pricing-section { max-width: 940px; margin: 0 auto; padding: 5rem 1.5rem 0; }
 
 .card-groups {
@@ -114,7 +121,6 @@ nav {
 }
 @media (max-width: 480px) { .pro-group-inner { grid-template-columns: 1fr; } }
 
-/* ── PLAN CARD ── */
 .plan-card {
   background: white;
   border: 1.5px solid rgba(212,221,206,0.65);
@@ -195,7 +201,6 @@ nav {
   border: 1px solid rgba(235,196,190,0.3);
 }
 
-/* ── FEATURES PANEL ── */
 .features-wrap { max-width: 940px; margin: 1.8rem auto 0; padding: 0 1.5rem; }
 .features-inner {
   background: white; border: 1.5px solid rgba(212,221,206,0.65);
@@ -233,7 +238,6 @@ nav {
   white-space: nowrap; vertical-align: middle;
 }
 
-/* ── CUSTOM NOTE ── */
 .custom-note {
   max-width: 940px; margin: 0 auto;
   text-align: center; padding: 1.5rem 1.5rem 5rem;
@@ -242,7 +246,6 @@ nav {
 .custom-note a { color: var(--olive); font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(74,87,70,0.3); }
 .custom-note a:hover { border-color: var(--olive); }
 
-/* ── PORTAL SECTION ── */
 .portal-section { max-width: 940px; margin: 0 auto; padding: 0 1.5rem 4.5rem; }
 .portal-inner {
   background: linear-gradient(135deg, #EEF3EE 0%, #FAF7F2 100%);
@@ -252,7 +255,7 @@ nav {
 .portal-eyebrow { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sage-dark); margin-bottom: 0.35rem; }
 .portal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 600; color: var(--olive); margin-bottom: 1.4rem; }
 .portal-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem 2.5rem; }
-@media (max-width: 620px) { .portal-steps { grid-template-columns: 1fr; gap: 1.1rem; } }
+@media (max-width: 620px) { .portal-steps { grid-column: 1fr; gap: 1.1rem; } }
 .portal-step { display: flex; gap: 0.85rem; align-items: flex-start; }
 .step-num {
   width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
@@ -265,7 +268,6 @@ nav {
 .step-title { font-size: 0.84rem; font-weight: 600; color: var(--olive); margin-bottom: 0.2rem; }
 .step-desc  { font-size: 0.77rem; color: var(--muted); line-height: 1.55; }
 
-/* ── FAQ ── */
 .faq-section { max-width: 640px; margin: 0 auto; padding: 0 1.5rem 6rem; }
 .faq-head { text-align: center; margin-bottom: 2.5rem; }
 .faq-eyebrow { font-size: 0.63rem; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--sage-dark); margin-bottom: 0.5rem; }
@@ -284,7 +286,6 @@ nav {
 .faq-a { font-size: 0.83rem; color: var(--muted); line-height: 1.75; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.25s ease; }
 .faq-item.open .faq-a { max-height: 300px; padding-top: 0.8rem; }
 
-/* ── TESTIMONIAL ── */
 .testimonial-section {
   background: linear-gradient(135deg, #EEF3EE 0%, #F5EDE8 100%);
   border-top: 1px solid rgba(168,185,158,0.3); border-bottom: 1px solid rgba(168,185,158,0.3);
@@ -304,7 +305,6 @@ nav {
 .author-name { font-size: 0.87rem; font-weight: 600; color: var(--olive); }
 .author-role { font-size: 0.74rem; color: var(--muted); margin-top: 0.1rem; }
 
-/* ── CTA ── */
 .cta-section { background: var(--cream); text-align: center; position: relative; overflow: hidden; padding: 6rem 1.5rem; }
 .cta-section::before {
   content: ''; position: absolute; inset: 0;
@@ -402,7 +402,6 @@ nav {
 .checkout-msg.error   { background: var(--rose-light); color: var(--rose); border: 1px solid #E8C4C4; display: block; }
 .checkout-msg.success { background: var(--sage-light); color: #2D5A30; border: 1px solid #B5D4B8; display: block; }
 
-/* ── PIN INPUT ── */
 .pin-input-row { display: flex; gap: 0.5rem; }
 .pin-digit {
   width: 52px; height: 52px; text-align: center;
@@ -414,7 +413,6 @@ nav {
 .pin-digit:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); }
 .pin-digit.error { border-color: var(--rose); }
 
-/* ── FOOTER ── */
 footer {
   background: var(--olive); color: rgba(255,255,255,0.82);
   text-align: center; padding: 2rem 1.5rem;
@@ -426,6 +424,11 @@ footer span { color: #EBC4BE; }
 </style>
 </head>
 <body>
+
+<!-- TEST MODE BANNER — shown only when Stripe is in test mode -->
+<div class="test-banner" id="test-banner">
+  🧪 <strong>Test mode.</strong> Use card <code>4242 4242 4242 4242</code>, any future expiry, any CVC, any postal code.
+</div>
 
 <!-- NAV -->
 <nav>
@@ -532,7 +535,7 @@ footer span { color: #EBC4BE; }
         <div class="feature-item"><div class="fcheck olive">✓</div>Co-edit plans with clients in real time</div>
         <div class="feature-item"><div class="fcheck olive">✓</div>Your branding on all client PDFs</div>
         <div class="feature-item"><div class="fcheck olive">✓</div>Client notes &amp; birth summaries</div>
-        <div class="feature-item"><div class="fcheck olive">✓</div>Multi-provider team access <span class="feature-tag">Collective</span></div>
+        <div class="feature-item"><div class="fcheck olive">✓</div>Multi-provider team access <span class="feature-tag">Practice/Collective</span></div>
       </div>
     </div>
   </div>
@@ -589,8 +592,12 @@ footer span { color: #EBC4BE; }
     <div class="faq-a">Their plan becomes read-only. They can view and download it anytime, but can't make new edits. If they want to keep editing (say, for a future pregnancy), they can subscribe to Personal and the plan carries over seamlessly. No data is ever lost.</div>
   </div>
   <div class="faq-item" onclick="toggleFaq(this)">
-    <div class="faq-q">Can I switch Professional tiers? <div class="faq-icon">+</div></div>
-    <div class="faq-a">Absolutely. Upgrade anytime and it takes effect immediately. Downgrades take effect at the end of your billing period.</div>
+    <div class="faq-q">Can I upgrade or downgrade my plan? <div class="faq-icon">+</div></div>
+    <div class="faq-a">Yes — upgrades are instant and handled through your billing portal. Downgrades take effect at the end of your billing period. All your clients and data are always preserved regardless of tier.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">How do I cancel my subscription? <div class="faq-icon">+</div></div>
+    <div class="faq-a">You can cancel anytime from your portal — click your plan badge, then "Manage Billing." You'll be taken to a secure Stripe page where you can cancel, update payment details, or download invoices. Your access continues until the end of the paid period.</div>
   </div>
   <div class="faq-item" onclick="toggleFaq(this)">
     <div class="faq-q">Is my clients' data private and secure? <div class="faq-icon">+</div></div>
@@ -699,9 +706,8 @@ footer span { color: #EBC4BE; }
 
       <div class="checkout-msg" id="checkout-msg"></div>
 
-      <!-- Divider + already have account link -->
       <div class="checkout-divider"><span>already have an account?</span></div>
-      <a class="checkout-signin-link" id="checkout-signin-link" href="/portal/">Sign in to the Portal →</a>
+      <a class="checkout-signin-link" id="checkout-signin-link" href="/portal/">Sign in →</a>
 
       <div class="checkout-note">
         🔒 Secure checkout via Stripe. Your card details never touch our servers.
@@ -717,6 +723,12 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { storageKey: 'bluumi-pricing-auth', persistSession: false }
 });
+
+// Detect Stripe test mode by checking the key in env — since we're client-side,
+// we show the banner if the page URL is not blumi.ca (i.e. dev/staging).
+// Flip this to `true` manually during local dev/testing.
+const IS_TEST_MODE = window.location.hostname !== 'blumi.ca';
+if (IS_TEST_MODE) document.getElementById('test-banner').classList.add('visible');
 
 const PLAN_META = {
   personal:   { name: 'Personal',   price: '$59 one-time',  amount: '$59',  billing: 'one-time', isTeam: false, signinHref: '/birthplan/' },
@@ -742,7 +754,6 @@ function openCheckout(plan) {
   document.getElementById('checkout-signin-link').href  = meta.signinHref;
   document.getElementById('checkout-signin-link').textContent =
     meta.signinHref === '/portal/' ? 'Sign in to the Portal →' : 'Sign in to birth plan builder →';
-  // Reset inputs
   ['checkout-email','checkout-password','checkout-confirm',
    'checkout-practice-name','checkout-admin-name'].forEach(id => {
     const el = document.getElementById(id);
@@ -798,13 +809,12 @@ async function startCheckout() {
   const confirm  = document.getElementById('checkout-confirm').value;
   const meta     = PLAN_META[_activePlan];
 
-  // Clear all errors
   ['checkout-email','checkout-password','checkout-confirm'].forEach(clearError);
 
-  if (!email) { markError('checkout-email'); return showCheckoutMsg('Please enter your email address.', 'error'); }
-  if (!password) { markError('checkout-password'); return showCheckoutMsg('Please enter a password.', 'error'); }
+  if (!email)            { markError('checkout-email');    return showCheckoutMsg('Please enter your email address.', 'error'); }
+  if (!password)         { markError('checkout-password'); return showCheckoutMsg('Please enter a password.', 'error'); }
   if (password.length < 8) { markError('checkout-password'); return showCheckoutMsg('Password must be at least 8 characters.', 'error'); }
-  if (password !== confirm) { markError('checkout-confirm'); return showCheckoutMsg('Passwords do not match — please check and try again.', 'error'); }
+  if (password !== confirm)  { markError('checkout-confirm');  return showCheckoutMsg('Passwords do not match.', 'error'); }
 
   let practiceName = '', adminName = '', adminPin = '';
   if (meta.isTeam) {
@@ -819,8 +829,8 @@ async function startCheckout() {
   const btn = document.getElementById('checkout-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
 
-  // 1. Create the Supabase account — account starts with tier: 'pending_payment'
-  //    The webhook will set the real tier once Stripe confirms payment.
+  // 1. Create Supabase account with tier: 'pending_payment'
+  //    The webhook sets the real tier once Stripe confirms.
   const { data: signUpData, error: signUpError } = await sb.auth.signUp({
     email, password,
     options: {
@@ -830,17 +840,14 @@ async function startCheckout() {
         practice_name: practiceName || null,
         admin_name:    adminName    || null,
         admin_pin:     adminPin     || null,
-        pending_tier:  _activePlan, // remember what they intended to buy
+        pending_tier:  _activePlan,
       }
     }
   });
 
   if (signUpError) {
     btn.disabled = false; btn.textContent = 'Continue to Payment →';
-    // If account already exists, tell them to sign in instead
-    if (signUpError.message.toLowerCase().includes('already registered') ||
-        signUpError.message.toLowerCase().includes('already been registered') ||
-        signUpError.message.toLowerCase().includes('user already exists')) {
+    if (signUpError.message.toLowerCase().includes('already')) {
       return showCheckoutMsg('An account with this email already exists. Please sign in instead.', 'error');
     }
     return showCheckoutMsg(signUpError.message, 'error');
@@ -854,7 +861,7 @@ async function startCheckout() {
 
   btn.textContent = 'Redirecting to payment…';
 
-  // 2. Create the Stripe Checkout session via our serverless function
+  // 2. Create Stripe Checkout session
   try {
     const resp = await fetch('/api/create-checkout-session', {
       method:  'POST',
@@ -868,7 +875,7 @@ async function startCheckout() {
       }),
     });
 
-    if (!resp.ok) { throw new Error('Server error ' + resp.status); }
+    if (!resp.ok) throw new Error('Server error ' + resp.status);
 
     const { url, error } = await resp.json();
     if (error || !url) {

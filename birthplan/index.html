@@ -573,9 +573,9 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div> 
       -->
 
-      <div class="auth-switch">
-  Don't have an account? <a onclick="window.location.href='../pricing/'">Create one</a>
-</div>
+      <div class="auth-switch" id="signup-switch">
+    Don't have an account? <a id="signup-link" onclick="goToSignup()">Create one</a>
+  </div>
       <div class="auth-divider"><span>or</span></div>
       <button class="guest-btn" onclick="guestMode()">Continue as Guest — no account needed</button>
     </div>
@@ -1192,6 +1192,16 @@ function guestMode() {
   document.getElementById('user-email-display').textContent = 'Guest';
   document.getElementById('save-indicator').textContent = '⚠ Not saved';
   attachAutoSave(null);
+}
+
+function goToSignup() {
+// If there's an invite token in the URL, go to the free invite signup page.
+// Otherwise, go to pricing (payment required).
+if (INVITE_TOKEN) {
+window.location.href = '../birthplan/signup.html?invite=' + encodeURIComponent(INVITE_TOKEN);
+} else {
+window.location.href = '../pricing/';
+}
 }
 
 window.addEventListener('DOMContentLoaded', async () => {

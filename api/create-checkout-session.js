@@ -2,9 +2,10 @@
 // Called by the frontend to create a Stripe Checkout session.
 // Set these in Vercel Dashboard → Project → Settings → Environment Variables:
 //   STRIPE_SECRET_KEY      = sk_live_...
-//   NEXT_PUBLIC_SITE_URL   = https://yourdomain.com  (no trailing slash)
+//   NEXT_PUBLIC_SITE_URL   = https://blumi.ca  (no trailing slash)
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { createClient } = require('@supabase/supabase-js');
 
 const PRICE_IDS = {
   personal:   'price_1TbAmADeU3RWQQbVbbnFo0al',
@@ -16,14 +17,44 @@ const PRICE_IDS = {
 // Personal is a one-time payment; the rest are subscriptions
 const ONE_TIME = ['personal'];
 
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+}
+
 module.exports = async (req, res) => {
-  // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { plan, userId, email, successPath, cancelPath } = req.body;
+  const { plan, userId, email, successPath, cancelPath, action } = req.body;
 
+  // ── Handle billing portal (cancel / manage subscription) ─────────────
+  // POST { action: 'portal', userId, returnUrl }
+  if (action === 'portal') {
+    if (!userId) return res.status(400).json({ error: 'userId required' });
+    const sb = getSupabase();
+    const { data: profile } = await sb
+      .from('profiles')
+      .select('stripe_customer_id')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (!profile?.stripe_customer_id) {
+      return res.status(400).json({ error: 'No Stripe customer found for this user.' });
+    }
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://blumi.ca';
+    const session = await stripe.billingPortal.sessions.create({
+      customer:   profile.stripe_customer_id,
+      return_url: req.body.returnUrl || siteUrl + '/portal/',
+    });
+    return res.status(200).json({ url: session.url });
+  }
+
+  // ── Standard checkout ─────────────────────────────────────────────────
   if (!plan || !PRICE_IDS[plan]) {
     return res.status(400).json({ error: 'Invalid plan' });
   }
@@ -31,23 +62,20 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'userId and email are required' });
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://blumi.ca';
-  const isOneTime = ONE_TIME.includes(plan);
+  const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL || 'https://blumi.ca';
+  const isOneTime  = ONE_TIME.includes(plan);
 
   try {
     const sessionParams = {
       mode:               isOneTime ? 'payment' : 'subscription',
       customer_email:     email,
       line_items: [{ price: PRICE_IDS[plan], quantity: 1 }],
-      // Pass userId and plan through so the webhook can update Supabase
       metadata: { userId, plan },
       success_url: `${siteUrl}${successPath || '/'}?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
       cancel_url:  `${siteUrl}${cancelPath  || '/pricing/'}`,
-      // Allow promo codes entered at checkout
       allow_promotion_codes: true,
     };
 
-    // For subscriptions, also store metadata on the subscription itself
     if (!isOneTime) {
       sessionParams.subscription_data = { metadata: { userId, plan } };
     }
