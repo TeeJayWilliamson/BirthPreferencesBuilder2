@@ -370,7 +370,7 @@ body::before {
 .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.85rem; pointer-events: none; }
 
 /* ── CLIENT TABLE ── */
-.clients-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.9); overflow: hidden; }
+.clients-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.9); overflow: hidden; position: relative; }
 .clients-table { width: 100%; border-collapse: collapse; }
 .clients-table thead tr { border-bottom: 1px solid var(--border); background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%); }
 .clients-table th { padding: 0.9rem 1.2rem; text-align: left; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
@@ -411,6 +411,25 @@ body::before {
 .empty-state-icon { font-size: 2rem; margin-bottom: 1rem; opacity: 0.4; }
 .empty-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--olive); margin-bottom: 0.5rem; }
 .empty-state p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+/* ── TABLE LOADING SPINNER ── */
+@keyframes tableSpinAnim {
+  to { transform: rotate(360deg); }
+}
+.table-loading-row td { padding: 3.5rem 2rem; }
+.table-spinner {
+  display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
+}
+.table-spinner-ring {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--olive);
+  animation: tableSpinAnim 0.7s linear infinite;
+}
+.table-spinner-text {
+  font-size: 0.78rem; color: var(--muted); font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
 
 /* ── MODALS ── */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); z-index: 1000; justify-content: center; align-items: center; padding: 1rem; }
@@ -548,9 +567,6 @@ body::before {
 .mobile-menu-btn.signout:hover { background: var(--rose-light); color: var(--rose); }
 .mobile-menu-btn.signout svg { color: var(--rose); opacity: 0.7; }
 .mobile-menu-divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
-.mobile-menu-provider[style*="pointer"]:hover {
-  background: var(--olive-pale); border-radius: 8px; margin: -0.3rem; padding: 0.3rem;
-}
 
 /* ── UNSURE ITEMS MODAL ── */
 .unsure-modal-intro { font-size: 0.82rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.4rem; font-family: 'Cormorant Garamond', serif; font-style: italic; }
@@ -770,7 +786,6 @@ body::before {
       </div>
       <button class="auth-btn" onclick="signIn()">Sign In</button>
       <div class="auth-msg" id="si-msg"></div>
-      <!-- <div class="auth-switch">New to Blümi? <a onclick="showScreen('signup')">Create a Care Provider account</a></div> -->
       <div class="auth-switch">New to Blümi? <a onclick="window.location.href='../pricing/'">Create a Care Provider account</a></div>
     </div>
     <a href="../" style="position:absolute;bottom:1rem;right:1.2rem;color:var(--muted);font-family:'Jost',sans-serif;font-size:0.75rem;text-decoration:none;display:flex;align-items:center;gap:0.4rem;opacity:0.7;">
@@ -815,8 +830,6 @@ body::before {
           <option value="collective">Collective — shared account, unlimited clients</option>
         </select>
       </div>
-
-      <!-- Admin setup — shown for practice/collective -->
       <div class="admin-setup-box" id="admin-setup-box">
         <div class="admin-setup-box-title">🔑 Your Admin Account</div>
         <p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.9rem;line-height:1.55;">
@@ -836,7 +849,6 @@ body::before {
           </div>
         </div>
       </div>
-
       <button class="auth-btn" onclick="signUp()">Create Account</button>
       <div class="auth-msg" id="su-msg"></div>
       <div class="auth-switch">Already have an account? <a onclick="showScreen('signin')">Sign in</a></div>
@@ -844,12 +856,12 @@ body::before {
   </div>
 </div>
 
-<!-- ── PIN SELECTOR SCREEN (practice/collective only) ── -->
+<!-- ── PIN SELECTOR SCREEN ── -->
 <div id="pin-screen" class="auth-screen" style="display:none;">
   <div class="pin-card">
     <div class="pin-card-head">
       <div class="auth-logo" style="margin-bottom:0.6rem;"><img src="../img/logo.png" alt="Blümi"></div>
-      <div class="pin-practice-name" id="pin-practice-name">Greater Toronto Doulas</div>
+      <div class="pin-practice-name" id="pin-practice-name">Your Practice</div>
       <p class="auth-sub" style="margin-top:0.3rem;">Who are you? Select your name and enter your PIN.</p>
     </div>
     <div class="pin-card-body">
@@ -857,7 +869,6 @@ body::before {
       <select class="pin-provider-select" id="pin-provider-select" onchange="onProviderSelect()">
         <option value="">— Choose your name —</option>
       </select>
-
       <div class="pin-entry-section" id="pin-entry-section">
         <div class="pin-entry-label">Enter your 4-digit PIN</div>
         <div class="pin-dots-row">
@@ -872,7 +883,6 @@ body::before {
         </div>
         <div class="pin-msg" id="pin-msg"></div>
       </div>
-
       <a class="pin-signout-link" onclick="signOut()">← Sign out of this account</a>
     </div>
   </div>
@@ -897,7 +907,6 @@ body::before {
       <span id="topbar-tier-badge"></span>
       <button class="topbar-signout" onclick="signOut()">Sign out</button>
     </div>
-    <!-- Mobile hamburger -->
     <button class="topbar-hamburger" id="topbar-hamburger" onclick="openMobileMenu()" aria-label="Open menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
@@ -1028,7 +1037,9 @@ body::before {
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody id="clients-tbody"></tbody>
+        <tbody id="clients-tbody">
+          <tr class="table-loading-row"><td colspan="5"><div class="table-spinner"><div class="table-spinner-ring"></div><div class="table-spinner-text">Loading your clients…</div></div></td></tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -1174,7 +1185,7 @@ body::before {
   </div>
 </div>
 
-<!-- MANAGE PROVIDERS MODAL (admin only) -->
+<!-- MANAGE PROVIDERS MODAL -->
 <div class="modal-overlay" id="providers-modal">
   <div class="modal" style="max-width:580px;">
     <div class="modal-head">
@@ -1251,7 +1262,6 @@ let activeArchiveRow  = null;
 let currentInviteLink = '';
 let _upgradeBannerDismissed = false;
 
-// Practice/Collective state
 let currentProvider   = null;
 let allProviders      = [];
 
@@ -1264,6 +1274,15 @@ const TEAM_TIERS   = ['practice', 'collective'];
 function isTeamTier() { return TEAM_TIERS.includes(currentProfile?.tier); }
 function isAdmin()    { return isTeamTier() && currentProvider?.is_admin; }
 
+// ── Spinner helper ─────────────────────────────────────────────────────
+function showTableSpinner(msg) {
+  document.getElementById('clients-tbody').innerHTML =
+    `<tr class="table-loading-row"><td colspan="5"><div class="table-spinner">` +
+    `<div class="table-spinner-ring"></div>` +
+    `<div class="table-spinner-text">${msg || 'Loading…'}</div>` +
+    `</div></td></tr>`;
+}
+
 // ── Screen management ──────────────────────────────────────────────────
 function showScreen(name) {
   document.getElementById('signin-screen').style.display = name === 'signin' ? 'flex' : 'none';
@@ -1272,7 +1291,6 @@ function showScreen(name) {
   document.getElementById('app-screen').style.display    = name === 'app'    ? 'block': 'none';
 }
 
-// ── Signup tier toggle ─────────────────────────────────────────────────
 function onTierChange() {
   const tier = document.getElementById('su-tier').value;
   const isTeam = TEAM_TIERS.includes(tier);
@@ -1295,7 +1313,6 @@ function showMsg(id, text, type) {
   el.textContent = text; el.className = 'auth-msg ' + type; el.style.display = 'block';
 }
 
-// ── PIN input helpers ──────────────────────────────────────────────────
 function pinOnlyNum(el) { el.value = el.value.replace(/\D/g, ''); }
 function pinNext(el, nextId) {
   if (el.value.length === 1) {
@@ -1323,7 +1340,6 @@ function clearPinEntry() {
   document.getElementById('pin-msg').textContent = '';
 }
 
-// ── Auth ───────────────────────────────────────────────────────────────
 async function signIn() {
   const email    = document.getElementById('si-email').value.trim();
   const password = document.getElementById('si-password').value;
@@ -1335,11 +1351,9 @@ async function signIn() {
   if (error) showMsg('si-msg', error.message, 'error');
 }
 
-// ── BILLING PORTAL (cancel / manage subscription) ─────────────────────
 async function openBillingPortal() {
   const btn = event?.currentTarget;
   if (btn) { btn.disabled = true; btn.textContent = 'Opening…'; }
- 
   try {
     const resp = await fetch('/api/create-checkout-session', {
       method: 'POST',
@@ -1360,7 +1374,6 @@ async function openBillingPortal() {
   }
 }
 
-// ── FIX 1: signUp now explicitly upserts the profiles row with the correct tier ──
 async function signUp() {
   const practiceName = document.getElementById('su-practice-name').value.trim();
   const email        = document.getElementById('su-email').value.trim();
@@ -1387,8 +1400,6 @@ async function signUp() {
   const btn = document.querySelector('#signup-screen .auth-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
 
-  // Store all signup data so _enterPortal can use it for first-time setup
-  // We tag it onto the user metadata so it's available in the session
   const { data: signUpData, error } = await sb.auth.signUp({
     email, password,
     options: {
@@ -1406,8 +1417,6 @@ async function signUp() {
   btn.disabled = false; btn.textContent = 'Create Account';
   if (error) return showMsg('su-msg', error.message, 'error');
 
-  // FIX: Immediately upsert the profile row with the chosen tier.
-  // Supabase triggers may create the row but won't know the tier; this ensures it's set.
   if (signUpData?.user?.id) {
     await sb.from('profiles').upsert({
       id:            signUpData.user.id,
@@ -1417,8 +1426,6 @@ async function signUp() {
       practice_name: practiceName || null,
     }, { onConflict: 'id' });
 
-    // FIX: For team tiers, immediately insert the admin provider row while we have the data.
-    // This is idempotent — _enterPortal will skip creation if the row already exists.
     if (isTeam && adminName && adminPin.length === 4) {
       await sb.from('practice_providers').upsert({
         birth_worker_id: signUpData.user.id,
@@ -1441,25 +1448,23 @@ async function signOut() {
 function switchProvider() {
   currentProvider = null;
   localStorage.removeItem('bluumi_current_provider_id');
+  // Show spinner immediately so the old data disappears before the PIN screen shows
+  showTableSpinner('Switching provider…');
   showPinScreen();
 }
 
-// ── Auth state ─────────────────────────────────────────────────────────
 let _bootedUserId    = null;
 let _realtimeChannel = null;
 
-// ── FIX 2: _enterPortal — robust profile + provider bootstrap ──────────
 async function _enterPortal(user, session) {
   currentUser = user;
 
-  // Load profile, retry once if not yet created by trigger
   await loadProfile();
   if (!currentProfile) {
     await new Promise(r => setTimeout(r, 1000));
     await loadProfile();
   }
 
-  // FIX: If profile still missing, create it from session metadata
   if (!currentProfile) {
     const meta = session?.user?.user_metadata || user.user_metadata || {};
     await sb.from('profiles').upsert({
@@ -1472,7 +1477,6 @@ async function _enterPortal(user, session) {
     await loadProfile();
   }
 
-  // FIX: If profile exists but tier is missing, patch it from metadata
   if (currentProfile && !currentProfile.tier) {
     const meta = session?.user?.user_metadata || user.user_metadata || {};
     const tier = meta.tier || 'solo';
@@ -1480,7 +1484,6 @@ async function _enterPortal(user, session) {
     currentProfile.tier = tier;
   }
 
-  // Role check
   const role = currentProfile?.role ?? (session?.user?.user_metadata?.role);
   if (role && role !== 'birth_worker') {
     showMsg('si-msg', 'This portal is for Care Providers only.', 'error');
@@ -1488,16 +1491,13 @@ async function _enterPortal(user, session) {
     return;
   }
 
-  // FIX: Always load providers for team tiers (regardless of count)
   if (isTeamTier()) {
     await loadProviders();
 
-    // FIX: Create admin provider row if it doesn't exist yet (idempotent upsert)
     const hasAdmin = allProviders.some(p => p.is_admin);
     if (!hasAdmin) {
       const meta = session?.user?.user_metadata || user.user_metadata || {};
       if (meta?.admin_name && meta?.admin_pin) {
-        // Use insert with conflict handling rather than upsert (no unique constraint to rely on)
         const { error: provErr } = await sb.from('practice_providers').insert({
           birth_worker_id: user.id,
           name:     meta.admin_name,
@@ -1511,7 +1511,6 @@ async function _enterPortal(user, session) {
       }
     }
 
-    // Restore active provider from localStorage
     if (!currentProvider) {
       const savedId = localStorage.getItem('bluumi_current_provider_id');
       if (savedId) {
@@ -1528,7 +1527,6 @@ async function _enterPortal(user, session) {
   await bootApp();
 }
 
-// ── Eager session check on page load ──────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
   onTierChange();
 
@@ -1539,7 +1537,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
 
   const { data: { session } } = await sb.auth.getSession();
-  console.log('DOMContentLoaded session check:', session?.user?.id ?? 'none');
 
   if (session?.user) {
     _bootedUserId = session.user.id;
@@ -1554,8 +1551,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   sb.auth.onAuthStateChange(async (event, session) => {
-    console.log('auth event:', event, session?.user?.id);
-
     if (event === 'SIGNED_OUT') {
       _bootedUserId = null;
       if (_realtimeChannel) { sb.removeChannel(_realtimeChannel); _realtimeChannel = null; }
@@ -1597,7 +1592,6 @@ async function loadProviders() {
   allProviders = data || [];
 }
 
-// ── PIN screen ─────────────────────────────────────────────────────────
 function showPinScreen() {
   const practiceName = currentProfile?.practice_name
     || currentUser?.user_metadata?.practice_name
@@ -1657,10 +1651,12 @@ function submitPin() {
 
   currentProvider = provider;
   localStorage.setItem('bluumi_current_provider_id', provider.id);
+  // Show spinner immediately as we transition from PIN screen to app
+  showScreen('app');
+  showTableSpinner('Loading your clients…');
   bootApp();
 }
 
-// ── Boot the app ───────────────────────────────────────────────────────
 async function bootApp() {
   showScreen('app');
   document.getElementById('topbar-email').textContent = currentUser.email;
@@ -1708,12 +1704,10 @@ function renderTopbarProvider() {
 }
 
 function syncMobileDrawerIdentity() {
-  // Determine display name: provider name for team tiers, email prefix for solo
   let displayName, emailStr;
   if (isTeamTier() && currentProvider) {
     displayName = currentProvider.name;
   } else {
-    // Solo: use email (or part before @)
     displayName = currentUser ? currentUser.email : '—';
   }
   emailStr = currentUser ? currentUser.email : '';
@@ -1724,11 +1718,9 @@ function syncMobileDrawerIdentity() {
   if (!mAvatar) return;
   mAvatar.textContent = initials;
   document.getElementById('mobile-menu-provider-name').textContent = displayName;
-  // Show email on second line only if name != email
   const mEmail = document.getElementById('mobile-menu-email');
   mEmail.textContent = (displayName !== emailStr) ? emailStr : '';
 
-  // Make identity row clickable (switch provider) for team tiers
   const providerRow = document.getElementById('mobile-menu-provider-row');
   const switchArrow = document.getElementById('mobile-menu-switch-arrow');
   if (providerRow) {
@@ -1738,11 +1730,9 @@ function syncMobileDrawerIdentity() {
     if (switchArrow) switchArrow.style.display = canSwitch ? '' : 'none';
   }
 
-  // Switch provider button: only for team tiers with a provider
   const switchBtn = document.getElementById('mobile-menu-switch-btn');
   if (switchBtn) switchBtn.style.display = (isTeamTier() && currentProvider) ? '' : 'none';
 
-  // Manage team button: only for admins on team tiers
   const manageBtn = document.getElementById('mobile-menu-manage-btn');
   if (manageBtn) manageBtn.style.display = (isTeamTier() && isAdmin()) ? '' : 'none';
 }
@@ -1755,7 +1745,6 @@ function renderTierBadge() {
   el.textContent = tier ? labels[tier] : 'No plan';
   el.title = isAdmin() || !isTeamTier() ? 'View or change your plan' : 'View your plan';
   el.onclick = () => openUpgradeModal();
-  // Sync mobile drawer tier badge
   const mBadge = document.getElementById('mobile-menu-tier-badge');
   if (mBadge) {
     mBadge.className = el.className;
@@ -1765,7 +1754,6 @@ function renderTierBadge() {
   }
 }
 
-// ── UPGRADE BANNER ─────────────────────────────────────────────────────
 function renderUpgradeBanner() {
   const tier   = currentProfile?.tier;
   const banner = document.getElementById('upgrade-banner');
@@ -1794,7 +1782,6 @@ function dismissUpgradeBanner() {
   document.getElementById('upgrade-banner').classList.remove('visible');
 }
 
-// ── UPGRADE MODAL ──────────────────────────────────────────────────────
 function openUpgradeModal() {
   const currentTier = currentProfile?.tier;
   if (isTeamTier() && !isAdmin()) { showToast('Only the account admin can change the plan.'); return; }
@@ -1807,7 +1794,7 @@ function openUpgradeModal() {
 function renderUpgradeModalTiers(currentTier) {
   const container = document.getElementById('upgrade-modal-tiers');
   const hasPaidSub = currentProfile?.stripe_subscription || currentProfile?.paid;
- 
+
   container.innerHTML = TIER_ORDER.map(t => {
     const isCurrent    = t === currentTier;
     const isDowngrade  = TIER_ORDER.indexOf(t) < TIER_ORDER.indexOf(currentTier);
@@ -1816,22 +1803,20 @@ function renderUpgradeModalTiers(currentTier) {
     if (isCurrent)     cardClass += ' current';
     if (isRecommended) cardClass += ' recommended';
     if (isDowngrade)   cardClass += ' downgrade';
- 
+
     let ctaLabel, ctaClass, onclickAttr;
     if (isCurrent) {
       ctaLabel = 'Current plan'; ctaClass = 'umt-cta disabled'; onclickAttr = '';
     } else if (isDowngrade) {
-      // Downgrades go through the billing portal
       ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`;
       ctaClass = 'umt-cta downgrade-btn';
       onclickAttr = `onclick="openBillingPortal()"`;
     } else {
-      // Upgrades go through Stripe Checkout
       ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)} →`;
       ctaClass = 'umt-cta active';
       onclickAttr = `onclick="selectTierPaid('${t}')"`;
     }
- 
+
     return `<div class="${cardClass}">
       <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '🌿 Best value' : 'Professional'}</div>
       <div class="umt-name">${t.charAt(0).toUpperCase()+t.slice(1)}</div>
@@ -1842,7 +1827,7 @@ function renderUpgradeModalTiers(currentTier) {
     </div>`;
   }).join('');
 
-    if (hasPaidSub) {
+  if (hasPaidSub) {
     container.insertAdjacentHTML('beforeend', `
       <div style="grid-column:1/-1;margin-top:0.8rem;padding:1rem 1.2rem;background:var(--cream);border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
         <div>
@@ -1860,7 +1845,6 @@ window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(location.search);
   if (params.get('upgraded') === '1') {
     history.replaceState({}, '', location.pathname);
-    // Profile will have been updated by the webhook — reload it
     setTimeout(async () => {
       await loadProfile();
       renderTierBadge();
@@ -1877,30 +1861,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function confirmDowngrade(newTier) {
-  const tierName  = newTier.charAt(0).toUpperCase() + newTier.slice(1);
-  const newLimit  = TIER_LIMITS[newTier];
-  const used      = allClients.filter(r => r.status !== 'archived').length;
-  const overLimit = newLimit !== Infinity && used > newLimit;
-  document.getElementById('upgrade-modal-tiers').innerHTML = `
-    <div class="downgrade-confirm-box">
-      <div class="downgrade-confirm-icon">⚠️</div>
-      <div class="downgrade-confirm-title">Downgrade to ${tierName}?</div>
-      <div class="downgrade-confirm-body">
-        The ${tierName} plan supports <strong>${TIER_SLOTS[newTier]}</strong>.
-        ${overLimit
-          ? `You currently have <strong>${used} active clients</strong> — over the ${tierName} limit of <strong>${newLimit}</strong>. You'll need to archive some clients before new invites will work, but <strong>no data will be deleted.</strong>`
-          : `You have <strong>${used} active client${used!==1?'s':''}</strong>, within the ${tierName} limit. All data is fully preserved.`
-        }
-      </div>
-      <div class="downgrade-confirm-actions">
-        <button class="btn-secondary" onclick="renderUpgradeModalTiers('${currentProfile?.tier}')">← Go back</button>
-        <button class="btn-danger" onclick="selectTier('${newTier}')">Yes, downgrade to ${tierName}</button>
-      </div>
-    </div>`;
-}
-
-// ── Team setup step (solo → team upgrade) ──────────────────────────────
 function showTeamSetupStepPaid(newTier) {
   const tierName = newTier.charAt(0).toUpperCase() + newTier.slice(1);
   document.getElementById('upgrade-modal-tiers').innerHTML = `
@@ -1934,7 +1894,7 @@ function showTeamSetupStepPaid(newTier) {
     </div>`;
   setTimeout(() => document.getElementById('team-setup-admin-name')?.focus(), 80);
 }
- 
+
 function getTeamSetupPin() {
   return ['tsp0','tsp1','tsp2','tsp3'].map(id => document.getElementById(id)?.value || '').join('');
 }
@@ -1943,21 +1903,18 @@ async function proceedTeamUpgradePaid(newTier) {
   const adminName = document.getElementById('team-setup-admin-name')?.value?.trim();
   const adminPin  = getTeamSetupPin();
   const msgEl     = document.getElementById('team-setup-msg');
- 
+
   if (!adminName) { msgEl.textContent = 'Please enter your name.'; return; }
   if (adminPin.length !== 4) { msgEl.textContent = 'Please enter all 4 digits of your PIN.'; return; }
   msgEl.textContent = '';
- 
-  // Store admin details on Supabase user metadata so the webhook can create
-  // the provider row after payment succeeds
+
   await sb.auth.updateUser({
     data: { admin_name: adminName, admin_pin: adminPin, pending_tier: newTier }
   });
- 
-  // Close modal and redirect to Stripe
+
   document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
   showToast('Redirecting to checkout…');
- 
+
   try {
     const resp = await fetch('/api/create-checkout-session', {
       method: 'POST',
@@ -1978,61 +1935,17 @@ async function proceedTeamUpgradePaid(newTier) {
   }
 }
 
-async function confirmTeamUpgrade(newTier) {
-  const adminName = document.getElementById('team-setup-admin-name').value.trim();
-  const adminPin  = getTeamSetupPin();
-  const msgEl     = document.getElementById('team-setup-msg');
-
-  if (!adminName) { msgEl.textContent = 'Please enter your name.'; return; }
-  if (adminPin.length !== 4) { msgEl.textContent = 'Please enter all 4 digits of your PIN.'; return; }
-  msgEl.textContent = '';
-
-  document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
-
-  const { error } = await sb.from('profiles').update({ tier: newTier }).eq('id', currentUser.id);
-  if (error) { showToast('Could not update plan. Please try again.'); return; }
-
-  // FIX: Delete any existing non-admin orphan admin rows, then insert cleanly
-  await sb.from('practice_providers')
-    .delete()
-    .eq('birth_worker_id', currentUser.id)
-    .eq('is_admin', true);
-
-  const { error: provErr } = await sb.from('practice_providers').insert({
-    birth_worker_id: currentUser.id,
-    name:     adminName,
-    pin:      adminPin,
-    is_admin: true,
-  });
-  if (provErr) { showToast('Plan saved, but could not create provider. Please contact support.'); return; }
-
-  currentProfile.tier = newTier;
-  _upgradeBannerDismissed = false;
-  try { localStorage.removeItem('bluumi-upgrade-banner-dismissed'); } catch(e) {}
-
-  await loadProviders();
-  currentProvider = allProviders.find(p => p.is_admin) || allProviders[0];
-  if (currentProvider) localStorage.setItem('bluumi_current_provider_id', currentProvider.id);
-
-  renderTierBadge(); renderTopbarProvider(); renderUpgradeBanner(); renderPortalHeader();
-  await loadClients();
-
-  showToast(`✓ Upgraded to ${newTier.charAt(0).toUpperCase()+newTier.slice(1)}! You're now logged in as ${currentProvider?.name || 'Admin'}.`, 5000);
-}
-
 async function selectTierPaid(newTier) {
-  // Team upgrades from solo still need the team-setup step first
   if (['practice', 'collective'].includes(newTier) && !isTeamTier()) {
     showTeamSetupStepPaid(newTier);
     return;
   }
- 
-  // Any change goes through Stripe — close modal and redirect
+
   document.querySelectorAll('.modal-overlay').forEach(m => closeModal(m.id));
- 
+
   const tierName = newTier.charAt(0).toUpperCase() + newTier.slice(1);
   showToast(`Redirecting to checkout for ${tierName}…`);
- 
+
   try {
     const resp = await fetch('/api/create-checkout-session', {
       method: 'POST',
@@ -2058,6 +1971,9 @@ function getSlotLimit() { return TIER_LIMITS[currentProfile?.tier] ?? 0; }
 // ── Clients ────────────────────────────────────────────────────────────
 async function loadClients() {
   if (!currentUser?.id) return;
+  // Show spinner immediately — before any await — so there's never a flash of stale data
+  showTableSpinner('Loading your clients…');
+
   const { data } = await sb
     .from('birth_worker_clients')
     .select(`id, invited_email, status, notes, created_at, invite_token, provider_id,
@@ -2240,7 +2156,6 @@ function renderTable() {
   }).join('');
 }
 
-// ── Reassign client ────────────────────────────────────────────────────
 async function reassignClient(rowId, providerId) {
   if (!providerId) return;
   const { error } = await sb
@@ -2256,11 +2171,10 @@ async function reassignClient(rowId, providerId) {
   showToast(`Client assigned to ${pName}.`);
 }
 
-// ── View Plan ──────────────────────────────────────────────────────────
 function openViewPlanModal(rowId) {
-  const row = allClients.find(r => r.id === rowId);
-  const d   = row?.plan_data;
-  const body = document.getElementById('view-plan-body');
+  const row   = allClients.find(r => r.id === rowId);
+  const d     = row?.plan_data;
+  const body  = document.getElementById('view-plan-body');
   if (!d) {
     body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-style:italic;">No birth plan data yet.</div>';
     openModal('view-plan-modal'); return;
@@ -2304,7 +2218,6 @@ function openViewPlanModal(rowId) {
   openModal('view-plan-modal');
 }
 
-// ── Unsure Modal ───────────────────────────────────────────────────────
 const SECTION_LABELS = {
   values: 'Core Values', comfortPref: 'Comfort Preference', naturalComfort: 'Natural Comfort',
   medicalComfort: 'Medical Comfort', induction: 'Labor Interventions', vaginal: 'Vaginal Birth',
@@ -2324,7 +2237,6 @@ function openUnsureModal(rowId) {
   openModal('unsure-modal');
 }
 
-// ── Open Plan (editable) ───────────────────────────────────────────────
 async function openPlan(clientId) {
   sessionStorage.setItem('portalReturnUrl', location.href);
   const { data: { session } } = await sb.auth.getSession();
@@ -2336,7 +2248,6 @@ async function openPlan(clientId) {
   window.open(url, '_blank');
 }
 
-// ── Invite ─────────────────────────────────────────────────────────────
 function openInviteModal() {
   document.getElementById('invite-email').value = '';
   document.getElementById('invite-name').value  = '';
@@ -2398,7 +2309,6 @@ function copyInviteLink() {
   });
 }
 
-// ── Notes ──────────────────────────────────────────────────────────────
 function parseNotes(raw) {
   if (!raw) return [];
   if (typeof raw === 'object' && Array.isArray(raw)) return raw;
@@ -2475,7 +2385,6 @@ async function saveNote() {
   showToast('Note saved.');
 }
 
-// ── Archive ────────────────────────────────────────────────────────────
 function openArchiveModal(rowId, name) {
   activeArchiveRow = rowId;
   document.getElementById('archive-client-name').textContent = name;
@@ -2491,9 +2400,7 @@ async function confirmArchive() {
   await loadClients(); closeModal('archive-modal'); showToast('Client archived.');
 }
 
-// ── Manage Providers ───────────────────────────────────────────────────
 function openManageProvidersModal() {
-  // Reset any revealed PINs from last session
   Object.keys(_pinRevealTimers).forEach(id => {
     clearTimeout(_pinRevealTimers[id]);
     const el = document.getElementById('pin-display-' + id);
@@ -2570,7 +2477,6 @@ async function editProviderPin(providerId, name) {
   showToast(`PIN updated for ${name}.`);
 }
 
-// ── Modal helpers ──────────────────────────────────────────────────────
 function openModal(id) {
   const el = document.getElementById(id);
   el.style.display = 'flex';
@@ -2582,7 +2488,6 @@ function closeModal(id) {
   el.style.display = 'none';
 }
 
-// ── Toast ──────────────────────────────────────────────────────────────
 let toastTimer;
 function showToast(msg, duration = 3000) {
   const el = document.getElementById('toast');
@@ -2591,13 +2496,11 @@ function showToast(msg, duration = 3000) {
   toastTimer = setTimeout(() => el.classList.remove('show'), duration);
 }
 
-// ── PIN reveal ────────────────────────────────────────────────────────
 let _pinRevealTimers = {};
 function togglePinReveal(providerId, pin) {
   const el = document.getElementById('pin-display-' + providerId);
   if (!el) return;
   if (el.classList.contains('revealed')) {
-    // Second tap = edit
     clearTimeout(_pinRevealTimers[providerId]);
     el.classList.remove('revealed');
     el.textContent = '••••';
@@ -2605,7 +2508,6 @@ function togglePinReveal(providerId, pin) {
     const provider = allProviders.find(p => p.id === providerId);
     if (provider) editProviderPin(providerId, provider.name);
   } else {
-    // First tap = reveal, auto-hide after 4s
     el.classList.add('revealed');
     el.textContent = pin;
     el.title = 'Tap again to edit PIN';
@@ -2620,7 +2522,6 @@ function togglePinReveal(providerId, pin) {
   }
 }
 
-// ── Mobile Menu ───────────────────────────────────────────────────────
 function openMobileMenu() {
   document.getElementById('mobile-menu-overlay').classList.add('open');
   document.getElementById('mobile-menu-drawer').classList.add('open');
@@ -2630,9 +2531,8 @@ function closeMobileMenu() {
   document.getElementById('mobile-menu-overlay').classList.remove('open');
   document.getElementById('mobile-menu-drawer').classList.remove('open');
   document.body.style.overflow = '';
-} 
+}
 
-// ── Utility ────────────────────────────────────────────────────────────
 function formatDue(dateStr) { return new Date(dateStr + 'T00:00').toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }); }
 function isSoon(dateStr) { const diff = (new Date(dateStr + 'T00:00') - Date.now()) / (1000 * 60 * 60 * 24); return diff >= 0 && diff <= 60; }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }

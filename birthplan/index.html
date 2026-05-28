@@ -1236,19 +1236,26 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // Portal mode is handled separately above — skip session check here
-  if (PORTAL_MODE !== '1') {
-    // Check for existing session on every page load.
-    // If already logged in, go straight to the app — don't flash the login screen.
-    const { data: { session } } = await sb.auth.getSession();
-    if (session?.user) {
-      _bootedUserId = session.user.id;
-      currentUser   = session.user;
-      await _enterApp(session.user, false);
-    } else {
-      showScreen('signin');
-    }
+// Portal mode is handled separately above — skip session check here
+if (PORTAL_MODE !== '1') {
+  // Check for existing session on every page load.
+  // If already logged in, go straight to the app — don't flash the login screen.
+  const { data: { session } } = await sb.auth.getSession();
+
+  if (session?.user) {
+    _bootedUserId = session.user.id;
+    currentUser   = session.user;
+    await _enterApp(session.user, false);
+  } else if (INVITE_TOKEN) {
+    // Invite flow: go directly to signup page
+    window.location.replace(
+      `signup.html?invite=${encodeURIComponent(INVITE_TOKEN)}`
+    );
+    return;
+  } else {
+    showScreen('signin');
   }
+}
 
   // Register onAuthStateChange after DOM is ready so showScreen() never
   // tries to access elements that don't exist yet.
