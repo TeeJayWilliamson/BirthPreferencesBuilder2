@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birth Preferences Builder — Blümi</title>
+<title>Your Birth Space — Blümi</title>
 <link rel="icon" type="image/png" href="img/flavicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -535,6 +535,17 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 .preview-story-text { font-family:'Cormorant Garamond',serif; font-size:0.82rem; line-height:1.7; color:#333; }
 .preview-greeting { display:inline-block; background:var(--olive-pale); color:var(--olive); font-family:'Jost',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; padding:0.3rem 0.7rem; border-radius:5px; margin-bottom:0.8rem; }
 .preview-footer { margin-top:1.2rem; padding-top:0.8rem; border-top:1px solid #EEE; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.78rem; color:var(--muted); }
+
+/* ── DYNAMIC TITLE PREFIX ── */
+#birth-space-prefix {
+  display: inline-block;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+#birth-space-prefix.fading {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
 </style>
 </head>
 <body>
@@ -627,7 +638,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 <div id="app-screen">
   <header class="site-header">
     <div class="site-header-logo"><img src="../img/logo.png" alt="Blümi"></div>
-    <h1>Birth Preferences Builder</h1>
+    <h1><span id="birth-space-prefix">Your</span> Birth Space</h1>
     <p>A guided journey to create your personalised birth plan — with everything you need to make informed, confident decisions.</p>
   </header>
 
@@ -1786,6 +1797,51 @@ function generateStory() {
   textarea.value='';note.style.display='none';btn.disabled=true;btn.style.opacity='0.7';label.textContent=' Writing...';
   var i=0;var interval=setInterval(function(){textarea.value+=finalText[i];i++;if(i>=finalText.length){clearInterval(interval);note.style.display='block';btn.disabled=false;btn.style.opacity='1';label.textContent=' Regenerate';}},14);
 }
+
+// ── DYNAMIC BIRTH SPACE TITLE ─────────────────────────────
+(function() {
+  var prefixEl = document.getElementById('birth-space-prefix');
+  var nameInput = document.getElementById('name');
+  if (!prefixEl || !nameInput) return;
+  var _lastVal = '';
+  var _fadeTimer = null;
+
+  function applyTitle(newText) {
+    if (newText === _lastVal) return;
+    _lastVal = newText;
+    clearTimeout(_fadeTimer);
+    prefixEl.classList.add('fading');
+    _fadeTimer = setTimeout(function() {
+      prefixEl.textContent = newText;
+      prefixEl.classList.remove('fading');
+    }, 510);
+  }
+
+  function updateTitle() {
+    var val = nameInput.value;
+    var firstName = val.trim().split(/\s+/)[0];
+
+    if (!firstName) {
+      applyTitle('Your');
+    } else if (/^\S+ /.test(val)) {
+      applyTitle(firstName + '\u2019s');
+    }
+  }
+
+  function updateTitleOnBlur() {
+    var firstName = nameInput.value.trim().split(/\s+/)[0];
+    if (firstName) applyTitle(firstName + '\u2019s');
+    else applyTitle('Your');
+  }
+
+  nameInput.addEventListener('input', updateTitle);
+  nameInput.addEventListener('blur', updateTitleOnBlur);
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(updateTitleOnBlur, 700);
+  });
+})();
+
 </script>
 </body>
 </html>
