@@ -71,7 +71,7 @@ module.exports = async (req, res) => {
       customer_email:     email,
       line_items: [{ price: PRICE_IDS[plan], quantity: 1 }],
       metadata: { userId, plan },
-      success_url: `${siteUrl}${successPath || '/'}?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
+      success_url: `${siteUrl}${successPath || '/'}${successPath?.includes('?') ? '&' : '?'}session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
       cancel_url:  `${siteUrl}${cancelPath  || '/pricing/'}`,
       allow_promotion_codes: true,
     };
