@@ -1174,6 +1174,22 @@ async function _enterApp(user, isPortalMode) {
     attachAutoSave(PORTAL_CLIENT);
     return;
   }
+
+  // ── Gate unpaid personal accounts ──────────────────────────────
+  const { data: profile } = await sb
+    .from('profiles').select('role, tier, paid').eq('id', user.id).maybeSingle();
+
+  if (profile?.role === 'client' && profile?.tier !== 'invited' && !profile?.paid) {
+    await sb.auth.signOut();
+    showScreen('signin');
+    showMsg('si-msg',
+      'Your account isn\'t active yet — please complete your purchase to continue.',
+      'error');
+    setTimeout(() => { window.location.href = '/pricing/'; }, 2500);
+    return;
+  }
+  // ───────────────────────────────────────────────────────────────
+
   showScreen('app');
   document.getElementById('user-email-display').textContent = user.email;
   if (INVITE_TOKEN) {

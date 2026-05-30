@@ -15,7 +15,7 @@
 //     customer.subscription.deleted
 //     invoice.payment_failed
 
-const stripe         = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require('@supabase/supabase-js');
 
 function getSupabase() {
@@ -23,6 +23,19 @@ function getSupabase() {
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
+}
+
+// Read the raw body from the Node.js stream — required for Stripe HMAC verification.
+// Vercel may parse req.body into an object before we see it, which breaks
+// constructEvent. Reading directly from the stream gives us the original bytes
+// that Stripe signed.
+function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', chunk => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
 }
 
 const PRICE_TO_TIER = {
@@ -35,12 +48,12 @@ const PRICE_TO_TIER = {
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end('Method Not Allowed');
 
-  const sig  = req.headers['stripe-signature'];
-  const body = req.body;
+  const rawBody = await getRawBody(req);
+  const sig = req.headers['stripe-signature'];
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('[webhook] signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -65,8 +78,8 @@ module.exports = async (req, res) => {
       id:                  userId,
       role,
       tier:                plan,
-      stripe_customer_id:  session.customer      || null,
-      stripe_subscription: session.subscription  || null,
+      stripe_customer_id:  session.customer     || null,
+      stripe_subscription: session.subscription || null,
       paid:                true,
       paid_at:             new Date().toISOString(),
     }, { onConflict: 'id' });
@@ -77,14 +90,8 @@ module.exports = async (req, res) => {
     // admin provider row now (in case they signed up via /pricing/ and it
     // wasn't created yet).
     if (['practice', 'collective'].includes(plan)) {
-      const { data: profile } = await sb
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      // Check metadata from Supabase auth user
-      const { data: { user } } = await sb.auth.admin.getUserById(userId).catch(() => ({ data: { user: null } }));
+      const { data: { user } } = await sb.auth.admin.getUserById(userId)
+        .catch(() => ({ data: { user: null } }));
       const meta = user?.user_metadata || {};
       if (meta.admin_name && meta.admin_pin) {
         const { data: existing } = await sb
@@ -123,7 +130,6 @@ module.exports = async (req, res) => {
       }
     }
 
-    // If subscription moves to past_due / unpaid, mark as unpaid
     if (['past_due', 'unpaid', 'incomplete_expired'].includes(sub.status)) {
       await sb.from('profiles').update({ paid: false }).eq('id', userId);
     }
@@ -152,13 +158,8 @@ module.exports = async (req, res) => {
   if (event.type === 'invoice.payment_failed') {
     const invoice = event.data.object;
     console.warn(`[webhook] payment failed for customer ${invoice.customer}`);
-    // Optionally: look up user by stripe_customer_id and send an email nudge
     return res.status(200).json({ received: true });
   }
 
   return res.status(200).json({ received: true });
-};
-
-module.exports.config = {
-  api: { bodyParser: false },
 };
