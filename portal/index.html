@@ -772,21 +772,61 @@ body::before {
       <div class="auth-logo"><img src="../img/logo.png" alt="Blümi"></div>
       <div class="auth-brand-tag">Care Provider Portal</div>
       <div class="auth-portal-tag">Professional Access</div>
-      <p class="auth-sub">Sign in to your Care Provider account to manage clients and birth plans.</p>
+      <p class="auth-sub">Sign in to your Care Provider account.</p>
     </div>
     <div class="auth-body">
-      <div class="auth-field">
-        <label class="auth-label">Email Address</label>
-        <input type="email" class="auth-input" id="si-email" placeholder="you@example.com" autocomplete="email">
+
+      <!-- HANDLE LOGIN (practice/collective) -->
+      <div id="si-handle-mode">
+        <div class="auth-field">
+          <label class="auth-label">Practice Handle</label>
+          <div style="display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:var(--cream);transition:border-color 0.2s;box-shadow:none;" id="handle-input-wrap">
+            <span style="padding:0.75rem 0.8rem 0.75rem 1rem;font-size:0.88rem;color:var(--muted);white-space:nowrap;border-right:1px solid var(--border);background:white;user-select:none;">blumi.</span>
+            <input type="text" id="si-handle" placeholder="YourPracticeName"
+              style="flex:1;padding:0.75rem 1rem;border:none;background:transparent;font-family:'Jost',sans-serif;font-size:0.88rem;color:var(--text);outline:none;"
+              onkeydown="if(event.key==='Enter') signInWithHandle()"
+              oninput="this.value=this.value.replace(/\s/g,'')">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Account PIN</label>
+          <div class="pin-input-row" style="justify-content:flex-start;">
+            <input class="pin-digit" id="si-p0" maxlength="1" inputmode="numeric" pattern="[0-9]" type="password"
+              onkeyup="pinNext(this,'si-p1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="si-p1" maxlength="1" inputmode="numeric" pattern="[0-9]" type="password"
+              onkeyup="pinNext(this,'si-p2')" onkeydown="pinBack(event,this,'si-p0')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="si-p2" maxlength="1" inputmode="numeric" pattern="[0-9]" type="password"
+              onkeyup="pinNext(this,'si-p3')" onkeydown="pinBack(event,this,'si-p1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="si-p3" maxlength="1" inputmode="numeric" pattern="[0-9]" type="password"
+              onkeydown="pinBack(event,this,'si-p2')" oninput="pinOnlyNum(this); if(this.value) signInWithHandle()">
+          </div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:0.4rem;">This is the admin account PIN, not your personal provider PIN.</div>
+        </div>
+        <button class="auth-btn" onclick="signInWithHandle()">Sign In</button>
+        <div class="auth-msg" id="si-msg"></div>
+        <div class="auth-switch" style="margin-top:0.8rem;">
+          Solo provider? <a onclick="toggleSiMode(true)">Sign in with email →</a>
+        </div>
       </div>
-      <div class="auth-field">
-        <label class="auth-label">Password</label>
-        <input type="password" class="auth-input" id="si-password" placeholder="Your password" autocomplete="current-password"
-          onkeydown="if(event.key==='Enter') signIn()">
+
+      <!-- EMAIL LOGIN (solo / fallback) -->
+      <div id="si-email-mode" style="display:none;">
+        <div class="auth-field">
+          <label class="auth-label">Email Address</label>
+          <input type="email" class="auth-input" id="si-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <input type="password" class="auth-input" id="si-password" placeholder="Your password" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter') signIn()">
+        </div>
+        <button class="auth-btn" onclick="signIn()">Sign In</button>
+        <div class="auth-msg" id="si-email-msg"></div>
+        <div class="auth-switch" style="margin-top:0.8rem;">
+          Practice or Collective? <a onclick="toggleSiMode(false)">Sign in with handle →</a>
+        </div>
       </div>
-      <button class="auth-btn" onclick="signIn()">Sign In</button>
-      <div class="auth-msg" id="si-msg"></div>
-      <div class="auth-switch">New to Blümi? <a onclick="window.location.href='../pricing/'">Create a Care Provider account</a></div>
+
     </div>
     <a href="../" style="position:absolute;bottom:1rem;right:1.2rem;color:var(--muted);font-family:'Jost',sans-serif;font-size:0.75rem;text-decoration:none;display:flex;align-items:center;gap:0.4rem;opacity:0.7;">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -808,6 +848,16 @@ body::before {
         <label class="auth-label">Practice / Business Name <span style="font-weight:400;color:var(--muted)" id="practice-name-hint">(optional for Solo)</span></label>
         <input type="text" class="auth-input" id="su-practice-name" placeholder="e.g. Greater Toronto Doulas">
       </div>
+      <div class="auth-field" id="su-handle-wrap" style="display:none;">
+  <label class="auth-label">Practice Handle <span style="font-weight:400;color:var(--muted);">(your team's login ID)</span></label>
+  <div style="display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:var(--cream);" id="su-handle-input-wrap">
+    <span style="padding:0.75rem 0.8rem 0.75rem 1rem;font-size:0.88rem;color:var(--muted);white-space:nowrap;border-right:1px solid var(--border);background:white;user-select:none;">blumi.</span>
+    <input type="text" id="su-handle" placeholder="GreaterTorontoDoulas"
+      style="flex:1;padding:0.75rem 1rem;border:none;background:transparent;font-family:'Jost',sans-serif;font-size:0.88rem;color:var(--text);outline:none;"
+      oninput="this.value=this.value.replace(/\s/g,'')">
+  </div>
+  <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">Your team will use <strong>blumi.[handle]</strong> + the account PIN to log in. No spaces.</div>
+</div>
       <div class="auth-field">
         <label class="auth-label">Email Address</label>
         <input type="email" class="auth-input" id="su-email" placeholder="you@example.com" autocomplete="email">
@@ -1292,10 +1342,12 @@ function showScreen(name) {
 }
 
 function onTierChange() {
-  const tier = document.getElementById('su-tier').value;
+  const tier   = document.getElementById('su-tier').value;
   const isTeam = TEAM_TIERS.includes(tier);
-  document.getElementById('admin-setup-box').style.display = isTeam ? 'block' : 'none';
-  document.getElementById('practice-name-hint').textContent = isTeam ? '(required)' : '(optional for Solo)';
+
+  document.getElementById('admin-setup-box').style.display    = isTeam ? 'block' : 'none';
+  document.getElementById('practice-name-hint').style.display = isTeam ? 'none'  : '';
+  document.getElementById('su-handle-wrap').style.display     = isTeam ? 'block' : 'none'; // ← ADD THIS
 }
 
 function checkPwStrength(pw) {
@@ -1351,6 +1403,34 @@ async function signIn() {
   if (error) showMsg('si-msg', error.message, 'error');
 }
 
+// ── Toggle between handle and email login modes ──
+function toggleSiMode(showEmail) {
+  document.getElementById('si-handle-mode').style.display = showEmail ? 'none' : '';
+  document.getElementById('si-email-mode').style.display  = showEmail ? '' : 'none';
+  document.getElementById('si-msg').textContent = '';
+  document.getElementById('si-email-msg').textContent = '';
+}
+
+// ── Handle-based sign in (practice / collective) ──
+async function signInWithHandle() {
+  const handle = document.getElementById('si-handle').value.trim();
+  const pin    = ['si-p0','si-p1','si-p2','si-p3'].map(id => document.getElementById(id).value).join('');
+
+  if (!handle) return showMsg('si-msg', 'Please enter your practice handle.', 'error');
+  if (pin.length !== 4) return showMsg('si-msg', 'Please enter the 4-digit account PIN.', 'error');
+
+  const btn = document.querySelector('#si-handle-mode .auth-btn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+
+  const email    = handle.toLowerCase() + '@blumi.app';
+  const password = pin;
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  btn.disabled = false; btn.textContent = 'Sign In';
+  if (error) return showMsg('si-msg', 'Handle or PIN not recognised. Please check and try again.', 'error');
+  // onAuthStateChange → _enterPortal → showPinScreen() takes over from here
+}
+
 async function openBillingPortal() {
   const btn = event?.currentTarget;
   if (btn) { btn.disabled = true; btn.textContent = 'Opening…'; }
@@ -1382,17 +1462,20 @@ async function signUp() {
   const tier         = document.getElementById('su-tier').value;
   const isTeam       = TEAM_TIERS.includes(tier);
   const adminName    = isTeam ? document.getElementById('su-admin-name').value.trim() : '';
-  const adminPin     = isTeam ? getSignupPin() : '';
+const adminPin     = isTeam ? getSignupPin() : '';
+const handle       = isTeam ? document.getElementById('su-handle').value.trim() : '';
 
-  if (!email || !password) return showMsg('su-msg', 'Please fill in all required fields.', 'error');
-  if (password.length < 8) return showMsg('su-msg', 'Password must be at least 8 characters.', 'error');
-  if (password !== confirm) {
+  if (!isTeam && (!email || !password)) return showMsg('su-msg', 'Please fill in all required fields.', 'error');
+  if (!isTeam && password.length < 8)   return showMsg('su-msg', 'Password must be at least 8 characters.', 'error');
+  if (!isTeam && password !== confirm) {
     document.getElementById('su-confirm').classList.add('error');
     return showMsg('su-msg', 'Passwords do not match.', 'error');
   }
   document.getElementById('su-confirm').classList.remove('error');
-  if (isTeam) {
+if (isTeam) {
     if (!practiceName) return showMsg('su-msg', 'Please enter your practice or business name.', 'error');
+    if (!handle)       return showMsg('su-msg', 'Please enter a practice handle.', 'error');
+    if (!/^[a-zA-Z0-9_-]+$/.test(handle)) return showMsg('su-msg', 'Handle can only use letters, numbers, hyphens, and underscores — no spaces.', 'error');
     if (!adminName)    return showMsg('su-msg', 'Please enter your name as the admin.', 'error');
     if (adminPin.length !== 4) return showMsg('su-msg', 'Please enter all 4 digits of your PIN.', 'error');
   }
@@ -1400,16 +1483,20 @@ async function signUp() {
   const btn = document.querySelector('#signup-screen .auth-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
 
+const authEmail    = isTeam ? handle.toLowerCase() + '@blumi.app' : email;
+  const authPassword = isTeam ? adminPin : password;
+
   const { data: signUpData, error } = await sb.auth.signUp({
-    email, password,
+    email: authEmail, password: authPassword,
     options: {
       data: {
-        role:          'birth_worker',
-        display_name:  practiceName || email,
+        role:            'birth_worker',
+        display_name:    practiceName || email,
         tier,
-        practice_name: practiceName || null,
-        admin_name:    adminName    || null,
-        admin_pin:     adminPin     || null,
+        practice_name:   practiceName || null,
+        practice_handle: handle       || null,
+        admin_name:      adminName    || null,
+        admin_pin:       adminPin     || null,
       }
     }
   });
@@ -1418,12 +1505,13 @@ async function signUp() {
   if (error) return showMsg('su-msg', error.message, 'error');
 
   if (signUpData?.user?.id) {
-    await sb.from('profiles').upsert({
-      id:            signUpData.user.id,
-      role:          'birth_worker',
+await sb.from('profiles').upsert({
+      id:              signUpData.user.id,
+      role:            'birth_worker',
       tier,
-      display_name:  practiceName || email,
-      practice_name: practiceName || null,
+      display_name:    practiceName || email,
+      practice_name:   practiceName || null,
+      practice_handle: handle       || null,
     }, { onConflict: 'id' });
 
     if (isTeam && adminName && adminPin.length === 4) {
@@ -1467,12 +1555,13 @@ async function _enterPortal(user, session) {
 
   if (!currentProfile) {
     const meta = session?.user?.user_metadata || user.user_metadata || {};
-    await sb.from('profiles').upsert({
-      id:            user.id,
-      role:          meta.role          || 'birth_worker',
-      tier:          meta.tier          || 'solo',
-      display_name:  meta.display_name  || user.email,
-      practice_name: meta.practice_name || null,
+await sb.from('profiles').upsert({
+      id:              user.id,
+      role:            meta.role             || 'birth_worker',
+      tier:            meta.tier             || 'solo',
+      display_name:    meta.display_name     || user.email,
+      practice_name:   meta.practice_name    || null,
+      practice_handle: meta.practice_handle  || null,
     }, { onConflict: 'id' });
     await loadProfile();
   }
@@ -1557,8 +1646,10 @@ window.addEventListener('DOMContentLoaded', async () => {
       currentUser = null; currentProfile = null; allClients = [];
       currentProvider = null; allProviders = [];
       localStorage.removeItem('bluumi_current_provider_id');
-      document.getElementById('si-email').value = '';
-      document.getElementById('si-password').value = '';
+document.getElementById('si-email').value    = '';
+document.getElementById('si-password').value = '';
+document.getElementById('si-handle').value   = '';
+['si-p0','si-p1','si-p2','si-p3'].forEach(id => document.getElementById(id).value = '');
       showScreen('signin');
       return;
     }
