@@ -2,7 +2,7 @@
 // Called by the frontend to create a Stripe Checkout session.
 // Set these in Vercel Dashboard → Project → Settings → Environment Variables:
 //   STRIPE_SECRET_KEY      = sk_live_...
-//   NEXT_PUBLIC_SITE_URL   = https://blumi.ca  (no trailing slash)
+//   NEXT_PUBLIC_SITE_URL   = https://www.blumi.ca  (no trailing slash)
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require('@supabase/supabase-js');
@@ -20,7 +20,7 @@ const ONE_TIME = ['personal'];
 function getSupabase() {
   return createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_SERVICE_KEY
   );
 }
 
@@ -32,7 +32,6 @@ module.exports = async (req, res) => {
   const { plan, userId, email, successPath, cancelPath, action } = req.body;
 
   // ── Handle billing portal (cancel / manage subscription) ─────────────
-  // POST { action: 'portal', userId, returnUrl }
   if (action === 'portal') {
     if (!userId) return res.status(400).json({ error: 'userId required' });
     const sb = getSupabase();
@@ -46,7 +45,7 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'No Stripe customer found for this user.' });
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://blumi.ca';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.blumi.ca';
     const session = await stripe.billingPortal.sessions.create({
       customer:   profile.stripe_customer_id,
       return_url: req.body.returnUrl || siteUrl + '/portal/',
@@ -58,26 +57,28 @@ module.exports = async (req, res) => {
   if (!plan || !PRICE_IDS[plan]) {
     return res.status(400).json({ error: 'Invalid plan' });
   }
-  if (!userId || !email) {
-    return res.status(400).json({ error: 'userId and email are required' });
+  if (!email) {
+    return res.status(400).json({ error: 'email is required' });
   }
 
-  const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL || 'https://blumi.ca';
-  const isOneTime  = ONE_TIME.includes(plan);
+  const siteUrl   = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.blumi.ca';
+  const isOneTime = ONE_TIME.includes(plan);
 
   try {
     const sessionParams = {
-      mode:               isOneTime ? 'payment' : 'subscription',
-      customer_email:     email,
+      mode:           isOneTime ? 'payment' : 'subscription',
+      customer_email: email,
       line_items: [{ price: PRICE_IDS[plan], quantity: 1 }],
-      metadata: { userId, plan },
-      success_url: `${siteUrl}${successPath || '/'}${successPath?.includes('?') ? '&' : '?'}session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
-      cancel_url:  `${siteUrl}${cancelPath  || '/pricing/'}`,
+      // No userId in metadata — account doesn't exist yet.
+      // The webhook will use email to look up the user after payment.
+      metadata: { plan, email },
+      success_url: `${siteUrl}${successPath || '/'}${(successPath || '/').includes('?') ? '&' : '?'}session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
+      cancel_url:  `${siteUrl}${cancelPath || '/pricing/'}`,
       allow_promotion_codes: true,
     };
 
     if (!isOneTime) {
-      sessionParams.subscription_data = { metadata: { userId, plan } };
+      sessionParams.subscription_data = { metadata: { plan, email } };
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
