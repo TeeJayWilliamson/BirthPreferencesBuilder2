@@ -57,8 +57,8 @@ module.exports = async (req, res) => {
   if (!plan || !PRICE_IDS[plan]) {
     return res.status(400).json({ error: 'Invalid plan' });
   }
-  if (!email) {
-    return res.status(400).json({ error: 'email is required' });
+  if (!email || !userId) {
+    return res.status(400).json({ error: 'email and userId are required' });
   }
 
   const siteUrl   = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.blumi.ca';
@@ -69,16 +69,14 @@ module.exports = async (req, res) => {
       mode:           isOneTime ? 'payment' : 'subscription',
       customer_email: email,
       line_items: [{ price: PRICE_IDS[plan], quantity: 1 }],
-      // No userId in metadata — account doesn't exist yet.
-      // The webhook will use email to look up the user after payment.
-      metadata: { plan, email },
+      metadata: { userId, plan },
       success_url: `${siteUrl}${successPath || '/'}${(successPath || '/').includes('?') ? '&' : '?'}session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
       cancel_url:  `${siteUrl}${cancelPath || '/pricing/'}`,
       allow_promotion_codes: true,
     };
 
     if (!isOneTime) {
-      sessionParams.subscription_data = { metadata: { plan, email } };
+      sessionParams.subscription_data = { metadata: { userId, plan } };
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);

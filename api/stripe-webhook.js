@@ -61,26 +61,15 @@ module.exports = async (req, res) => {
 
   const sb = getSupabase();
 
-  // ── checkout.session.completed ────────────────────────────────────────
-if (event.type === 'checkout.session.completed') {
+  if (event.type === 'checkout.session.completed') {
   const session = event.data.object;
-  const { plan, email } = session.metadata || {};
+  const { userId, plan } = session.metadata || {};
 
-  if (!plan || !email) {
+  if (!userId || !plan) {
     console.warn('[webhook] checkout.session.completed missing metadata', session.id);
     return res.status(200).json({ received: true });
   }
 
-  // Look up the user by email since account is created after payment
-  const { data: { users }, error: lookupError } = await sb.auth.admin.listUsers();
-  const user = users?.find(u => u.email?.toLowerCase() === email.toLowerCase());
-
-  if (!user) {
-    console.warn('[webhook] no user found for email:', email);
-    return res.status(200).json({ received: true });
-  }
-
-  const userId = user.id;
   const role = plan === 'personal' ? 'client' : 'birth_worker';
   console.log(`[webhook] activating userId=${userId} tier=${plan}`);
 
@@ -90,14 +79,16 @@ if (event.type === 'checkout.session.completed') {
     tier:                plan,
     stripe_customer_id:  session.customer     || null,
     stripe_subscription: session.subscription || null,
-    paid:                true,
+    stripe_paid:         true,
     paid_at:             new Date().toISOString(),
   }, { onConflict: 'id' });
 
   if (error) console.error('[webhook] profile upsert failed:', error.message);
 
   if (['practice', 'collective'].includes(plan)) {
-    const meta = user.user_metadata || {};
+    const { data: { user } } = await sb.auth.admin.getUserById(userId)
+      .catch(() => ({ data: { user: null } }));
+    const meta = user?.user_metadata || {};
     if (meta.admin_name && meta.admin_pin) {
       const { data: existing } = await sb
         .from('practice_providers')

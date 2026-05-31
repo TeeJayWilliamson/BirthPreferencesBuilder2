@@ -826,16 +826,39 @@ async function startCheckout() {
     if (adminPin.length !== 4) return showCheckoutMsg('Please enter all 4 digits of your PIN.', 'error');
   }
 
-  const btn = document.getElementById('checkout-btn');
-  btn.disabled = true; btn.textContent = 'Redirecting to payment…';
+const btn = document.getElementById('checkout-btn');
+  btn.disabled = true; btn.textContent = 'Creating account…';
 
-  // Store credentials — account is created AFTER payment, not before
-  sessionStorage.setItem('bluumi_pending_signup', JSON.stringify({
-    email, password, plan: _activePlan,
-    practiceName: practiceName || null,
-    adminName:    adminName    || null,
-    adminPin:     adminPin     || null,
-  }));
+  const { data: signUpData, error: signUpError } = await sb.auth.signUp({
+    email, password,
+    options: {
+      data: {
+        role:          _activePlan === 'personal' ? 'client' : 'birth_worker',
+        tier:          'pending_payment',
+        practice_name: practiceName || null,
+        admin_name:    adminName    || null,
+        admin_pin:     adminPin     || null,
+        pending_tier:  _activePlan,
+      }
+    }
+  });
+
+  if (signUpError) {
+    btn.disabled = false; btn.textContent = 'Continue to Payment →';
+    if (signUpError.message.toLowerCase().includes('already registered') ||
+        signUpError.message.toLowerCase().includes('already exists')) {
+      return showCheckoutMsg('An account with this email already exists. Please sign in instead.', 'error');
+    }
+    return showCheckoutMsg(signUpError.message, 'error');
+  }
+
+  const userId = signUpData.user?.id;
+  if (!userId) {
+    btn.disabled = false; btn.textContent = 'Continue to Payment →';
+    return showCheckoutMsg('Could not create account. Please try again.', 'error');
+  }
+
+  btn.textContent = 'Redirecting to payment…';
 
   try {
     const resp = await fetch('/api/create-checkout-session', {
@@ -843,21 +866,25 @@ async function startCheckout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         plan:        _activePlan,
+        userId,
         email,
         successPath: _activePlan === 'personal' ? '/birthplan/?paid=1' : '/portal/?paid=1',
         cancelPath:  '/pricing/',
       }),
     });
+
+    if (!resp.ok) throw new Error('Server error ' + resp.status);
+
     const { url, error } = await resp.json();
     if (error || !url) {
       btn.disabled = false; btn.textContent = 'Continue to Payment →';
-      sessionStorage.removeItem('bluumi_pending_signup');
       return showCheckoutMsg('Could not start checkout. Please try again.', 'error');
     }
+
     window.location.href = url;
+
   } catch (err) {
     btn.disabled = false; btn.textContent = 'Continue to Payment →';
-    sessionStorage.removeItem('bluumi_pending_signup');
     showCheckoutMsg('Network error. Please try again.', 'error');
   }
 }

@@ -1176,8 +1176,8 @@ async function _enterApp(user, isPortalMode) {
   }
 
   // ── Gate pending (unpaid) accounts ─────────────────────────────
-  const { data: profile } = await sb
-    .from('profiles').select('role, tier, paid')
+const { data: profile } = await sb
+    .from('profiles').select('role, tier, stripe_paid')
     .eq('id', user.id).maybeSingle();
 
   const tier = profile?.tier || user.user_metadata?.tier;
