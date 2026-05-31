@@ -1175,18 +1175,14 @@ async function _enterApp(user, isPortalMode) {
     return;
   }
 
-  // ── Gate unpaid personal accounts ──────────────────────────────
+  // ── Gate pending (unpaid) accounts ─────────────────────────────
   const { data: profile } = await sb
-    .from('profiles').select('role, tier, paid, stripe_paid')
+    .from('profiles').select('role, tier, paid')
     .eq('id', user.id).maybeSingle();
 
-  // Fall back to auth metadata if no profile row exists yet
-  const role = profile?.role || meta.role;
-  const tier = profile?.tier || meta.tier;
-  const paid = profile?.paid || profile?.stripe_paid;
+  const tier = profile?.tier || user.user_metadata?.tier;
 
-  // Allow through if tier is pending_payment — webhook will update shortly
-  if (role === 'client' && tier !== 'invited' && tier !== 'pending_payment' && !paid) {
+  if (tier === 'pending_payment') {
     await sb.auth.signOut();
     showScreen('signin');
     showMsg('si-msg',
@@ -1270,16 +1266,17 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // ── Handle post-payment account creation ───────────────────────────────
-const urlParams = new URLSearchParams(location.search);
-if (urlParams.get('paid') === '1') {
-  const pendingRaw = sessionStorage.getItem('bluumi_pending_signup');
-  if (pendingRaw) {
-    try {
-      const { email, password, plan, practiceName, adminName, adminPin } = JSON.parse(pendingRaw);
+// ── Handle post-payment account creation ───────────────────────────────
+try {
+  const _urlParams = new URLSearchParams(location.search);
+  if (_urlParams.get('paid') === '1') {
+    const pendingRaw = sessionStorage.getItem('bluumi_pending_signup');
+    if (pendingRaw) {
       sessionStorage.removeItem('bluumi_pending_signup');
+      const { email, password, plan, practiceName, adminName, adminPin } = JSON.parse(pendingRaw);
+      history.replaceState({}, '', location.pathname);
 
-      const { data: signUpData, error: signUpError } = await sb.auth.signUp({
+      const { error: signUpError } = await sb.auth.signUp({
         email, password,
         options: {
           data: {
@@ -1294,18 +1291,20 @@ if (urlParams.get('paid') === '1') {
       });
 
       if (!signUpError) {
-        // Sign in immediately after signup
         await sb.auth.signInWithPassword({ email, password });
+      } else {
+        console.error('Post-payment signup error:', signUpError.message);
       }
-      // Clean up URL regardless
+    } else {
+      // No pending signup in sessionStorage — just clean the URL
       history.replaceState({}, '', location.pathname);
-    } catch (e) {
-      console.error('Post-payment signup error:', e);
-      sessionStorage.removeItem('bluumi_pending_signup');
     }
-    // Fall through to normal session check below
   }
+} catch (e) {
+  console.error('Post-payment handler error:', e);
+  // Never block page load — fall through to normal session check
 }
+// ── End post-payment handler ───────────────────────────────────────────
 
 // Portal mode is handled separately above — skip session check here
 if (PORTAL_MODE !== '1') {
