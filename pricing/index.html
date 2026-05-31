@@ -699,15 +699,26 @@ footer span { color: #EBC4BE; }
     <label class="checkout-label">Your Name (Admin)</label>
     <input type="text" class="checkout-input" id="checkout-admin-name" placeholder="e.g. Jane Smith">
   </div>
-  <div class="checkout-field">
-    <label class="checkout-label">Your 4-Digit PIN</label>
-    <div class="pin-input-row">
-      <input class="pin-digit" id="cp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp1')" oninput="pinOnlyNum(this)">
-      <input class="pin-digit" id="cp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp2')" onkeydown="pinBack(event,this,'cp0')" oninput="pinOnlyNum(this)">
-      <input class="pin-digit" id="cp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp3')" onkeydown="pinBack(event,this,'cp1')" oninput="pinOnlyNum(this)">
-      <input class="pin-digit" id="cp3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'cp2')" oninput="pinOnlyNum(this)">
-    </div>
-  </div>
+<div class="checkout-field">
+        <label class="checkout-label">Account PIN <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(shared by your whole team to log in)</span></label>
+        <div class="pin-input-row">
+          <input class="pin-digit" id="cp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp1')" oninput="pinOnlyNum(this)">
+          <input class="pin-digit" id="cp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp2')" onkeydown="pinBack(event,this,'cp0')" oninput="pinOnlyNum(this)">
+          <input class="pin-digit" id="cp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp3')" onkeydown="pinBack(event,this,'cp1')" oninput="pinOnlyNum(this)">
+          <input class="pin-digit" id="cp3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'cp2')" oninput="pinOnlyNum(this)">
+        </div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">Everyone enters this to access the portal, then selects themselves.</div>
+      </div>
+      <div class="checkout-field">
+        <label class="checkout-label">Your Personal PIN <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(just for you, as admin)</span></label>
+        <div class="pin-input-row">
+          <input class="pin-digit" id="ap0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap1')" oninput="pinOnlyNum(this)">
+          <input class="pin-digit" id="ap1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap2')" onkeydown="pinBack(event,this,'ap0')" oninput="pinOnlyNum(this)">
+          <input class="pin-digit" id="ap2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap3')" onkeydown="pinBack(event,this,'ap1')" oninput="pinOnlyNum(this)">
+          <input class="pin-digit" id="ap3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'ap2')" oninput="pinOnlyNum(this)">
+        </div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">You'll use this after selecting your name from the dropdown.</div>
+      </div>
 </div>
 
       <button class="checkout-btn" id="checkout-btn" onclick="startCheckout()">
@@ -769,7 +780,7 @@ function openCheckout(plan) {
     const el = document.getElementById(id);
     if (el) { el.value = ''; el.classList.remove('error'); }
   });
-  ['cp0','cp1','cp2','cp3'].forEach(id => {
+['cp0','cp1','cp2','cp3','ap0','ap1','ap2','ap3'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.value = ''; el.classList.remove('error'); }
   });
@@ -826,17 +837,19 @@ async function startCheckout() {
   if (password.length < 8)  { markError('checkout-password'); return showCheckoutMsg('Password must be at least 8 characters.', 'error'); }
   if (password !== confirm)  { markError('checkout-confirm');  return showCheckoutMsg('Passwords do not match.', 'error'); }
 
-let practiceName = '', practiceHandle = '', adminName = '', adminPin = '';
+let practiceName = '', practiceHandle = '', adminName = '', adminPin = '', adminPersonalPin = '';
   if (meta.isTeam) {
-    practiceName    = document.getElementById('checkout-practice-name').value.trim();
-    practiceHandle  = document.getElementById('checkout-handle').value.trim();
-    adminName       = document.getElementById('checkout-admin-name').value.trim();
-    adminPin        = getCheckoutPin();
+    practiceName     = document.getElementById('checkout-practice-name').value.trim();
+    practiceHandle   = document.getElementById('checkout-handle').value.trim();
+    adminName        = document.getElementById('checkout-admin-name').value.trim();
+    adminPin         = getCheckoutPin();
+    adminPersonalPin = ['ap0','ap1','ap2','ap3'].map(id => document.getElementById(id).value).join('');
     if (!practiceName)   { markError('checkout-practice-name'); return showCheckoutMsg('Please enter your practice name.', 'error'); }
     if (!practiceHandle) { return showCheckoutMsg('Please enter a practice handle.', 'error'); }
     if (!/^[a-zA-Z0-9_-]+$/.test(practiceHandle)) { return showCheckoutMsg('Handle can only use letters, numbers, hyphens, and underscores — no spaces.', 'error'); }
     if (!adminName)      { markError('checkout-admin-name'); return showCheckoutMsg('Please enter your name.', 'error'); }
-    if (adminPin.length !== 4) return showCheckoutMsg('Please enter all 4 digits of your PIN.', 'error');
+    if (adminPin.length !== 4)         return showCheckoutMsg('Please enter all 4 digits of your account PIN.', 'error');
+    if (adminPersonalPin.length !== 4) return showCheckoutMsg('Please enter all 4 digits of your personal PIN.', 'error');
   }
 
 const btn = document.getElementById('checkout-btn');
@@ -844,7 +857,7 @@ const btn = document.getElementById('checkout-btn');
 
   let userId = null;
 const authEmail    = meta.isTeam ? practiceHandle.toLowerCase() + '@blumi.app' : email;
-  const authPassword = meta.isTeam ? adminPin : password;
+const authPassword = meta.isTeam ? adminPin + adminPin + 'bx' : password;
 
   const { data: signUpData, error: signUpError } = await sb.auth.signUp({
     email: authEmail, password: authPassword,
@@ -855,7 +868,7 @@ const authEmail    = meta.isTeam ? practiceHandle.toLowerCase() + '@blumi.app' :
         practice_name:    practiceName    || null,
         practice_handle:  practiceHandle  || null,
         admin_name:       adminName       || null,
-        admin_pin:        adminPin        || null,
+        admin_pin:        adminPersonalPin  || null,
         pending_tier:     _activePlan,
       }
     }
@@ -867,7 +880,7 @@ const authEmail    = meta.isTeam ? practiceHandle.toLowerCase() + '@blumi.app' :
         signUpError.message.toLowerCase().includes('already exists')) {
       
 const { data: signInData, error: signInError } = await sb.auth.signInWithPassword({ email: authEmail, password: authPassword });
-      
+
       if (signInError) {
         btn.disabled = false; btn.textContent = 'Continue to Payment →';
         return showCheckoutMsg('An account exists, but the password was incorrect. Please sign in via the portal.', 'error');

@@ -1423,9 +1423,8 @@ async function signInWithHandle() {
   btn.disabled = true; btn.textContent = 'Signing in…';
 
   const email    = handle.toLowerCase() + '@blumi.app';
-  const password = pin;
-
-  const { error } = await sb.auth.signInWithPassword({ email, password });
+const password = pin + pin + 'bx';
+const { error } = await sb.auth.signInWithPassword({ email, password });
   btn.disabled = false; btn.textContent = 'Sign In';
   if (error) return showMsg('si-msg', 'Handle or PIN not recognised. Please check and try again.', 'error');
   // onAuthStateChange → _enterPortal → showPinScreen() takes over from here
