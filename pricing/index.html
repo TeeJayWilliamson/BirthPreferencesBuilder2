@@ -696,29 +696,29 @@ footer span { color: #EBC4BE; }
     <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">Your team signs in with <strong>blumi.[handle]</strong> + account PIN. No spaces.</div>
   </div>
   <div class="checkout-field">
+    <label class="checkout-label">Account PIN <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(shared by your whole team to log in)</span></label>
+    <div class="pin-input-row">
+      <input class="pin-digit" id="cp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp1')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="cp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp2')" onkeydown="pinBack(event,this,'cp0')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="cp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp3')" onkeydown="pinBack(event,this,'cp1')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="cp3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'cp2')" oninput="pinOnlyNum(this)">
+    </div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">Everyone enters this to access the portal, then selects themselves.</div>
+  </div>
+  <div class="checkout-field">
     <label class="checkout-label">Your Name (Admin)</label>
     <input type="text" class="checkout-input" id="checkout-admin-name" placeholder="e.g. Jane Smith">
   </div>
-<div class="checkout-field">
-        <label class="checkout-label">Account PIN <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(shared by your whole team to log in)</span></label>
-        <div class="pin-input-row">
-          <input class="pin-digit" id="cp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp1')" oninput="pinOnlyNum(this)">
-          <input class="pin-digit" id="cp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp2')" onkeydown="pinBack(event,this,'cp0')" oninput="pinOnlyNum(this)">
-          <input class="pin-digit" id="cp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp3')" onkeydown="pinBack(event,this,'cp1')" oninput="pinOnlyNum(this)">
-          <input class="pin-digit" id="cp3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'cp2')" oninput="pinOnlyNum(this)">
-        </div>
-        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">Everyone enters this to access the portal, then selects themselves.</div>
-      </div>
-      <div class="checkout-field">
-        <label class="checkout-label">Your Personal PIN <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(just for you, as admin)</span></label>
-        <div class="pin-input-row">
-          <input class="pin-digit" id="ap0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap1')" oninput="pinOnlyNum(this)">
-          <input class="pin-digit" id="ap1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap2')" onkeydown="pinBack(event,this,'ap0')" oninput="pinOnlyNum(this)">
-          <input class="pin-digit" id="ap2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap3')" onkeydown="pinBack(event,this,'ap1')" oninput="pinOnlyNum(this)">
-          <input class="pin-digit" id="ap3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'ap2')" oninput="pinOnlyNum(this)">
-        </div>
-        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">You'll use this after selecting your name from the dropdown.</div>
-      </div>
+  <div class="checkout-field">
+    <label class="checkout-label">Your Personal PIN <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(just for you, as admin)</span></label>
+    <div class="pin-input-row">
+      <input class="pin-digit" id="ap0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap1')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="ap1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap2')" onkeydown="pinBack(event,this,'ap0')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="ap2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'ap3')" onkeydown="pinBack(event,this,'ap1')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="ap3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'ap2')" oninput="pinOnlyNum(this)">
+    </div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">You'll use this after selecting your name from the dropdown.</div>
+  </div>
 </div>
 
       <button class="checkout-btn" id="checkout-btn" onclick="startCheckout()">
