@@ -74,12 +74,10 @@ module.exports = async (req, res) => {
   console.log(`[webhook] activating userId=${userId} tier=${plan}`);
 
 const { error } = await sb.from('profiles').upsert({
-    id:                  userId,
-    role,
-    tier:                plan,
-    stripe_customer_id:  session.customer     || null,
-    stripe_subscription: session.subscription || null,
-    stripe_paid:         true
+    id:          userId,
+    role:        role,
+    tier:        plan,
+    stripe_paid: true
   }, { onConflict: 'id' });
 
   if (error) console.error('[webhook] profile upsert failed:', error.message);
@@ -132,7 +130,7 @@ const { error } = await sb.from('profiles').upsert({
     return res.status(200).json({ received: true });
   }
 
-  // ── customer.subscription.deleted ────────────────────────────────────
+// ── customer.subscription.deleted ────────────────────────────────────
   if (event.type === 'customer.subscription.deleted') {
     const sub = event.data.object;
     const { userId } = sub.metadata || {};
@@ -140,9 +138,8 @@ const { error } = await sb.from('profiles').upsert({
     if (userId) {
       console.log(`[webhook] subscription cancelled userId=${userId}`);
       await sb.from('profiles').update({
-        tier:                null,
-        stripe_paid:         false,
-        stripe_subscription: null,
+        tier:        null,
+        stripe_paid: false
       }).eq('id', userId);
     }
 
