@@ -73,14 +73,13 @@ module.exports = async (req, res) => {
   const role = plan === 'personal' ? 'client' : 'birth_worker';
   console.log(`[webhook] activating userId=${userId} tier=${plan}`);
 
-  const { error } = await sb.from('profiles').upsert({
+const { error } = await sb.from('profiles').upsert({
     id:                  userId,
     role,
     tier:                plan,
     stripe_customer_id:  session.customer     || null,
     stripe_subscription: session.subscription || null,
-    stripe_paid:         true,
-    paid_at:             new Date().toISOString(),
+    stripe_paid:         true
   }, { onConflict: 'id' });
 
   if (error) console.error('[webhook] profile upsert failed:', error.message);
