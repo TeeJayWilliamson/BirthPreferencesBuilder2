@@ -111,7 +111,7 @@ module.exports = async (req, res) => {
   return res.status(200).json({ received: true });
 }
 
-  // ── customer.subscription.updated ────────────────────────────────────
+// ── customer.subscription.updated ────────────────────────────────────
   if (event.type === 'customer.subscription.updated') {
     const sub = event.data.object;
     const { userId, plan } = sub.metadata || {};
@@ -122,12 +122,12 @@ module.exports = async (req, res) => {
       const priceId = sub.items?.data?.[0]?.price?.id;
       const tier    = plan || PRICE_TO_TIER[priceId] || null;
       if (tier) {
-        await sb.from('profiles').update({ tier, paid: true }).eq('id', userId);
+        await sb.from('profiles').update({ tier, stripe_paid: true }).eq('id', userId);
       }
     }
 
     if (['past_due', 'unpaid', 'incomplete_expired'].includes(sub.status)) {
-      await sb.from('profiles').update({ paid: false }).eq('id', userId);
+      await sb.from('profiles').update({ stripe_paid: false }).eq('id', userId);
     }
 
     return res.status(200).json({ received: true });
@@ -142,7 +142,7 @@ module.exports = async (req, res) => {
       console.log(`[webhook] subscription cancelled userId=${userId}`);
       await sb.from('profiles').update({
         tier:                null,
-        paid:                false,
+        stripe_paid:         false,
         stripe_subscription: null,
       }).eq('id', userId);
     }

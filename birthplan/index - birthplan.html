@@ -1266,36 +1266,43 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-// ── Handle post-payment account check ───────────────────────────────
+// ── Handle post-payment account creation ───────────────────────────────
 try {
   const _urlParams = new URLSearchParams(location.search);
   if (_urlParams.get('paid') === '1') {
-    // Clean up Claude's old sessionStorage logic just in case it's lingering
-    sessionStorage.removeItem('bluumi_pending_signup');
+    const pendingRaw = sessionStorage.getItem('bluumi_pending_signup');
+    if (pendingRaw) {
+      sessionStorage.removeItem('bluumi_pending_signup');
+      const { email, password, plan, practiceName, adminName, adminPin } = JSON.parse(pendingRaw);
+      history.replaceState({}, '', location.pathname);
 
-    // Pause the app load to wait for the Stripe webhook to finish updating the database
-    const { data: { session } } = await sb.auth.getSession();
-    if (session?.user) {
-      let attempts = 0;
-      let isPaid = false;
-      
-      // Poll the profile every 1 second (max 5 seconds) waiting for stripe_paid = true
-      while (attempts < 5 && !isPaid) {
-        const { data: profile } = await sb.from('profiles').select('stripe_paid').eq('id', session.user.id).maybeSingle();
-        if (profile?.stripe_paid) {
-          isPaid = true;
-        } else {
-          attempts++;
-          await new Promise(r => setTimeout(r, 1000));
+      const { error: signUpError } = await sb.auth.signUp({
+        email, password,
+        options: {
+          data: {
+            role:          plan === 'personal' ? 'client' : 'birth_worker',
+            tier:          'pending_payment',
+            practice_name: practiceName || null,
+            admin_name:    adminName    || null,
+            admin_pin:     adminPin     || null,
+            pending_tier:  plan,
+          }
         }
+      });
+
+      if (!signUpError) {
+        await sb.auth.signInWithPassword({ email, password });
+      } else {
+        console.error('Post-payment signup error:', signUpError.message);
       }
+    } else {
+      // No pending signup in sessionStorage — just clean the URL
+      history.replaceState({}, '', location.pathname);
     }
-    
-    // Clean the URL so a refresh doesn't trigger polling again
-    history.replaceState({}, '', location.pathname);
   }
 } catch (e) {
   console.error('Post-payment handler error:', e);
+  // Never block page load — fall through to normal session check
 }
 // ── End post-payment handler ───────────────────────────────────────────
 

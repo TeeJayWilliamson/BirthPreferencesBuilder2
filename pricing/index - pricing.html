@@ -829,7 +829,6 @@ async function startCheckout() {
 const btn = document.getElementById('checkout-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
 
-  let userId = null;
   const { data: signUpData, error: signUpError } = await sb.auth.signUp({
     email, password,
     options: {
@@ -845,25 +844,15 @@ const btn = document.getElementById('checkout-btn');
   });
 
   if (signUpError) {
-    // If account exists, they probably abandoned a previous checkout. Log them in!
+    btn.disabled = false; btn.textContent = 'Continue to Payment →';
     if (signUpError.message.toLowerCase().includes('already registered') ||
         signUpError.message.toLowerCase().includes('already exists')) {
-      
-      const { data: signInData, error: signInError } = await sb.auth.signInWithPassword({ email, password });
-      
-      if (signInError) {
-        btn.disabled = false; btn.textContent = 'Continue to Payment →';
-        return showCheckoutMsg('An account exists, but the password was incorrect. Please sign in via the portal.', 'error');
-      }
-      userId = signInData.user.id;
-    } else {
-      btn.disabled = false; btn.textContent = 'Continue to Payment →';
-      return showCheckoutMsg(signUpError.message, 'error');
+      return showCheckoutMsg('An account with this email already exists. Please sign in instead.', 'error');
     }
-  } else {
-    userId = signUpData.user?.id;
+    return showCheckoutMsg(signUpError.message, 'error');
   }
 
+  const userId = signUpData.user?.id;
   if (!userId) {
     btn.disabled = false; btn.textContent = 'Continue to Payment →';
     return showCheckoutMsg('Could not create account. Please try again.', 'error');
