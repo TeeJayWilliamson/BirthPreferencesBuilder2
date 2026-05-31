@@ -1177,9 +1177,16 @@ async function _enterApp(user, isPortalMode) {
 
   // ── Gate unpaid personal accounts ──────────────────────────────
   const { data: profile } = await sb
-    .from('profiles').select('role, tier, paid').eq('id', user.id).maybeSingle();
+    .from('profiles').select('role, tier, paid, stripe_paid')
+    .eq('id', user.id).maybeSingle();
 
-  if (profile?.role === 'client' && profile?.tier !== 'invited' && !profile?.paid) {
+  // Fall back to auth metadata if no profile row exists yet
+  const meta = user.user_metadata || {};
+  const role = profile?.role || meta.role;
+  const tier = profile?.tier || meta.tier;
+  const paid = profile?.paid || profile?.stripe_paid;
+
+  if (role === 'client' && tier !== 'invited' && !paid) {
     await sb.auth.signOut();
     showScreen('signin');
     showMsg('si-msg',
