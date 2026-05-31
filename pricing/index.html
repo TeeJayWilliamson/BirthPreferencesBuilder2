@@ -679,26 +679,36 @@ footer span { color: #EBC4BE; }
         <input type="password" class="checkout-input" id="checkout-confirm" placeholder="Re-enter your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')startCheckout()">
       </div>
 
-      <!-- Extra fields for Practice / Collective team tiers -->
-      <div id="team-fields" style="display:none;">
-        <div class="checkout-field">
-          <label class="checkout-label">Practice / Business Name</label>
-          <input type="text" class="checkout-input" id="checkout-practice-name" placeholder="e.g. Greater Toronto Doulas">
-        </div>
-        <div class="checkout-field">
-          <label class="checkout-label">Your Name (Admin)</label>
-          <input type="text" class="checkout-input" id="checkout-admin-name" placeholder="e.g. Jane Smith">
-        </div>
-        <div class="checkout-field">
-          <label class="checkout-label">Your 4-Digit PIN</label>
-          <div class="pin-input-row">
-            <input class="pin-digit" id="cp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp1')" oninput="pinOnlyNum(this)">
-            <input class="pin-digit" id="cp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp2')" onkeydown="pinBack(event,this,'cp0')" oninput="pinOnlyNum(this)">
-            <input class="pin-digit" id="cp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp3')" onkeydown="pinBack(event,this,'cp1')" oninput="pinOnlyNum(this)">
-            <input class="pin-digit" id="cp3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'cp2')" oninput="pinOnlyNum(this)">
-          </div>
-        </div>
-      </div>
+<!-- Extra fields for Practice / Collective team tiers -->
+<div id="team-fields" style="display:none;">
+  <div class="checkout-field">
+    <label class="checkout-label">Practice / Business Name</label>
+    <input type="text" class="checkout-input" id="checkout-practice-name" placeholder="e.g. Greater Toronto Doulas">
+  </div>
+  <div class="checkout-field">
+    <label class="checkout-label">Practice Handle <span style="font-weight:400;color:var(--muted);font-size:0.78rem;">(your team's login ID)</span></label>
+    <div style="display:flex;align-items:center;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:var(--cream);" id="checkout-handle-wrap">
+      <span style="padding:0.75rem 0.8rem 0.75rem 1rem;font-size:0.88rem;color:var(--muted);white-space:nowrap;border-right:1px solid var(--border);background:white;user-select:none;">blumi.</span>
+      <input type="text" id="checkout-handle" placeholder="GreaterTorontoDoulas"
+        style="flex:1;padding:0.75rem 1rem;border:none;background:transparent;font-family:'Jost',sans-serif;font-size:0.88rem;color:var(--text);outline:none;"
+        oninput="this.value=this.value.replace(/\s/g,'')">
+    </div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:0.35rem;">Your team signs in with <strong>blumi.[handle]</strong> + account PIN. No spaces.</div>
+  </div>
+  <div class="checkout-field">
+    <label class="checkout-label">Your Name (Admin)</label>
+    <input type="text" class="checkout-input" id="checkout-admin-name" placeholder="e.g. Jane Smith">
+  </div>
+  <div class="checkout-field">
+    <label class="checkout-label">Your 4-Digit PIN</label>
+    <div class="pin-input-row">
+      <input class="pin-digit" id="cp0" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp1')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="cp1" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp2')" onkeydown="pinBack(event,this,'cp0')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="cp2" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeyup="pinNext(this,'cp3')" onkeydown="pinBack(event,this,'cp1')" oninput="pinOnlyNum(this)">
+      <input class="pin-digit" id="cp3" maxlength="1" inputmode="numeric" pattern="[0-9]" onkeydown="pinBack(event,this,'cp2')" oninput="pinOnlyNum(this)">
+    </div>
+  </div>
+</div>
 
       <button class="checkout-btn" id="checkout-btn" onclick="startCheckout()">
         Continue to Payment →
@@ -816,13 +826,16 @@ async function startCheckout() {
   if (password.length < 8)  { markError('checkout-password'); return showCheckoutMsg('Password must be at least 8 characters.', 'error'); }
   if (password !== confirm)  { markError('checkout-confirm');  return showCheckoutMsg('Passwords do not match.', 'error'); }
 
-  let practiceName = '', adminName = '', adminPin = '';
+let practiceName = '', practiceHandle = '', adminName = '', adminPin = '';
   if (meta.isTeam) {
-    practiceName = document.getElementById('checkout-practice-name').value.trim();
-    adminName    = document.getElementById('checkout-admin-name').value.trim();
-    adminPin     = getCheckoutPin();
-    if (!practiceName) { markError('checkout-practice-name'); return showCheckoutMsg('Please enter your practice name.', 'error'); }
-    if (!adminName)    { markError('checkout-admin-name');    return showCheckoutMsg('Please enter your name.', 'error'); }
+    practiceName    = document.getElementById('checkout-practice-name').value.trim();
+    practiceHandle  = document.getElementById('checkout-handle').value.trim();
+    adminName       = document.getElementById('checkout-admin-name').value.trim();
+    adminPin        = getCheckoutPin();
+    if (!practiceName)   { markError('checkout-practice-name'); return showCheckoutMsg('Please enter your practice name.', 'error'); }
+    if (!practiceHandle) { return showCheckoutMsg('Please enter a practice handle.', 'error'); }
+    if (!/^[a-zA-Z0-9_-]+$/.test(practiceHandle)) { return showCheckoutMsg('Handle can only use letters, numbers, hyphens, and underscores — no spaces.', 'error'); }
+    if (!adminName)      { markError('checkout-admin-name'); return showCheckoutMsg('Please enter your name.', 'error'); }
     if (adminPin.length !== 4) return showCheckoutMsg('Please enter all 4 digits of your PIN.', 'error');
   }
 
@@ -830,16 +843,20 @@ const btn = document.getElementById('checkout-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
 
   let userId = null;
+const authEmail    = meta.isTeam ? practiceHandle.toLowerCase() + '@blumi.app' : email;
+  const authPassword = meta.isTeam ? adminPin : password;
+
   const { data: signUpData, error: signUpError } = await sb.auth.signUp({
-    email, password,
+    email: authEmail, password: authPassword,
     options: {
       data: {
-        role:          _activePlan === 'personal' ? 'client' : 'birth_worker',
-        tier:          'pending_payment',
-        practice_name: practiceName || null,
-        admin_name:    adminName    || null,
-        admin_pin:     adminPin     || null,
-        pending_tier:  _activePlan,
+        role:             _activePlan === 'personal' ? 'client' : 'birth_worker',
+        tier:             'pending_payment',
+        practice_name:    practiceName    || null,
+        practice_handle:  practiceHandle  || null,
+        admin_name:       adminName       || null,
+        admin_pin:        adminPin        || null,
+        pending_tier:     _activePlan,
       }
     }
   });
@@ -849,7 +866,7 @@ const btn = document.getElementById('checkout-btn');
     if (signUpError.message.toLowerCase().includes('already registered') ||
         signUpError.message.toLowerCase().includes('already exists')) {
       
-      const { data: signInData, error: signInError } = await sb.auth.signInWithPassword({ email, password });
+const { data: signInData, error: signInError } = await sb.auth.signInWithPassword({ email: authEmail, password: authPassword });
       
       if (signInError) {
         btn.disabled = false; btn.textContent = 'Continue to Payment →';
