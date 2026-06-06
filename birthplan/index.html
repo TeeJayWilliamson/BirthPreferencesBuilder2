@@ -654,10 +654,11 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       <div class="progress-step" data-step="1" onclick="goToStep(1)"><div class="step-dot">2</div><div class="step-label-text">Values</div></div>
       <div class="progress-step" data-step="2" onclick="goToStep(2)"><div class="step-dot">3</div><div class="step-label-text">Comfort</div></div>
       <div class="progress-step" data-step="3" onclick="goToStep(3)"><div class="step-dot">4</div><div class="step-label-text">Labor</div></div>
-      <div class="progress-step" data-step="4" onclick="goToStep(4)"><div class="step-dot">5</div><div class="step-label-text">Golden Hour</div></div>
-      <div class="progress-step" data-step="5" onclick="goToStep(5)"><div class="step-dot">6</div><div class="step-label-text">Emergency</div></div>
-      <div class="progress-step" data-step="6" onclick="goToStep(6)"><div class="step-dot">7</div><div class="step-label-text">Personal Care</div></div>
-      <div class="progress-step" data-step="7"><div class="step-dot">✓</div><div class="step-label-text">Preview</div></div>
+      <div class="progress-step" data-step="4" onclick="goToStep(4)"><div class="step-dot">5</div><div class="step-label-text">Pushing</div></div>
+      <div class="progress-step" data-step="5" onclick="goToStep(5)"><div class="step-dot">6</div><div class="step-label-text">Golden Hour</div></div>
+      <div class="progress-step" data-step="6" onclick="goToStep(6)"><div class="step-dot">7</div><div class="step-label-text">Emergency</div></div>
+      <div class="progress-step" data-step="7" onclick="goToStep(7)"><div class="step-dot">8</div><div class="step-label-text">Personal Care</div></div>
+      <div class="progress-step" data-step="8"><div class="step-dot">✓</div><div class="step-label-text">Preview</div></div>
     </div>
   </div>
 
@@ -667,7 +668,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
     <div class="wizard-step active" id="step-0">
       <div class="section-card">
         <div class="section-head">
-          <div class="section-step-tag">Step 1 of 7</div>
+          <div class="section-step-tag">Step 1 of 8</div>
           <div class="section-title">About You</div>
           <div class="section-intro">This information will appear at the top of your final birth plan.</div>
         </div>
@@ -724,7 +725,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
         </div>
       </div>
       <div class="wizard-nav">
-        <span class="step-counter">Step 1 of 7</span>
+        <span class="step-counter">Step 1 of 8</span>
         <button class="btn-next" onclick="nextStep()">Continue →</button>
       </div>
     </div>
@@ -733,7 +734,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
     <div class="wizard-step" id="step-1">
       <div class="section-card">
         <div class="section-head">
-          <div class="section-step-tag">Step 2 of 7</div>
+          <div class="section-step-tag">Step 2 of 8</div>
           <div class="section-title">Core Values in Labor</div>
           <div class="section-intro">During labor, feeling safe, heard, informed, and respected helps build trust and allows you to stay actively involved in decisions about your care.</div>
         </div>
@@ -753,7 +754,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <div class="wizard-nav">
         <button class="btn-back" onclick="prevStep()">← Back</button>
-        <span class="step-counter">Step 2 of 7</span>
+        <span class="step-counter">Step 2 of 8</span>
         <button class="btn-next" onclick="nextStep()">Continue →</button>
       </div>
     </div>
@@ -762,7 +763,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
     <div class="wizard-step" id="step-2">
       <div class="section-card">
         <div class="section-head">
-          <div class="section-step-tag">Step 3 of 7</div>
+          <div class="section-step-tag">Step 3 of 8</div>
           <div class="section-title">Comfort Measures</div>
           <div class="section-intro">Comfort measures are the ways pain and discomfort are managed during labor.</div>
         </div>
@@ -814,7 +815,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <div class="wizard-nav">
         <button class="btn-back" onclick="prevStep()">← Back</button>
-        <span class="step-counter">Step 3 of 7</span>
+        <span class="step-counter">Step 3 of 8</span>
         <button class="btn-next" onclick="nextStep()">Continue →</button>
       </div>
     </div>
@@ -823,7 +824,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
     <div class="wizard-step" id="step-3">
       <div class="section-card">
         <div class="section-head">
-          <div class="section-step-tag">Step 4 of 7</div>
+          <div class="section-step-tag">Step 4 of 8</div>
           <div class="section-title">Labor and Interventions</div>
           <div class="section-intro">They may be recommended based on how labor is unfolding or for specific health needs.</div>
         </div>
@@ -856,6 +857,9 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
               <div class="option-card" data-val="Planned C-Section" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Planned C-Section</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Scheduled before labor begins, often for medical reasons or personal preference.</div></div>
               <div class="option-card" data-val="Repeat C-Section" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Repeat C-Section</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">A C-section for someone who has had a previous C-section.</div></div>
               <div class="option-card" data-val="Gentle / Family-Centered C-Section" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Gentle / Family-Centered C-Section</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Modifications to include immediate bonding, skin-to-skin, or more family involvement.</div></div>
+              <div class="option-card" data-val="Spontaneous Rupture of Membranes" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Spontaneous Rupture of Membranes</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">My waters breaking on their own, without intervention.</div></div>
+              <div class="option-card" data-val="AROM/Amniotomy" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">AROM/Amniotomy</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Artificial rupture of membranes - breaking the waters to speed labor</div></div>
+              <div class="option-card" data-val="Cervical Checks" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Cervical Checks</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">An internal exam used to estimate labor progress.</div></div>
             </div>
           </div>
           <div class="inner-divider"></div>
@@ -871,16 +875,66 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <div class="wizard-nav">
         <button class="btn-back" onclick="prevStep()">← Back</button>
-        <span class="step-counter">Step 4 of 7</span>
+        <span class="step-counter">Step 4 of 8</span>
         <button class="btn-next" onclick="nextStep()">Continue →</button>
       </div>
     </div>
 
-    <!-- STEP 5 — GOLDEN HOUR -->
+    <!-- STEP 5 — PUSHING PREFERENCES -->
     <div class="wizard-step" id="step-4">
       <div class="section-card">
         <div class="section-head">
-          <div class="section-step-tag">Step 5 of 7</div>
+          <div class="section-step-tag">Step 5 of 8</div>
+          <div class="section-title">Pushing Preferences</div>
+          <div class="section-intro">Sharing how you hope to push helps your care team support you in the way that feels right for your body and your birth.</div>
+        </div>
+        <div class="section-body">
+          <div class="subsection">
+            <div class="subsection-title">Guidance</div>
+            <div class="subsection-intro">How would you like to be supported during the pushing stage?</div>
+            <div class="options-grid" id="pushing-guidance-options">
+              <div class="option-card" data-val="Spontaneous / instinctive pushing" onclick="toggleOptionSingle(this,'pushing-guidance-options')"><div class="option-header"><div class="option-check"></div><div class="option-name">Spontaneous / Instinctive Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Pushing when and how your body tells you to.</div></div></div></div><div class="option-desc">Pushing when and how your body tells you to.</div></div>
+              <div class="option-card" data-val="Directed pushing" onclick="toggleOptionSingle(this,'pushing-guidance-options')"><div class="option-header"><div class="option-check"></div><div class="option-name">Directed Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Your care team counts and guides each push.</div></div></div></div><div class="option-desc">Your care team counts and guides each push.</div></div>
+              <div class="option-card" data-val="Combination pushing" onclick="toggleOptionSingle(this,'pushing-guidance-options')"><div class="option-header"><div class="option-check"></div><div class="option-name">Combination</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Guided when needed, instinctive otherwise.</div></div></div></div><div class="option-desc">Guided when needed, instinctive otherwise.</div></div>
+            </div>
+          </div>
+          <div class="inner-divider"></div>
+          <div class="subsection">
+            <div class="subsection-title alt">Duration &amp; Pace</div>
+            <div class="options-grid" id="pushing-pace-options">
+              <div class="option-card" data-val="Laboring down" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Laboring Down</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">If appropriate, waiting to allow baby to descend naturally before active pushing begins.</div></div></div></div><div class="option-desc">If appropriate, I would like to wait and allow the baby to descend naturally before active pushing begins.</div></div>
+              <div class="option-card" data-val="Open glottis pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Open Glottis Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Breathing through pushes rather than holding your breath.</div></div></div></div><div class="option-desc">I would like to breathe through pushes rather than holding breath.</div></div>
+              <div class="option-card" data-val="Closed glottis pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Closed Glottis Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Traditional breath-holding push, guided by your care team counting.</div></div></div></div><div class="option-desc">Traditional breath-holding push.</div></div>
+            </div>
+          </div>
+          <div class="inner-divider"></div>
+          <div class="subsection">
+            <div class="subsection-title">Pushing Options</div>
+            <div class="options-grid" id="pushing-options-options">
+              <div class="option-card" data-val="Mirror offered" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Mirror Offered</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">To see baby's progress as you push.</div></div></div></div><div class="option-desc">To see baby's progress.</div></div>
+              <div class="option-card" data-val="I would like to feel my baby as they emerge" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Feel Baby Emerge</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Reaching down to feel your baby as they are born.</div></div></div></div><div class="option-desc">I would like to feel my baby as they emerge.</div></div>
+              <div class="option-card" data-val="Calm and quiet room" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Calm &amp; Quiet Room</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Keeping the room calm, quiet, and free from unnecessary noise or distraction.</div></div></div></div><div class="option-desc">Minimal noise and distraction during pushing.</div></div>
+              <div class="option-card" data-val="Verbal encouragement" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Verbal Encouragement</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Active coaching and encouraging words from your care team throughout pushing.</div></div></div></div><div class="option-desc">Active coaching and encouraging words from my care team.</div></div>
+              <div class="option-card" data-val="Warm compresses" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Warm Compresses</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Applied to the perineum during pushing to reduce tearing.</div></div></div></div><div class="option-desc">Applied to the perineum during pushing to reduce tearing.</div></div>
+              <div class="option-card" data-val="Perineal massage during pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Perineal Massage</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Manual support to stretch and protect tissue during pushing.</div></div></div></div><div class="option-desc">Manual support to stretch and protect tissue.</div></div>
+              <div class="option-card" data-val="Hands-on delivery" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Hands-On Delivery</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Provider actively supports the perineum as baby crowns.</div></div></div></div><div class="option-desc">Provider actively supports the perineum as baby crowns.</div></div>
+              <div class="option-card" data-val="Hands-off delivery" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Hands-Off Delivery</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Provider offers guidance without direct contact as baby is born.</div></div></div></div><div class="option-desc">Provider offers guidance without direct contact.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <span class="step-counter">Step 5 of 8</span>
+        <button class="btn-next" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 6 — GOLDEN HOUR -->
+    <div class="wizard-step" id="step-5">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-step-tag">Step 6 of 8</div>
           <div class="section-title">The Golden Hour</div>
           <div class="section-intro">The first 1–2 hours after birth — an important time for bonding, warmth, and adjustment to life outside the womb.</div>
         </div>
@@ -933,16 +987,16 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <div class="wizard-nav">
         <button class="btn-back" onclick="prevStep()">← Back</button>
-        <span class="step-counter">Step 5 of 7</span>
+        <span class="step-counter">Step 6 of 8</span>
         <button class="btn-next" onclick="nextStep()">Continue →</button>
       </div>
     </div>
 
-    <!-- STEP 6 — IF PLANS CHANGE -->
-    <div class="wizard-step" id="step-5">
+    <!-- STEP 7 — IF PLANS CHANGE -->
+    <div class="wizard-step" id="step-6">
       <div class="section-card">
         <div class="section-head">
-          <div class="section-step-tag">Step 6 of 7</div>
+          <div class="section-step-tag">Step 7 of 8</div>
           <div class="section-title">If Plans Change</div>
           <div class="section-intro">I hope for my main birth plan, but if an emergency arises, this is what I would like.</div>
         </div>
@@ -982,16 +1036,16 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <div class="wizard-nav">
         <button class="btn-back" onclick="prevStep()">← Back</button>
-        <span class="step-counter">Step 6 of 7</span>
+        <span class="step-counter">Step 7 of 8</span>
         <button class="btn-next" onclick="nextStep()">Continue →</button>
       </div>
     </div>
 
-    <!-- STEP 7 — PERSONAL CARE -->
-    <div class="wizard-step" id="step-6">
+    <!-- STEP 8 — PERSONAL CARE -->
+    <div class="wizard-step" id="step-7">
       <div class="section-card">
         <div class="section-head">
-          <div class="section-step-tag">Step 7 of 7</div>
+          <div class="section-step-tag">Step 8 of 8</div>
           <div class="section-title">Personal Care &amp; Considerations</div>
           <div class="section-intro">Each person's needs, preferences, and circumstances are unique.</div>
         </div>
@@ -1050,7 +1104,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <div class="wizard-nav">
         <button class="btn-back" onclick="prevStep()">← Back</button>
-        <span class="step-counter">Step 7 of 7</span>
+        <span class="step-counter">Step 8 of 8</span>
         <button class="btn-next" onclick="showPreview()" style="background:linear-gradient(135deg,var(--olive-mid) 0%,var(--olive-light) 100%)">Preview &amp; Download →</button>
       </div>
     </div>
@@ -1396,6 +1450,9 @@ function collectRawState() {
     vaginal: getSelected('vaginal-options'),
     csection: getSelected('csection-options'),
     otherInterventions: getSelected('other-interventions-options'),
+    pushingGuidance: getSelected('pushing-guidance-options'),
+    pushingPace: getSelected('pushing-pace-options'),
+    pushingOptions: getSelected('pushing-options-options'),
     cord: getSelected('cord-options'),
     placenta: getSelected('placenta-options'),
     bonding: getSelected('bonding-options'),
@@ -1479,6 +1536,9 @@ function applyPlanToForm(d) {
   restoreOptions('vaginal-options', d.vaginal || []);
   restoreOptions('csection-options', d.csection || []);
   restoreOptions('other-interventions-options', d.otherInterventions || []);
+  restoreOptionSingle('pushing-guidance-options', d.pushingGuidance || []);
+  restoreOptions('pushing-pace-options', d.pushingPace || []);
+  restoreOptions('pushing-options-options', d.pushingOptions || []);
   restoreOptions('cord-options', d.cord || []);
   restoreOptions('placenta-options', d.placenta || []);
   restoreOptions('bonding-options', d.bonding || []);
@@ -1524,7 +1584,7 @@ async function portalSave() {
 
 function setStep(n) {
   document.getElementById('step-' + currentStep)?.classList.remove('active');
-  currentStep = Math.max(0, Math.min(n, 6));
+  currentStep = Math.max(0, Math.min(n, 7));
   document.getElementById('step-' + currentStep)?.classList.add('active');
   updateProgress();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1618,6 +1678,9 @@ const _UNSURE_SECTION_MAP = {
   'vaginal-options':             'vaginal',
   'csection-options':            'csection',
   'other-interventions-options': 'otherInterventions',
+  'pushing-guidance-options':    'pushingGuidance',
+  'pushing-pace-options':        'pushingPace',
+  'pushing-options-options':     'pushingOptions',
   'cord-options':                'cord',
   'placenta-options':            'placenta',
   'bonding-options':             'bonding',
@@ -1689,6 +1752,9 @@ function getAllData() {
     medicalComfort:    getSelected('medical-options'),
     induction:         getSelected('induction-options'),
     otherInterventions:getSelected('other-interventions-options'),
+    pushingGuidance:   getSelected('pushing-guidance-options'),
+    pushingPace:       getSelected('pushing-pace-options'),
+    pushingOptions:    getSelected('pushing-options-options'),
     vaginalBirth:      getSelected('vaginal-options'),
     csection:          getSelected('csection-options'),
     decisionMaking:    getSelected('decision-options'),
@@ -1732,6 +1798,7 @@ function showPreview() {
       <div>
         ${d.naturalComfort.length||d.medicalComfort.length?`<div class="preview-section-title">Comfort</div>${d.comfortPref?`<div style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:0.4rem">${d.comfortPref}</div>`:''} ${listItems([...d.naturalComfort,...d.medicalComfort])}`:''}
         ${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?`<div class="preview-section-title" style="margin-top:0.8rem">Labor & Birth</div>${listItems([...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection])}`:''}
+        ${d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length?`<div class="preview-section-title" style="margin-top:0.8rem">Pushing</div>${listItems([...d.pushingGuidance,...d.pushingPace,...d.pushingOptions])}`:''}
         ${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?`<div class="preview-section-title alt" style="margin-top:0.8rem">Golden Hour</div>${listItems([...d.bonding,...d.placenta,...d.cord,...d.newborn])}`:''}
         ${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length?`<div class="preview-section-title rose-bg" style="margin-top:0.8rem">If Plans Change</div>${listItems([...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication])}`:''}
       </div>
@@ -1755,7 +1822,7 @@ async function downloadPDF() {
   const storyHtmlPdf = d.story ? d.story.split(/\n\n+/).map(p=>`<p style="margin:0 0 7px 0;">${p.replace(/\n/g,'<br>')}</p>`).join('') : '';
   function pdfList(arr,color='#4A5746'){return arr.map(i=>`<div style="display:flex;gap:5px;margin-bottom:4px;font-size:9px;line-height:1.5;align-items:flex-start;"><span style="color:${color};flex-shrink:0;">✓</span><span>${i}</span></div>`).join('');}
   function pdfSec(title,items,bg='#4A5746'){if(!items.length)return '';return `<div style="background:${bg};color:white;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin:9px 0 5px;">${title}</div>${pdfList(items,bg==='#7B4040'?'#7B4040':'#4A5746')}`;}
-  const printHTML = `<div id="pp" style="width:794px;min-height:1123px;background:#F7F3EE;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;"><div style="background:#EEF3EE;padding:26px 40px 20px;text-align:center;"><div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:5px;color:#6B8F71;text-transform:uppercase;font-weight:600;margin-bottom:10px;">Birth Preferences For</div><div style="font-family:${nameFont};font-size:${Math.max(22,Math.min(36,Math.floor(280/(d.name.length*0.5))))}px;color:#4A5746;font-weight:600;line-height:1.1;">${d.name}</div>${subLine?`<div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:2px;margin-top:8px;">${subLine}</div>`:''}${healthPillsHTML?`<div style="margin-top:10px;">${healthPillsHTML}</div>`:''}</div><div style="display:flex;gap:18px;padding:18px 40px 0;align-items:flex-start;"><div style="flex:1;font-size:10px;line-height:1.75;color:#333;">${d.careTeam?`<div style="display:inline-block;background:#EEF3EE;color:#4A5746;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin-bottom:10px;">Dear ${d.careTeam}</div>`:''}${storyHtmlPdf}${d.decisionMaking.length?pdfSec('Decision-Making',d.decisionMaking):''}${d.traumaCare.length||d.emotionalCare.length?pdfSec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#7B4040'):''}</div><div style="flex:1;font-size:10px;">${d.naturalComfort.length||d.medicalComfort.length?pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort]):''}${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection]):''}${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#6B8F71'):''}${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length?pdfSec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication],'#7B4040'):''}</div></div><div style="margin:18px 40px 0;padding-top:12px;border-top:1px solid #D4DDCE;font-size:10px;color:#2C2C2C;line-height:1.75;font-style:italic;">Thank you for welcoming my baby into the world with respect, skill and kindness while also 
+  const printHTML = `<div id="pp" style="width:794px;min-height:1123px;background:#F7F3EE;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;"><div style="background:#EEF3EE;padding:26px 40px 20px;text-align:center;"><div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:5px;color:#6B8F71;text-transform:uppercase;font-weight:600;margin-bottom:10px;">Birth Preferences For</div><div style="font-family:${nameFont};font-size:${Math.max(22,Math.min(36,Math.floor(280/(d.name.length*0.5))))}px;color:#4A5746;font-weight:600;line-height:1.1;">${d.name}</div>${subLine?`<div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:2px;margin-top:8px;">${subLine}</div>`:''}${healthPillsHTML?`<div style="margin-top:10px;">${healthPillsHTML}</div>`:''}</div><div style="display:flex;gap:18px;padding:18px 40px 0;align-items:flex-start;"><div style="flex:1;font-size:10px;line-height:1.75;color:#333;">${d.careTeam?`<div style="display:inline-block;background:#EEF3EE;color:#4A5746;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin-bottom:10px;">Dear ${d.careTeam}</div>`:''}${storyHtmlPdf}${d.decisionMaking.length?pdfSec('Decision-Making',d.decisionMaking):''}${d.traumaCare.length||d.emotionalCare.length?pdfSec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#7B4040'):''}</div><div style="flex:1;font-size:10px;">${d.naturalComfort.length||d.medicalComfort.length?pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort]):''}${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection]):''}${d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length?pdfSec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions]):''}${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#6B8F71'):''}${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length?pdfSec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication],'#7B4040'):''}</div></div><div style="margin:18px 40px 0;padding-top:12px;border-top:1px solid #D4DDCE;font-size:10px;color:#2C2C2C;line-height:1.75;font-style:italic;">Thank you for welcoming my baby into the world with respect, skill and kindness while also 
 protecting my mental and emotional wellbeing.<div style="margin-top:10px;font-style:normal;">With gratitude,</div><div style="font-family:${nameFont};font-size:24px;color:#4A5746;line-height:1.4;">${d.name}</div></div></div>`;
   let container = document.getElementById('pdf-render-container');
   if (!container) { container = document.createElement('div'); container.id = 'pdf-render-container'; container.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1;'; document.body.appendChild(container); }
