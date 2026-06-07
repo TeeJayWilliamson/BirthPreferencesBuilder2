@@ -244,8 +244,8 @@ nav {
 }
 /* FIX: decorative leaves on the tablet — hidden on small screens to avoid overflow */
 .tablet-deco-leaves {
-  position: absolute; top: -80px; right: -25px;
-  width: 160px; opacity: 0.35; pointer-events: none;
+  position: absolute; top: -170px; right: -120px;
+  width: 350px; opacity: 0.4; pointer-events: none;
   object-fit: contain; z-index: 0; transform: scaleX(-1);
 }
 @media (max-width: 900px) {
@@ -568,7 +568,7 @@ footer span { color: rgba(235,196,190,1); }
 
     <div class="hero-visual">
       <!-- FIX: moved to a classed element, hidden on mobile via CSS -->
-      <img class="tablet-deco-leaves" src="img/3leaves.png" alt="" aria-hidden="true">
+      <img class="tablet-deco-leaves" src="img/daisy.png" alt="" aria-hidden="true">
       <div class="tablet-wrap">
         <div class="tablet-shadow"></div>
         <div class="tablet-frame">
@@ -700,8 +700,8 @@ footer span { color: rgba(235,196,190,1); }
 <!-- CTA -->
 <!-- FIX: position:relative is now in CSS class, not inline style; overflow:hidden clips leaves -->
 <section class="cta-section">
-  <img src="img/3leaves.png" alt="" style="position:absolute;right:3%;bottom:0;width:min(220px,30vw);opacity:0.1;pointer-events:none;object-fit:contain;transform-origin:bottom right;" aria-hidden="true">
-  <img src="img/3leaves.png" alt="" style="position:absolute;left:2%;top:5%;width:min(180px,25vw);opacity:0.08;pointer-events:none;object-fit:contain;transform:scaleX(-1);" aria-hidden="true">
+  <img src="img/poppy.png" alt="" style="position:absolute;right:-8%;bottom:-15%;width:min(550px,30vw);rotate:-10deg;opacity:0.3;pointer-events:none;object-fit:contain;transform-origin:bottom right;" aria-hidden="true">
+  <img src="img/peony.png" alt="" style="position:absolute;left:-8%;top:-15%;width:min(550px,25vw);rotate:145deg;opacity:0.4;pointer-events:none;object-fit:contain;transform:scaleX(-1);" aria-hidden="true">
 
   <div class="section-inner" style="position:relative;z-index:1;">
     <div class="section-eyebrow">
@@ -747,14 +747,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('thoughtfully');
   if (!el) return;
 
-  const colors = [
-    '#E8C7C8', // Blush
-    '#CFC4E8', // Lavender
-    '#D8C27A'  // Soft Gold
+  const themes = [
+    { color: '#E8C7C8', flowers: ['img/poppy.png', 'img/peony.png'] }, // Blush
+    { color: '#CFC4E8', flowers: ['img/violet.png'] },                 // Lavender
+    { color: '#D8C27A', flowers: ['img/daisy.png'] },                  // Soft Gold
   ];
 
-  const pick = colors[Math.floor(Math.random() * colors.length)];
-  el.style.color = pick;
+  const pick = themes[Math.floor(Math.random() * themes.length)];
+  el.style.color = pick.color;
+
+  const deco = document.querySelector('.tablet-deco-leaves');
+  if (deco) {
+    const flower = pick.flowers[Math.floor(Math.random() * pick.flowers.length)];
+    deco.src = flower;
+  }
 });
 </script>
 
