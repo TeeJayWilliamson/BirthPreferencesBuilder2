@@ -977,12 +977,37 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
               <div class="option-card" data-val="Assessments done on parent's chest" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Assessments on Parent's Chest</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">General assessments while on parent's chest.</div></div>
               <div class="option-card" data-val="Assessments at warmer" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Assessments at Warmer</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Baby taken to warmer for general assessments.</div></div>
               <div class="option-card" data-val="Vitamin K" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Vitamin K</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Given after birth to support normal blood clotting.</div></div>
-              <div class="option-card" data-val="Erythromycin Eye Ointment" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Erythromycin</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Helps prevent bacterial eye infections passed during delivery.</div></div>
+              <div class="option-card" data-val="Erythromycin Eye Ointment" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Erythromycin</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">An antibiotic eye ointment sometimes given after birth to protect against bacterial eye infections that can be passed during delivery.</div></div>
               <div class="option-card" data-val="RSV Immunization" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">RSV Immunization</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Protects newborns from severe RSV infections.</div></div>
               <div class="option-card" data-val="Hepatitis B Vaccine" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Hepatitis B Vaccine</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Usually recommended within 24 hours of birth.</div></div>
               <div class="option-card" data-val="Drying and stimulation" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Drying &amp; Stimulation</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">May help the baby begin breathing and maintain body temperature.</div></div>
               <div class="option-card" data-val="Minimal drying and stimulation" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Minimal Drying &amp; Stimulation</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">If baby is stable and you wish to prioritize uninterrupted skin-to-skin.</div></div>
-            </div>
+              <div class="option-card" data-val="Vernix Left on Skin" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Vernix Left on Skin</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">not wiped off, allowed to absorb naturally</div></div>
+              <div class="option-card" data-val="Announcement of Sex" onclick="toggleOption(this)">
+                <div class="option-header">
+                  <div class="option-check"></div>
+                  <div class="option-name">Announcement of Sex</div>
+
+                  <div class="card-btn-group">
+                    <button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button>
+
+                    <div class="info-btn" onclick="event.stopPropagation()">
+                      i
+                      <div class="info-tooltip">Enter information about this subject here.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="option-desc">
+                  <input
+                    type="text"
+                    placeholder="Who will be announcing the babys sex?"
+                    onclick="event.stopPropagation()"
+                    style="width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-size:14px; box-sizing:border-box;"
+                  >
+                </div>
+                </div>
+              </div>
           </div>
         </div>
       </div>
@@ -1027,10 +1052,6 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
               <div class="option-card" data-val="Offer my own breastmilk first" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">My Breastmilk First</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div></div>
               <div class="option-card" data-val="Donor milk if available" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Donor Milk</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div></div>
               <div class="option-card" data-val="Formula feeding" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Formula</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div></div>
-            </div>
-            <div class="subsection-title" style="margin-bottom:0.6rem">Communication</div>
-            <div class="options-grid" id="nicu-communication-options">
-              <div class="option-card" data-val="Real-time updates on all medical decisions and procedures" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Real-Time Updates</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Check this to flag and discuss later with your Care Provider.">?</button><div class="info-btn" onclick="event.stopPropagation()">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div></div>
             </div>
           </div>
         </div>
@@ -1464,7 +1485,6 @@ function collectRawState() {
     emergencyDelivery: getSelected('emergency-delivery-options'),
     nicuSeparation: getSelected('nicu-separation-options'),
     nicuFeeding: getSelected('nicu-feeding-options'),
-    nicuCommunication: getSelected('nicu-communication-options'),
     unsureItems: getUnsureItems(),
   };
 }
@@ -1550,7 +1570,6 @@ function applyPlanToForm(d) {
   restoreOptions('emergency-delivery-options', d.emergencyDelivery || []);
   restoreOptions('nicu-separation-options', d.nicuSeparation || []);
   restoreOptions('nicu-feeding-options', d.nicuFeeding || []);
-  restoreOptions('nicu-communication-options', d.nicuCommunication || []);
   if (d.story) document.getElementById('story-generated-note').style.display = 'block';
   restoreUnsureItems(d.unsureItems || []);
   setStep(0);
@@ -1692,7 +1711,6 @@ const _UNSURE_SECTION_MAP = {
   'emergency-delivery-options':  'emergencyDelivery',
   'nicu-separation-options':     'nicuSeparation',
   'nicu-feeding-options':        'nicuFeeding',
-  'nicu-communication-options':  'nicuCommunication',
 };
 
 function getUnsureItems() {
@@ -1768,7 +1786,6 @@ function getAllData() {
     emergencyDelivery: getSelected('emergency-delivery-options'),
     nicuSeparation:    getSelected('nicu-separation-options'),
     nicuFeeding:       getSelected('nicu-feeding-options'),
-    nicuCommunication: getSelected('nicu-communication-options'),
   };
 }
 
@@ -1801,7 +1818,7 @@ function showPreview() {
         ${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?`<div class="preview-section-title" style="margin-top:0.8rem">Labor & Birth</div>${listItems([...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection])}`:''}
         ${d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length?`<div class="preview-section-title" style="margin-top:0.8rem">Pushing</div>${listItems([...d.pushingGuidance,...d.pushingPace,...d.pushingOptions])}`:''}
         ${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?`<div class="preview-section-title alt" style="margin-top:0.8rem">Golden Hour</div>${listItems([...d.bonding,...d.placenta,...d.cord,...d.newborn])}`:''}
-        ${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length?`<div class="preview-section-title rose-bg" style="margin-top:0.8rem">If Plans Change</div>${listItems([...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication])}`:''}
+        ${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length?`<div class="preview-section-title rose-bg" style="margin-top:0.8rem">If Plans Change</div>${listItems([...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding])}`:''}
       </div>
     </div>
     <div class="preview-footer">Thank you for welcoming my baby into the world with respect, skill and kindness while also 
@@ -1823,7 +1840,7 @@ async function downloadPDF() {
   const storyHtmlPdf = d.story ? d.story.split(/\n\n+/).map(p=>`<p style="margin:0 0 7px 0;">${p.replace(/\n/g,'<br>')}</p>`).join('') : '';
   function pdfList(arr,color='#4A5746'){return arr.map(i=>`<div style="display:flex;gap:5px;margin-bottom:4px;font-size:9px;line-height:1.5;align-items:flex-start;"><span style="color:${color};flex-shrink:0;">✓</span><span>${i}</span></div>`).join('');}
   function pdfSec(title,items,bg='#4A5746'){if(!items.length)return '';return `<div style="background:${bg};color:white;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin:9px 0 5px;">${title}</div>${pdfList(items,bg==='#7B4040'?'#7B4040':'#4A5746')}`;}
-  const printHTML = `<div id="pp" style="width:794px;min-height:1123px;background:#F7F3EE;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;"><div style="background:#EEF3EE;padding:26px 40px 20px;text-align:center;"><div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:5px;color:#6B8F71;text-transform:uppercase;font-weight:600;margin-bottom:10px;">Birth Preferences For</div><div style="font-family:${nameFont};font-size:${Math.max(22,Math.min(36,Math.floor(280/(d.name.length*0.5))))}px;color:#4A5746;font-weight:600;line-height:1.1;">${d.name}</div>${subLine?`<div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:2px;margin-top:8px;">${subLine}</div>`:''}${healthPillsHTML?`<div style="margin-top:10px;">${healthPillsHTML}</div>`:''}</div><div style="display:flex;gap:18px;padding:18px 40px 0;align-items:flex-start;"><div style="flex:1;font-size:10px;line-height:1.75;color:#333;">${d.careTeam?`<div style="display:inline-block;background:#EEF3EE;color:#4A5746;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin-bottom:10px;">Dear ${d.careTeam}</div>`:''}${storyHtmlPdf}${d.decisionMaking.length?pdfSec('Decision-Making',d.decisionMaking):''}${d.traumaCare.length||d.emotionalCare.length?pdfSec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#7B4040'):''}</div><div style="flex:1;font-size:10px;">${d.naturalComfort.length||d.medicalComfort.length?pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort]):''}${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection]):''}${d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length?pdfSec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions]):''}${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#6B8F71'):''}${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length?pdfSec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication],'#7B4040'):''}</div></div><div style="margin:18px 40px 0;padding-top:12px;border-top:1px solid #D4DDCE;font-size:10px;color:#2C2C2C;line-height:1.75;font-style:italic;">Thank you for welcoming my baby into the world with respect, skill and kindness while also 
+  const printHTML = `<div id="pp" style="width:794px;min-height:1123px;background:#F7F3EE;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;"><div style="background:#EEF3EE;padding:26px 40px 20px;text-align:center;"><div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:5px;color:#6B8F71;text-transform:uppercase;font-weight:600;margin-bottom:10px;">Birth Preferences For</div><div style="font-family:${nameFont};font-size:${Math.max(22,Math.min(36,Math.floor(280/(d.name.length*0.5))))}px;color:#4A5746;font-weight:600;line-height:1.1;">${d.name}</div>${subLine?`<div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:2px;margin-top:8px;">${subLine}</div>`:''}${healthPillsHTML?`<div style="margin-top:10px;">${healthPillsHTML}</div>`:''}</div><div style="display:flex;gap:18px;padding:18px 40px 0;align-items:flex-start;"><div style="flex:1;font-size:10px;line-height:1.75;color:#333;">${d.careTeam?`<div style="display:inline-block;background:#EEF3EE;color:#4A5746;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin-bottom:10px;">Dear ${d.careTeam}</div>`:''}${storyHtmlPdf}${d.decisionMaking.length?pdfSec('Decision-Making',d.decisionMaking):''}${d.traumaCare.length||d.emotionalCare.length?pdfSec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#7B4040'):''}</div><div style="flex:1;font-size:10px;">${d.naturalComfort.length||d.medicalComfort.length?pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort]):''}${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection]):''}${d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length?pdfSec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions]):''}${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#6B8F71'):''}${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length?pdfSec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding],'#7B4040'):''}</div></div><div style="margin:18px 40px 0;padding-top:12px;border-top:1px solid #D4DDCE;font-size:10px;color:#2C2C2C;line-height:1.75;font-style:italic;">Thank you for welcoming my baby into the world with respect, skill and kindness while also 
 protecting my mental and emotional wellbeing.<div style="margin-top:10px;font-style:normal;">With gratitude,</div><div style="font-family:${nameFont};font-size:24px;color:#4A5746;line-height:1.4;">${d.name}</div></div></div>`;
   let container = document.getElementById('pdf-render-container');
   if (!container) { container = document.createElement('div'); container.id = 'pdf-render-container'; container.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1;'; document.body.appendChild(container); }
@@ -1864,7 +1881,6 @@ function generateStory() {
   var emergencyList=getSelected('emergency-delivery-options');
   var nicuSepList=getSelected('nicu-separation-options');
   var nicuFeedList=getSelected('nicu-feeding-options');
-  var nicuCommList=getSelected('nicu-communication-options');
   var emotionalList=getSelected('emotional-options');
   var decisionList=getSelected('decision-options');
   var traumaList=getSelected('trauma-options');
@@ -1903,7 +1919,7 @@ function generateStory() {
   var p1parts=[s_greeting,s_values,s_comfort,s_birthtype,s_labor,s_care,s_decision,s_closing];
   var paragraph1=p1parts.filter(function(s){return s&&s.trim();}).join(' ');
   var goldenHourAny=cordList.length||placentaList.length||bondingList.length||newbornList.length;
-  var emergencyAny=emergencyList.length||nicuSepList.length||nicuFeedList.length||nicuCommList.length;
+  var emergencyAny=emergencyList.length||nicuSepList.length||nicuFeedList.length;
   var paragraph2='';
   if(goldenHourAny||emergencyAny){
     var p2parts=[];
@@ -1924,7 +1940,7 @@ function generateStory() {
       p2parts.push(pick(['I have also thought carefully about what I would want if things do not go to plan.','While I hope my main plan unfolds as I have imagined, I have given thought to some contingencies too.','I want your team to know my wishes in case anything needs to change quickly.']));
       var emergencyPhrases={'Forceps Delivery':['If an assisted delivery is needed, I am open to forceps. Please talk me through it first.','I would consider forceps if your team recommends it and there is time for a quick explanation.'],'Vacuum Delivery':['If we need some help getting baby out, I would prefer to try vacuum before other options.','A vacuum delivery is something I am open to if an assisted birth becomes necessary.'],'Emergency C-Section':['If an emergency C-section is needed, I trust your team completely. Please act quickly and keep me informed.',"Should an emergency C-section become necessary, please prioritize my baby's safety and keep "+sp+' with me.']};
       var nicuPhrases={'Partner/support person to stay with baby at all times':['If baby needs extra care, I would like '+sp+' to stay with baby at all times.','Please keep '+sp+' with our baby if NICU care is needed so baby is never alone.'],'Partner/support person to stay with me at all times':['If baby is taken to NICU, I need '+sp+' to remain with me while I recover.','Please keep '+sp+' with me if our baby needs to go to the NICU. I will need that support.'],'Photo and video updates when partner/support person and baby are separated':['If we are separated from baby, please help us stay connected through regular photo and video updates.','Photo and video updates would mean so much to us if we cannot be with our baby.'],'Provide pump or colostrum collection kit within 2 hours if baby cannot breastfeed directly':['If baby cannot latch, please provide a pump or colostrum collection kit within two hours.','Getting a pump to me within the first two hours is really important if baby is unable to breastfeed directly.'],'Offer my own breastmilk first':['Please offer my own milk as the first feeding choice for my baby in NICU.','I would like my milk to be the priority. Please support me in expressing as soon as possible.'],'Donor milk if available':['If my milk is not ready, I would like donor milk offered before formula.','Donor milk is my preference if my own supply is not sufficient yet.'],'Formula feeding':['If baby needs to be fed in NICU, please use formula. I am comfortable with that decision.','Formula feeding is what we have chosen. Please support us in getting started.'],'Real-time updates on all medical decisions and procedures':['I would like to be kept informed in real time of anything that happens with my baby.','Please update me immediately on any decisions or procedures involving my baby. I do not want to find out after the fact.']};
-      var allEmergency=emergencyList.concat(nicuSepList,nicuFeedList,nicuCommList);var surfaced=[];
+      var allEmergency=emergencyList.concat(nicuSepList,nicuFeedList);var surfaced=[];
       allEmergency.forEach(function(v){if(surfaced.length<2){var pool=emergencyPhrases[v]||nicuPhrases[v];if(pool)surfaced.push(pick(pool));}});
       surfaced.forEach(function(s){p2parts.push(s);});
     }
