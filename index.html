@@ -548,7 +548,7 @@ footer span { color: rgba(235,196,190,1); }
   <div class="hero">
     <div class="hero-content">
       <div class="hero-eyebrow">Your Birth Space</div>
-      <h1>Guiding your birth,<br><em>thoughtfully.</em></h1>
+      <h1>Guiding your birth,<br><em id="thoughtfully">thoughtfully.</em></h1>
       <p class="hero-sub">A calm, collaborative space to prepare for birth.</p>
       <div class="hero-actions">
         <a href="/birthplan/" class="btn-primary">Get Started</a>
@@ -739,6 +739,22 @@ document.getElementById('mobile-menu').querySelectorAll('a').forEach(a => {
     document.getElementById('mobile-menu').classList.remove('open');
     document.getElementById('nav-hamburger').classList.remove('open');
   });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('thoughtfully');
+  if (!el) return;
+
+  const colors = [
+    '#E8C7C8', // Blush
+    '#CFC4E8', // Lavender
+    '#D8C27A'  // Soft Gold
+  ];
+
+  const pick = colors[Math.floor(Math.random() * colors.length)];
+  el.style.color = pick;
 });
 </script>
 
