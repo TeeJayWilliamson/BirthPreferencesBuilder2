@@ -249,7 +249,18 @@ nav {
   object-fit: contain; z-index: 0; transform: scaleX(-1);
 }
 @media (max-width: 900px) {
-  .tablet-deco-leaves { display: none; } /* FIX: hides the overflowing leaves on mobile */
+  .hero-visual { overflow: visible; }
+}
+@media (max-width: 900px) {
+  .tablet-deco-leaves {
+    /* Peek from top-right corner, behind the tablet */
+    top: -110px;
+    right: -65px;
+    left: auto;
+    width: 240px;
+    opacity: 0.5;
+    z-index: 0; /* behind tablet-wrap so it sits back naturally */
+  }
   .tablet-wrap { max-width: 340px; } /* FIX: more reasonable size on mobile */
 }
 .tablet-shadow {
@@ -478,6 +489,10 @@ section { padding: 6rem 1.5rem; }
   transition: all 0.22s;
 }
 .cta-btn-large:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(74,87,70,0.36); background: var(--navy-light); }
+@media (max-width: 700px) {
+  .cta-flower-right { width: 250px !important; right: -10% !important; bottom: -5% !important; }
+  .cta-flower-left  { width: 250px !important; left: -15% !important;  top: -10% !important; }
+}
 
 /* ── FOOTER ────────────────────────────────────── */
 footer {
@@ -700,8 +715,8 @@ footer span { color: rgba(235,196,190,1); }
 <!-- CTA -->
 <!-- FIX: position:relative is now in CSS class, not inline style; overflow:hidden clips leaves -->
 <section class="cta-section">
-  <img src="img/poppy.png" alt="" style="position:absolute;right:-8%;bottom:-15%;width:min(550px,30vw);rotate:-10deg;opacity:0.3;pointer-events:none;object-fit:contain;transform-origin:bottom right;" aria-hidden="true">
-  <img src="img/peony.png" alt="" style="position:absolute;left:-8%;top:-15%;width:min(550px,25vw);rotate:145deg;opacity:0.4;pointer-events:none;object-fit:contain;transform:scaleX(-1);" aria-hidden="true">
+  <img src="img/poppy.png" alt="" class="cta-flower-right" style="position:absolute;right:-8%;bottom:-15%;width:min(550px,30vw);rotate:-10deg;opacity:0.3;pointer-events:none;object-fit:contain;transform-origin:bottom right;" aria-hidden="true">
+  <img src="img/peony.png" alt="" class="cta-flower-left" style="position:absolute;left:-8%;top:-15%;width:min(550px,25vw);rotate:145deg;opacity:0.4;pointer-events:none;object-fit:contain;transform:scaleX(-1);" aria-hidden="true">
 
   <div class="section-inner" style="position:relative;z-index:1;">
     <div class="section-eyebrow">
