@@ -485,10 +485,11 @@ footer span { color: #EBC4BE; }
     <div>
       <div class="plan-card featured">
         <div class="plan-eyebrow is-personal">For families</div>
-        <div class="plan-name">Personal</div>
+        <div class="plan-name">Bud</div>
+        <div class="plan-tag" style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem;font-style:italic;">Individual</div>
         <div class="plan-divider"></div>
         <div class="plan-price-row">
-          <span class="cur">$</span><span class="amt">59</span>
+          <span class="cur">$</span><span class="amt">19</span>
         </div>
         <div class="plan-detail">Active for 12 months from date of activation</div>
         <button class="plan-cta cta-primary" onclick="openCheckout('personal')">Start your birth plan</button>
@@ -503,19 +504,21 @@ footer span { color: #EBC4BE; }
 
         <div class="plan-card">
           <div class="plan-eyebrow">Professional</div>
-          <div class="plan-name">Solo</div>
+          <div class="plan-name">Sprout</div>
+          <div class="plan-tag" style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem;font-style:italic;">Solo</div>
           <div class="plan-divider"></div>
           <div class="plan-price-row">
             <span class="cur">$</span><span class="amt">29</span><span class="per">/mo</span>
           </div>
-          <div class="slot-pill">✉️ 10 client slots <span class="slot-sub">/ active</span></div>
+          <div class="slot-pill">✉️ 18 client slots <span class="slot-sub">/ active</span></div>
           <button class="plan-cta cta-outline" onclick="openCheckout('solo')">Get Started</button>
           <img class="plan-flower" src="../img/poppy.png" alt="" aria-hidden="true">
         </div>
 
         <div class="plan-card featured">
           <div class="plan-eyebrow">Professional</div>
-          <div class="plan-name">Practice <span class="popular-badge">Popular</span></div>
+          <div class="plan-name">Petal <span class="popular-badge">Popular</span></div>
+          <div class="plan-tag" style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem;font-style:italic;">Practice</div>
           <div class="plan-divider"></div>
           <div class="plan-price-row">
             <span class="cur">$</span><span class="amt">59</span><span class="per">/mo</span>
@@ -527,13 +530,14 @@ footer span { color: #EBC4BE; }
 
         <div class="plan-card">
           <div class="plan-eyebrow">Professional</div>
-          <div class="plan-name">Collective</div>
+          <div class="plan-name">Bloom</div>
+          <div class="plan-tag" style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem;font-style:italic;">Collective</div>
           <div class="plan-divider"></div>
           <div class="plan-price-row">
-            <span class="cur">$</span><span class="amt">149</span><span class="per">/mo</span>
+            <span class="cur">$</span><span class="amt">99</span><span class="per">/mo</span>
           </div>
-          <div class="slot-pill">✉️ Unlimited <span class="slot-sub">/ no cap</span></div>
-          <button class="plan-cta cta-blush" onclick="openCheckout('collective')">Get Started</button>
+          <div class="slot-pill">✉️ 100 client slots <span class="slot-sub">/ active</span></div>
+          <button class="plan-cta cta-outline" onclick="openCheckout('collective')">Get Started</button>
           <img class="plan-flower" src="../img/peony.png" alt="" aria-hidden="true">
         </div>
 
@@ -779,10 +783,10 @@ const IS_TEST_MODE = window.location.hostname !== 'blumi.ca';
 if (IS_TEST_MODE) document.getElementById('test-banner').classList.add('visible');
 
 const PLAN_META = {
-  personal:   { name: 'Personal',   price: '$59 one-time',  amount: '$59',  billing: 'one-time', isTeam: false, signinHref: '/birthplan/' },
-  solo:       { name: 'Solo',       price: '$29 / month',   amount: '$29',  billing: '/mo',      isTeam: false, signinHref: '/portal/' },
-  practice:   { name: 'Practice',   price: '$59 / month',   amount: '$59',  billing: '/mo',      isTeam: true,  signinHref: '/portal/' },
-  collective: { name: 'Collective', price: '$149 / month',  amount: '$149', billing: '/mo',      isTeam: true,  signinHref: '/portal/' },
+  personal:   { name: 'Bud',    price: '$19 one-time',  amount: '$19',  billing: 'one-time', isTeam: false, signinHref: '/birthplan/' },
+  solo:       { name: 'Sprout', price: '$29 / month',   amount: '$29',  billing: '/mo',      isTeam: false, signinHref: '/portal/' },
+  practice:   { name: 'Petal',  price: '$59 / month',   amount: '$59',  billing: '/mo',      isTeam: true,  signinHref: '/portal/' },
+  collective: { name: 'Bloom',  price: '$99 / month',   amount: '$99',  billing: '/mo',      isTeam: true,  signinHref: '/portal/' },
 };
 
 let _activePlan = null;
