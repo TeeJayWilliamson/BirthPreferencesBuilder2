@@ -650,6 +650,12 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
   z-index: 0;
   object-fit: contain;
 }
+@media (max-width: 600px) {
+  #header-flower-deco {
+    right: -10px;
+    width: 120px;
+  }
+}
 .site-header h1,
 .site-header p,
 .site-header-logo {
@@ -1941,6 +1947,10 @@ function renderPreview() {
     </div>
     <div class="preview-footer">Thank you for welcoming my baby into the world with respect, skill and kindness while also protecting my mental and emotional wellbeing.<br><br><em>With gratitude, ${d.name||'Your Name'}</em></div>
   `;
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
 }
 
 function showPreview() {
