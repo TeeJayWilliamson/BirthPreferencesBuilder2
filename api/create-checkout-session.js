@@ -8,10 +8,10 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require('@supabase/supabase-js');
 
 const PRICE_IDS = {
-  personal:   'price_1TbAmADeU3RWQQbVbbnFo0al',
+  personal:   'price_1TiQ4dDeU3RWQQbV9yqoH5JR',
   solo:       'price_1TbAmADeU3RWQQbVgtExVUZB',
   practice:   'price_1TbAm9DeU3RWQQbVmdcGdAHM',
-  collective: 'price_1TbAmADeU3RWQQbV53BgTBR9',
+  collective: 'price_1TiQ6IDeU3RWQQbVL7o0T2MX',
 };
 
 // Personal is a one-time payment; the rest are subscriptions
