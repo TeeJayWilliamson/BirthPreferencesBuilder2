@@ -1480,7 +1480,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
   document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-  document.getElementById('portal-back-link').addEventListener('click', e => { e.preventDefault(); window.close(); });
+  document.getElementById('portal-back-link').addEventListener('click', e => { e.preventDefault(); history.back(); });
   window.scrollTo({ top: 0, behavior: 'instant' });
 
   // ── Info modal ─────────────────────────────────────────────────────
@@ -1494,6 +1494,11 @@ window.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('infoModalBody').innerHTML    = body;
       document.getElementById('infoModal').classList.add('active');
     });
+  });
+
+  // Close info modal when clicking overlay or × button
+  document.getElementById('infoModal').addEventListener('click', function(e) {
+    if (e.target === this) closeInfoModal();
   });
 
 // ── Handle post-payment account check ───────────────────────────────
@@ -1953,6 +1958,10 @@ function renderPreview() {
 function closeModal() {
   document.getElementById('modal').classList.remove('active');
 }
+function closeInfoModal(e) {
+  if (e && e.target !== document.getElementById('infoModal') && !e.target.classList.contains('info-modal-close')) return;
+  document.getElementById('infoModal').classList.remove('active');
+}
 
 function showPreview() {
   // Default to first flower option selected
@@ -2217,11 +2226,11 @@ function generateStory() {
 })();
 </script>
 <!-- INFO MODAL -->
-<div class="info-modal-overlay" id="infoModal" onclick="closeInfoModal(event)">
+<div class="info-modal-overlay" id="infoModal" onclick="if(event.target===this)this.classList.remove('active')">
   <div class="info-modal">
     <div class="info-modal-header">
       <div class="info-modal-title" id="infoModalTitle"></div>
-      <button class="info-modal-close" onclick="closeInfoModal()" aria-label="Close">✕</button>
+      <button class="info-modal-close" onclick="document.getElementById('infoModal').classList.remove('active')" aria-label="Close">✕</button>
     </div>
     <div class="info-modal-body" id="infoModalBody"></div>
   </div>
