@@ -528,6 +528,79 @@ footer span { color: rgba(235,196,190,1); }
 .hero-actions  { animation: fadeUp 0.6s 0.4s ease both; }
 .hero-trust    { animation: fadeUp 0.6s 0.5s ease both; }
 .hero-visual   { animation: fadeUp 0.8s 0.3s ease both; }
+
+/* ── FAQ ACCORDION ─────────────────────────────── */
+.faq-section {
+  background: linear-gradient(160deg, #EEF3EE 0%, #FAF7F2 60%, #F5EDE8 100%);
+  border-top: 1px solid rgba(168,185,158,0.25);
+}
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 4rem;
+  margin-top: 3rem;
+}
+@media (max-width: 800px) {
+  .faq-grid { grid-template-columns: 1fr; gap: 0; }
+}
+.faq-item {
+  border-bottom: 1px solid rgba(168,185,158,0.3);
+}
+.faq-item:first-child, .faq-item:nth-child(2) {
+  border-top: 1px solid rgba(168,185,158,0.3);
+}
+@media (max-width: 800px) {
+  .faq-item:nth-child(2) { border-top: none; }
+}
+.faq-question {
+  width: 100%; background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
+  padding: 1.35rem 0;
+  text-align: left;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.92rem; font-weight: 500;
+  color: var(--olive);
+  transition: color 0.2s;
+}
+.faq-question:hover { color: var(--sage-dark); }
+.faq-icon {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(168,185,158,0.6);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s;
+  color: var(--sage-dark);
+}
+.faq-icon svg { width: 10px; height: 10px; transition: transform 0.25s; }
+.faq-item.open .faq-icon {
+  background: var(--sage-light);
+  border-color: var(--sage);
+}
+.faq-item.open .faq-icon svg { transform: rotate(45deg); }
+.faq-answer {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.25s ease;
+  font-size: 0.87rem; font-weight: 300; line-height: 1.8;
+  color: var(--muted);
+  padding: 0;
+}
+.faq-item.open .faq-answer {
+  max-height: 400px;
+  padding-bottom: 1.25rem;
+}
+.faq-footer {
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 0.85rem; color: var(--muted); font-weight: 300;
+}
+.faq-footer a {
+  color: var(--sage-dark); font-weight: 500; text-decoration: none;
+  border-bottom: 1px solid rgba(168,185,158,0.5);
+  transition: border-color 0.2s;
+}
+.faq-footer a:hover { border-color: var(--sage-dark); }
 </style>
 </head>
 <body>
@@ -540,6 +613,7 @@ footer span { color: rgba(235,196,190,1); }
   <ul class="nav-links">
     <li><a href="/portal/">For Care Providers</a></li>
     <li><a href="/pricing/">Pricing</a></li>
+    <li><a href="/faq/">FAQ</a></li>
     <li><a href="/birthplan/">Log in</a></li>
     <li><a href="/birthplan/" class="nav-cta">Get Started</a></li>
   </ul>
@@ -712,6 +786,73 @@ footer span { color: rgba(235,196,190,1); }
   </div>
 </section>
 
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="section-inner">
+    <div class="section-eyebrow">
+      <img src="img/pinkflower.png" alt="" style="width:32px;height:auto;margin-bottom:0.7rem;opacity:0.6;object-fit:contain;" aria-hidden="true">
+      <h2 class="section-title">Common questions</h2>
+    </div>
+    <p class="section-sub">Everything you need to know before you begin.</p>
+
+    <div class="faq-grid">
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What makes Blümi different from a free template?
+          <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg></span>
+        </button>
+        <div class="faq-answer">A free template gives you checkboxes. Blümi gives you a fully guided experience. Evidence-based information is woven into every step so your choices are truly informed, not just filled in. It's also built around your voice, so the plan you create actually sounds like you.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do I need a provider to use Blümi?
+          <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg></span>
+        </button>
+        <div class="faq-answer">You don't need one. Blümi is built so anyone navigating pregnancy can use it on their own. You can share the plan you create with whatever care team supports you, whether that's a doula, midwife, OB, or all three.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          When should I start my birth plan?
+          <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg></span>
+        </button>
+        <div class="faq-answer">We recommend starting around 28–32 weeks. That gives you enough time to explore your options thoughtfully and have meaningful conversations with your care team, without feeling like you're too far ahead. It's also never too late. A plan made close to your due date is still better than none.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is my information private and secure?
+          <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg></span>
+        </button>
+        <div class="faq-answer">Yes. Your birth plan and personal information are stored securely and only shared with people you choose. You're always in control of who can see your plan.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What if my birth doesn't go as planned?
+          <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg></span>
+        </button>
+        <div class="faq-answer">Birth is unpredictable, and that's okay. A birth plan isn't about controlling what happens, it's about knowing yourself well enough to navigate whatever does. Even when plans change, you'll still know what questions to ask, what matters most to you, and that your care team already understands your wishes.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is Blümi available where I live?
+          <span class="faq-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg></span>
+        </button>
+        <div class="faq-answer">Blümi is launching first in Canada and the United States, with plans to expand. If you're outside these regions, join the waitlist and we'll notify you as soon as Blümi becomes available where you are.</div>
+      </div>
+
+    </div>
+
+    <div class="faq-footer">
+      More questions? <a href="/faq/">See the full FAQ</a>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
 <!-- FIX: position:relative is now in CSS class, not inline style; overflow:hidden clips leaves -->
 <section class="cta-section">
@@ -777,6 +918,16 @@ document.addEventListener('DOMContentLoaded', () => {
     deco.src = flower;
   }
 });
+</script>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  // close all
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
 </script>
 
 </body>
