@@ -1246,7 +1246,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       <div class="wizard-nav">
         <button class="btn-back" onclick="prevStep()">← Back</button>
         <span class="step-counter">Step 8 of 8</span>
-        <button class="btn-next" onclick="showPreview()" style="background:linear-gradient(135deg,var(--olive-mid) 0%,var(--olive-light) 100%)">Preview &amp; Download →</button>
+        <button class="btn-next" onclick="showPreview()" style="background:linear-gradient(135deg,var(--olive-mid) 0%,var(--olive-light) 100%)">Download</button>
       </div>
     </div>
 
@@ -1284,8 +1284,8 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
     <div id="pdf-preview"></div>
     <div class="modal-actions">
       <button class="btn-modal-secondary" onclick="closeModal()">← Edit</button>
-      <button class="btn-modal-secondary" id="dl-questions-btn" onclick="downloadQuestionsPDF()" style="border-color:#D4A017;color:#7A5800;" title="Export a clean list of everything you've marked with ? to share with anyone">❓ My Questions</button>
-      <button class="btn-modal-primary" id="dl-btn" onclick="downloadPDF()">⬇ Download PDF</button>
+      <button class="btn-modal-secondary" id="dl-questions-btn" onclick="downloadQuestionsPDF()" style="border-color:#D4A017;color:#7A5800;" title="Export a clean list of everything you've marked with ? to share with anyone">My Questions</button>
+      <button class="btn-modal-primary" id="dl-btn" onclick="downloadPDF()">Download PDF</button>
     </div>
   </div>
 </div>
@@ -1937,23 +1937,7 @@ function renderPreview() {
       ${healthPills?`<div class="preview-health-pills">${healthPills}</div>`:''}
     </div>
     <div style="padding:1.2rem 1.6rem 0.5rem; box-sizing:border-box; width:100%; background:white">
-      <div class="preview-grid">
-        <div>
-          ${d.careTeam?`<div class="preview-greeting">Dear ${d.careTeam}</div>`:''}
-          <div class="preview-story-text">${storyHtml}</div>
-          ${sec('Decision-Making', d.decisionMaking)}
-          ${d.traumaCare.length||d.emotionalCare.length ? sec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#A07070') : ''}
-        </div>
-        <div>
-          ${d.naturalComfort.length||d.medicalComfort.length ? sec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort]) : ''}
-          ${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length ? sec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection]) : ''}
-          ${d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length ? sec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions]) : ''}
-          ${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length ? sec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn]) : ''}
-          ${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length ? sec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication],'#A07070') : ''}
-        </div>
-      </div>
     </div>
-    <div class="preview-footer">Thank you for welcoming my baby into the world with respect, skill and kindness while also protecting my mental and emotional wellbeing.<br><br><em>With gratitude, ${d.name||'Your Name'}</em></div>
   `;
 }
 
@@ -2026,7 +2010,7 @@ async function downloadPDF() {
     const pw=pdf.internal.pageSize.getWidth();const ph=pdf.internal.pageSize.getHeight();
     pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,pw,ph);
     pdf.save(`Birth Preferences — ${d.name}.pdf`);
-    btn.textContent='⬇ Download PDF';btn.disabled=false;
+    btn.textContent='Download PDF';btn.disabled=false;
   });
 }
 
@@ -2036,7 +2020,7 @@ async function downloadQuestionsPDF() {
 
   if (!unsureItems.length) {
     btn.textContent = 'No questions yet';
-    setTimeout(() => { btn.innerHTML = '❓ My Questions'; }, 2200);
+    setTimeout(() => { btn.innerHTML = 'My Questions'; }, 2200);
     return;
   }
 
@@ -2143,7 +2127,7 @@ async function downloadQuestionsPDF() {
     const ph = pdf.internal.pageSize.getHeight();
     pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
     pdf.save(`My Questions — ${d.name || 'Birth Plan'}.pdf`);
-    btn.innerHTML = '❓ My Questions';
+    btn.innerHTML = 'My Questions';
     btn.disabled = false;
   });
 }
