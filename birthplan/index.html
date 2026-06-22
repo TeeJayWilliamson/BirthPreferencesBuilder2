@@ -206,6 +206,24 @@ body::before {
 .pw-strength.weak  { color: var(--rose); }
 .pw-strength.ok    { color: #B08000; }
 .pw-strength.good  { color: var(--olive-mid); }
+.pw-wrap { position: relative; }
+.pw-wrap .auth-input { padding-right: 2.8rem; }
+.pw-toggle {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+.pw-toggle:hover { color: var(--olive); }
+.pw-toggle svg { width: 16px; height: 16px; }
 
 /* ── PORTAL MODE BANNER ── */
 #portal-banner {
@@ -691,8 +709,13 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <div class="auth-field">
         <label class="auth-label">Password</label>
-        <input type="password" class="auth-input" id="si-password" placeholder="Your password" autocomplete="current-password"
-          onkeydown="if(event.key==='Enter') signIn()">
+        <div class="pw-wrap">
+          <input type="password" class="auth-input" id="si-password" placeholder="Your password" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter') signIn()">
+          <button type="button" class="pw-toggle" onclick="togglePw('si-password', this)" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
       </div>
       <button class="auth-btn" onclick="signIn()">Sign In</button>
       <div class="auth-msg" id="si-msg"></div>
@@ -730,14 +753,24 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
       </div>
       <div class="auth-field">
         <label class="auth-label">Password</label>
-        <input type="password" class="auth-input" id="su-password" placeholder="At least 8 characters" autocomplete="new-password"
-          oninput="checkPwStrength(this.value)">
+        <div class="pw-wrap">
+          <input type="password" class="auth-input" id="su-password" placeholder="At least 8 characters" autocomplete="new-password"
+            oninput="checkPwStrength(this.value)">
+          <button type="button" class="pw-toggle" onclick="togglePw('su-password', this)" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
         <div class="pw-strength" id="pw-strength-msg"></div>
       </div>
       <div class="auth-field">
         <label class="auth-label">Confirm Password</label>
-        <input type="password" class="auth-input" id="su-confirm" placeholder="Re-enter your password" autocomplete="new-password"
-          onkeydown="if(event.key==='Enter') signUp()">
+        <div class="pw-wrap">
+          <input type="password" class="auth-input" id="su-confirm" placeholder="Re-enter your password" autocomplete="new-password"
+            onkeydown="if(event.key==='Enter') signUp()">
+          <button type="button" class="pw-toggle" onclick="togglePw('su-confirm', this)" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
       </div>
       <button class="auth-btn" onclick="signUp()">Create Account</button>
       <div class="auth-msg" id="su-msg"></div>
@@ -1308,6 +1341,16 @@ const PORTAL_CLIENT = urlParams.get('clientId');
 let currentUser = null;
 let saveTimer   = null;
 
+var EYE_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYE_CLOSED = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+function togglePw(inputId, btn) {
+  var input = document.getElementById(inputId);
+  var showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  // icon reflects current state: open eye = visible, closed eye = hidden
+  btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+  btn.innerHTML = showing ? EYE_CLOSED : EYE_OPEN;
+}
 function showScreen(name) {
   document.getElementById('signin-screen').style.display  = name === 'signin'  ? 'flex' : 'none';
   document.getElementById('signup-screen').style.display  = name === 'signup'  ? 'flex' : 'none';
