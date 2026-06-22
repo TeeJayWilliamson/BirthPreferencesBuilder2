@@ -1715,6 +1715,7 @@ function applyPlanToForm(d) {
   if (d.story) document.getElementById('story-generated-note').style.display = 'block';
   restoreUnsureItems(d.unsureItems || []);
   setStep(0);
+  if (typeof updateBirthSpaceTitle === 'function') updateBirthSpaceTitle();
 }
 
 function restoreChips(groupId, vals) {
@@ -1781,6 +1782,10 @@ function getSelected(id) { return [...document.querySelectorAll('#' + id + ' .op
 function getChips(id)    { return [...document.querySelectorAll('#' + id + ' .chip.selected')].map(c => c.dataset.val); }
 
 function resetForm() {
+  if (typeof updateBirthSpaceTitle === 'function') {
+    document.getElementById('name').value = '';
+    updateBirthSpaceTitle();
+  }
   ['name','due-date','support-person','care-team','story','pronouns-other'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
@@ -2266,10 +2271,9 @@ function generateStory() {
 }
 
 // ── DYNAMIC BIRTH SPACE TITLE ─────────────────────────────
-(function() {
+var updateBirthSpaceTitle = (function() {
   var prefixEl = document.getElementById('birth-space-prefix');
   var nameInput = document.getElementById('name');
-  if (!prefixEl || !nameInput) return;
   var _lastVal = '';
   var _fadeTimer = null;
 
@@ -2284,10 +2288,17 @@ function generateStory() {
     }, 510);
   }
 
+  function applyTitleImmediate(newText) {
+    _lastVal = newText;
+    clearTimeout(_fadeTimer);
+    prefixEl.classList.remove('fading');
+    prefixEl.textContent = newText;
+  }
+
   function updateTitle() {
+    if (!nameInput) return;
     var val = nameInput.value;
     var firstName = val.trim().split(/\s+/)[0];
-
     if (!firstName) {
       applyTitle('Your');
     } else if (/^\S+ /.test(val)) {
@@ -2296,17 +2307,26 @@ function generateStory() {
   }
 
   function updateTitleOnBlur() {
+    if (!nameInput) return;
     var firstName = nameInput.value.trim().split(/\s+/)[0];
     if (firstName) applyTitle(firstName + '\u2019s');
     else applyTitle('Your');
   }
 
-  nameInput.addEventListener('input', updateTitle);
-  nameInput.addEventListener('blur', updateTitleOnBlur);
+  // Public: call after loading a plan or on sign-out to sync immediately
+  function syncNow() {
+    if (!nameInput || !prefixEl) return;
+    var firstName = nameInput.value.trim().split(/\s+/)[0];
+    if (firstName) applyTitleImmediate(firstName + '\u2019s');
+    else applyTitleImmediate('Your');
+  }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(updateTitleOnBlur, 700);
-  });
+  if (nameInput) {
+    nameInput.addEventListener('input', updateTitle);
+    nameInput.addEventListener('blur', updateTitleOnBlur);
+  }
+
+  return syncNow;
 })();
 
 // ── HEADER COLOUR + FLOWER THEME ─────────────────────────────
