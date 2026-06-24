@@ -398,8 +398,8 @@ body::before {
 .status-archived::before { background: #9CA3AF; }
 .due-date-cell { font-size: 0.8rem; color: var(--muted); }
 .due-date-cell.soon { color: var(--olive); font-weight: 500; }
-.table-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-.btn-icon { background: none; border: 1.5px solid var(--border); color: var(--muted); border-radius: 8px; padding: 0.4rem 0.65rem; font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.table-actions { display: flex; align-items: center; gap: 0.35rem; flex-wrap: nowrap; }
+.btn-icon { background: none; border: 1.5px solid var(--border); color: var(--muted); border-radius: 6px; padding: 0.3rem 0.5rem; font-family: 'Jost', sans-serif; font-size: 0.68rem; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .btn-icon:hover { border-color: var(--olive-mid); color: var(--olive); background: var(--olive-pale); }
 .btn-icon.view-plan { border-color: var(--border); color: var(--olive); }
 .btn-icon.view-plan:hover { background: var(--olive-pale); border-color: var(--olive-mid); }
@@ -734,7 +734,8 @@ body::before {
 
 @media (max-width: 700px) {
   .clients-table th:nth-child(3), .clients-table td:nth-child(3),
-  .clients-table th:nth-child(4), .clients-table td:nth-child(4) { display: none; }
+  .clients-table th:nth-child(4), .clients-table td:nth-child(4),
+  .clients-table th:nth-child(5), .clients-table td:nth-child(5) { display: none; }
   .topbar { padding: 0 1rem; height: 54px; }
   .topbar-right { display: none !important; }
   .topbar-hamburger { display: inline-flex; }
@@ -805,7 +806,7 @@ body::before {
         <button class="auth-btn" onclick="signInWithHandle()">Sign In</button>
         <div class="auth-msg" id="si-msg"></div>
         <div class="auth-switch" style="margin-top:0.8rem;">
-          Sprout provider? <a onclick="toggleSiMode(true)">Sign in with email →</a>
+          Solo provider? <a onclick="toggleSiMode(true)">Sign in with email →</a>
         </div>
       </div>
 
@@ -823,7 +824,7 @@ body::before {
         <button class="auth-btn" onclick="signIn()">Sign In</button>
         <div class="auth-msg" id="si-email-msg"></div>
         <div class="auth-switch" style="margin-top:0.8rem;">
-          Petal or Bloom? <a onclick="toggleSiMode(false)">Sign in with handle →</a>
+          Practice or Collective? <a onclick="toggleSiMode(false)">Sign in with handle →</a>
         </div>
       </div>
 
@@ -845,7 +846,7 @@ body::before {
     </div>
     <div class="auth-body">
       <div class="auth-field">
-        <label class="auth-label">Practice / Business Name <span style="font-weight:400;color:var(--muted)" id="practice-name-hint">(optional for Sprout)</span></label>
+        <label class="auth-label">Practice / Business Name <span style="font-weight:400;color:var(--muted)" id="practice-name-hint">(optional for Solo)</span></label>
         <input type="text" class="auth-input" id="su-practice-name" placeholder="e.g. Greater Toronto Doulas">
       </div>
       <div class="auth-field" id="su-handle-wrap" style="display:none;">
@@ -875,9 +876,9 @@ body::before {
       <div class="auth-field">
         <label class="auth-label">Plan</label>
         <select class="auth-input" id="su-tier" onchange="onTierChange()">
-          <option value="solo">Sprout — up to 10 active clients</option>
-          <option value="practice" selected>Petal — shared account, up to 50 clients</option>
-          <option value="collective">Bloom — shared account, unlimited clients</option>
+          <option value="solo">Solo — up to 10 active clients</option>
+          <option value="practice" selected>Practice — shared account, up to 50 clients</option>
+          <option value="collective">Collective — shared account, unlimited clients</option>
         </select>
       </div>
       <div class="admin-setup-box" id="admin-setup-box">
@@ -1010,10 +1011,10 @@ body::before {
     <div class="upgrade-banner-left">
       <div class="upgrade-banner-tier-pill">
         <span class="tier-dot"></span>
-        <span id="upgrade-banner-tier-name">Sprout</span>
+        <span id="upgrade-banner-tier-name">Solo</span>
       </div>
       <div class="upgrade-banner-msg" id="upgrade-banner-msg">
-        You're on the <strong id="upgrade-banner-tier-strong">Sprout</strong> plan.
+        You're on the <strong id="upgrade-banner-tier-strong">Solo</strong> plan.
         Upgrade to invite more clients — <strong>your existing clients and plans are always kept.</strong>
       </div>
     </div>
@@ -1037,20 +1038,20 @@ body::before {
       <div class="stat-card">
         <div class="stat-label">Active Clients</div>
         <div class="stat-value" id="stat-active">—</div>
-        <div class="stat-sub">Currently in your care</div>
+        <div class="stat-sub">Currently working together</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Pending Invites</div>
         <div class="stat-value" id="stat-pending">—</div>
-        <div class="stat-sub">Waiting to join</div>
+        <div class="stat-sub">Awaiting sign-up</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Archived</div>
         <div class="stat-value" id="stat-archived">—</div>
-        <div class="stat-sub">No longer active</div>
+        <div class="stat-sub">Post-birth or inactive</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Active Clients</div>
+        <div class="stat-label">Slots Used</div>
         <div class="stat-value" id="stat-slots">—</div>
         <div class="stat-sub" id="stat-slots-sub">of your plan limit</div>
         <div class="slot-bar-wrap"><div class="slot-bar-track"><div class="slot-bar-fill" id="slot-bar" style="width:0%"></div></div></div>
@@ -1070,6 +1071,7 @@ body::before {
       <div class="filter-chip" data-filter="pending" onclick="setFilter('pending', this)">Pending</div>
       <div class="filter-chip" data-filter="archived" onclick="setFilter('archived', this)">Archived</div>
       <div class="filter-chip" data-filter="unassigned" id="filter-unassigned" onclick="setFilter('unassigned', this)" style="display:none;">Unassigned</div>
+      <div id="provider-filter-wrap" style="display:none;margin-left:auto;"></div>
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
         <input type="text" class="search-input" id="search-input" placeholder="Search clients…" oninput="renderTable()">
@@ -1108,15 +1110,8 @@ body::before {
       </p>
       <div class="upgrade-modal-tiers" id="upgrade-modal-tiers"></div>
       <div class="upgrade-assurance">
-<strong>
-  <img
-    src="../img/pinkflower.png"
-    alt=""
-    aria-hidden="true"
-    style="width:20px;height:auto;opacity:0.65;vertical-align:middle;margin-right:0.35rem;"
-  >
-  No data is ever lost when upgrading.
-</strong>
+        <strong>🌿 No data is ever lost when upgrading.</strong>
+        Your existing clients, birth plans, notes, and invite history are fully preserved. Upgrading simply unlocks more slots so you can keep inviting.
       </div>
     </div>
     <div class="modal-footer">
@@ -1188,11 +1183,11 @@ body::before {
 <div class="modal-overlay" id="unsure-modal">
   <div class="modal" style="max-width:500px;">
     <div class="modal-head">
-      <h3>Talking Points - Flagged for Discussion</h3>
+      <h3>Talking Points — Client Unsure</h3>
       <button class="modal-close" onclick="closeModal('unsure-modal')">×</button>
     </div>
     <div class="modal-body">
-      <p class="unsure-modal-intro">These are the topics that your client felt unsure about. Bring these up at your next appointment to ensure they feel informed and confident before their big day.</p>
+      <p class="unsure-modal-intro">These are the items your client flagged as uncertain. Use these as discussion starters in your next appointment.</p>
       <div class="unsure-item-list" id="unsure-item-list">
         <div class="unsure-empty">Loading…</div>
       </div>
@@ -1251,7 +1246,7 @@ body::before {
     </div>
     <div class="modal-body">
       <p style="font-size:0.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.2rem;font-family:'Cormorant Garamond',serif;font-style:italic;">
-        All providers share the main account log in. Each provider selects their name att sign-in and enters their own 4-digit PIN. You can view and reset all PINs here.
+        Everyone on your team shares this account login. Each person selects their name at sign-in and uses their own 4-digit PIN. You can see and reset all PINs here.
       </p>
       <div class="providers-list" id="providers-list"></div>
       <div class="add-provider-box">
@@ -1268,10 +1263,9 @@ body::before {
           <button class="btn-add-provider" onclick="addProvider()">Add</button>
         </div>
       </div>
-<div class="providers-pool-note">
-  <img src="../img/pinkflower.png" alt="" style="width:18px;height:auto;opacity:0.65;object-fit:contain;vertical-align:middle;margin-right:0.35rem;" aria-hidden="true">
-  Each provider can only see clients assigned to them. Unassigned clients are visible only to you, the admin.
-</div>
+      <div class="providers-pool-note">
+        🌿 All care providers share the same invite pool. Each provider only sees their own clients unless you (the admin) view unassigned clients.
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('providers-modal')">Done</button>
@@ -1314,6 +1308,7 @@ let currentUser       = null;
 let currentProfile    = null;
 let allClients        = [];
 let activeFilter      = 'all';
+let activeProviderFilter = '';
 let activeNoteRow     = null;
 let pendingDeleteNoteIdx = null;
 let activeArchiveRow  = null;
@@ -1326,7 +1321,6 @@ let allProviders      = [];
 const TIER_LIMITS  = { solo: 10, practice: 50, collective: Infinity };
 const TIER_PRICES  = { solo: '$29/mo', practice: '$59/mo', collective: '$99/mo' };
 const TIER_SLOTS   = { solo: '10 client slots', practice: '50 client slots', collective: 'Unlimited' };
-const TIER_LABELS  = { solo: 'Sprout', practice: 'Petal', collective: 'Bloom' };
 const TIER_ORDER   = ['solo', 'practice', 'collective'];
 const TEAM_TIERS   = ['practice', 'collective'];
 
@@ -1335,8 +1329,9 @@ function isAdmin()    { return isTeamTier() && currentProvider?.is_admin; }
 
 // ── Spinner helper ─────────────────────────────────────────────────────
 function showTableSpinner(msg) {
+  const cols = (isTeamTier && isAdmin && isTeamTier() && isAdmin()) ? 6 : 5;
   document.getElementById('clients-tbody').innerHTML =
-    `<tr class="table-loading-row"><td colspan="5"><div class="table-spinner">` +
+    `<tr class="table-loading-row"><td colspan="${cols}"><div class="table-spinner">` +
     `<div class="table-spinner-ring"></div>` +
     `<div class="table-spinner-text">${msg || 'Loading…'}</div>` +
     `</div></td></tr>`;
@@ -1778,13 +1773,58 @@ async function bootApp() {
 
 function renderPortalHeader() {
   if (isTeamTier() && currentProvider) {
-    document.getElementById('portal-header-title').textContent = currentProvider.name + "'s Clients";
+    document.getElementById('portal-header-title').textContent = isAdmin() ? 'All Clients' : currentProvider.name + "'s Clients";
     document.getElementById('portal-header-sub').textContent   = 'Invite, support, and co-create birth plans alongside your clients.';
     document.getElementById('filter-unassigned').style.display = isAdmin() ? '' : 'none';
   } else {
     document.getElementById('portal-header-title').textContent = 'Your Clients';
     document.getElementById('portal-header-sub').textContent   = 'Invite, support, and co-create birth plans alongside your clients.';
     document.getElementById('filter-unassigned').style.display = 'none';
+  }
+  renderProviderFilterDropdown();
+  renderAdminTableHeader();
+}
+
+function renderProviderFilterDropdown() {
+  const wrap = document.getElementById('provider-filter-wrap');
+  if (!wrap) return;
+  if (!isTeamTier() || !isAdmin() || allProviders.length < 2) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = '';
+  const sel = document.getElementById('provider-filter-select');
+  const current = sel ? sel.value : '';
+  wrap.innerHTML = `<select id="provider-filter-select" class="reassign-select" style="font-size:0.78rem;padding:0.35rem 0.7rem;" onchange="setProviderFilter(this.value)">
+    <option value="">All providers</option>
+    ${allProviders.map(p => `<option value="${p.id}" ${p.id === current ? 'selected' : ''}>${escHtml(p.name)}${p.is_admin ? ' (Admin)' : ''}</option>`).join('')}
+  </select>`;
+}
+
+function setProviderFilter(val) {
+  activeProviderFilter = val;
+  if (val && activeFilter === 'unassigned') {
+    activeFilter = 'all';
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === 'all'));
+  }
+  renderTable();
+  updateStats();
+}
+
+function renderAdminTableHeader() {
+  const thead = document.querySelector('.clients-table thead tr');
+  if (!thead) return;
+  const existingProviderTh = document.getElementById('th-provider');
+  if (isTeamTier() && isAdmin()) {
+    if (!existingProviderTh) {
+      const actionsTh = thead.querySelector('th:last-child');
+      const th = document.createElement('th');
+      th.id = 'th-provider';
+      th.textContent = 'Provider';
+      thead.insertBefore(th, actionsTh);
+    }
+  } else {
+    if (existingProviderTh) existingProviderTh.remove();
   }
 }
 
@@ -1838,9 +1878,10 @@ function syncMobileDrawerIdentity() {
 
 function renderTierBadge() {
   const tier   = currentProfile?.tier || null;
+  const labels = { solo: 'Solo', practice: 'Practice', collective: 'Collective' };
   const el     = document.getElementById('topbar-tier-badge');
   el.className = tier ? `tier-badge tier-${tier} tier-badge-clickable` : 'tier-badge tier-none tier-badge-clickable';
-  el.textContent = tier ? (TIER_LABELS[tier] || tier) : 'No plan';
+  el.textContent = tier ? labels[tier] : 'No plan';
   el.title = isAdmin() || !isTeamTier() ? 'View or change your plan' : 'View your plan';
   el.onclick = () => openUpgradeModal();
   const mBadge = document.getElementById('mobile-menu-tier-badge');
@@ -1859,14 +1900,15 @@ function renderUpgradeBanner() {
   if (!tier || tier === 'collective' || _upgradeBannerDismissed) { banner.classList.remove('visible'); return; }
   if (isTeamTier() && !isAdmin()) { banner.classList.remove('visible'); return; }
 
-  document.getElementById('upgrade-banner-tier-name').textContent   = TIER_LABELS[tier] || tier;
-  document.getElementById('upgrade-banner-tier-strong').textContent = TIER_LABELS[tier] || tier;
+  const tierNames = { solo: 'Solo', practice: 'Practice' };
+  document.getElementById('upgrade-banner-tier-name').textContent   = tierNames[tier] || tier;
+  document.getElementById('upgrade-banner-tier-strong').textContent = tierNames[tier] || tier;
   const currentIdx = TIER_ORDER.indexOf(tier);
   const options    = document.getElementById('upgrade-banner-options');
   options.innerHTML = TIER_ORDER.slice(currentIdx + 1).map(t => {
     const isPrimary = TIER_ORDER.indexOf(t) === currentIdx + 1;
     return `<button class="upgrade-tier-btn${isPrimary ? ' primary' : ''}" onclick="openUpgradeModal()">
-      Upgrade to ${TIER_LABELS[t] || t}
+      Upgrade to ${t.charAt(0).toUpperCase() + t.slice(1)}
       <span class="tier-price">${TIER_PRICES[t]}</span>
     </button>`;
   }).join('');
@@ -1905,23 +1947,18 @@ function renderUpgradeModalTiers(currentTier) {
     if (isCurrent) {
       ctaLabel = 'Current plan'; ctaClass = 'umt-cta disabled'; onclickAttr = '';
     } else if (isDowngrade) {
-      ctaLabel = `Downgrade to ${TIER_LABELS[t] || t}`;
+      ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`;
       ctaClass = 'umt-cta downgrade-btn';
       onclickAttr = `onclick="openBillingPortal()"`;
     } else {
-      ctaLabel = `Upgrade to ${TIER_LABELS[t] || t} →`;
+      ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)} →`;
       ctaClass = 'umt-cta active';
       onclickAttr = `onclick="selectTierPaid('${t}')"`;
     }
 
     return `<div class="${cardClass}">
-<div class="umt-label">${
-  isRecommended
-    ? '⭐ Recommended'
-    : t === 'collective'
-      ? `<img src="../img/pinkflower.png" alt="" aria-hidden="true" style="width:14px;height:auto;opacity:0.65;vertical-align:middle;margin-right:0.3rem;"> Best value`
-      : 'Professional'
-}</div>      <div class="umt-name">${TIER_LABELS[t] || t}</div>
+      <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '🌿 Best value' : 'Professional'}</div>
+      <div class="umt-name">${t.charAt(0).toUpperCase()+t.slice(1)}</div>
       <div class="umt-price"><strong>${t==='collective'?'$149':t==='practice'?'$59':'$29'}</strong> /mo</div>
       <div class="umt-slots">${TIER_SLOTS[t]}</div>
       ${isCurrent ? '<div class="umt-current-badge">✓ Your current plan</div>' : ''}
@@ -2101,7 +2138,11 @@ function getVisibleClients() {
     return allClients.filter(r => !r.provider_id);
   }
   if (isAdmin()) {
-    return allClients.filter(r => r.provider_id === currentProvider.id || !r.provider_id);
+    // Admin sees all clients; provider filter dropdown narrows further if set
+    if (activeProviderFilter) {
+      return allClients.filter(r => r.provider_id === activeProviderFilter);
+    }
+    return allClients;
   }
   return allClients.filter(r => r.provider_id === currentProvider.id);
 }
@@ -2124,7 +2165,7 @@ function updateStats() {
   document.getElementById('stat-archived').textContent = archived;
   document.getElementById('stat-slots').textContent    = usedTotal + ' / ' + limitStr;
   document.getElementById('stat-slots-sub').textContent = isTeamTier()
-    ? (limit === Infinity ? 'Practice Total — unlimited' : 'Practice Total of ' + limit)
+    ? (limit === Infinity ? 'shared pool — unlimited' : 'shared pool of ' + limit)
     : (limit === Infinity ? 'unlimited on your plan' : 'of ' + limit + ' on your plan');
 
   const pct = limit === Infinity ? 0 : Math.min(100, Math.round((usedTotal / limit) * 100));
@@ -2157,6 +2198,11 @@ async function refreshClients() {
 
 function setFilter(f, el) {
   activeFilter = f;
+  // Unassigned filter and provider filter are mutually exclusive
+  if (f === 'unassigned' && activeProviderFilter) {
+    activeProviderFilter = '';
+    renderProviderFilterDropdown();
+  }
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   renderTable();
@@ -2180,15 +2226,9 @@ function renderTable() {
   }
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
-      <div class="empty-state-icon">
-  <img
-    src="../img/pinkflower.png"
-    alt=""
-    aria-hidden="true"
-    style="width:48px;height:auto;opacity:0.65;"
-  >
-</div>
+    const cols = (isTeamTier() && isAdmin()) ? 6 : 5;
+    tbody.innerHTML = `<tr><td colspan="${cols}"><div class="empty-state">
+      <div class="empty-state-icon">🌿</div>
       <h3>${activeFilter === 'all' && !query ? 'No clients yet' : 'No clients found'}</h3>
       <p>${activeFilter === 'all' && !query ? 'Invite your first client to get started.' : 'Try adjusting your search or filter.'}</p>
     </div></td></tr>`;
@@ -2212,9 +2252,10 @@ function renderTable() {
     const unsureItems = r.plan_data?.unsureItems || [];
     const hasUnsure   = unsureItems.length > 0;
     const isUnassigned = isTeamTier() && !r.provider_id;
-    const providerName = isTeamTier() && isAdmin() && r.provider_id
-      ? allProviders.find(p => p.id === r.provider_id)?.name || ''
+    const providerName = isTeamTier() && isAdmin()
+      ? (r.provider_id ? allProviders.find(p => p.id === r.provider_id)?.name || '—' : '—')
       : '';
+    const showAdminCols = isTeamTier() && isAdmin();
 
     return `<tr style="animation-delay:${i * 0.04}s">
       <td>
@@ -2224,7 +2265,6 @@ function renderTable() {
             <div class="client-name">${escHtml(name)}</div>
             <div class="client-email">${escHtml(email)}</div>
             ${isUnassigned ? '<span class="unassigned-tag">Unassigned</span>' : ''}
-            ${providerName && !isUnassigned ? `<span style="font-size:0.68rem;color:var(--muted);">${escHtml(providerName)}</span>` : ''}
           </div>
         </div>
       </td>
@@ -2239,18 +2279,20 @@ function renderTable() {
       </td>
       <td class="${dueCls}">${dueFmt}</td>
       <td style="font-size:0.78rem;color:var(--muted)">${added}</td>
+      ${showAdminCols ? `<td>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;align-items:flex-start;">
+          <span style="font-size:0.8rem;color:var(--text);">${escHtml(providerName)}</span>
+          <select class="reassign-select" onchange="reassignClient('${r.id}', this.value)">
+            <option value="">Reassign…</option>
+            ${allProviders.map(p => `<option value="${p.id}" ${p.id === r.provider_id ? 'selected' : ''}>${escHtml(p.name)}</option>`).join('')}
+          </select>
+        </div>
+      </td>` : ''}
       <td>
         <div class="table-actions">
-          ${isUnassigned && isAdmin()
-            ? `<select class="reassign-select" onchange="reassignClient('${r.id}', this.value)">
-                <option value="">Assign to…</option>
-                ${allProviders.map(p => `<option value="${p.id}">${escHtml(p.name)}</option>`).join('')}
-              </select>`
-            : ''
-          }
           ${canOpen
-            ? `<button class="btn-icon view-plan" onclick="openViewPlanModal('${r.id}')">👁 View Plan</button>
-               <button class="btn-icon edit-plan" onclick="openPlan('${r.client.id}')">✏ Edit Plan</button>`
+            ? `<button class="btn-icon view-plan" onclick="openViewPlanModal('${r.id}')">View Plan</button>
+               ${(!isAdmin() || r.provider_id === currentProvider?.id) ? `<button class="btn-icon edit-plan" onclick="openPlan('${r.client.id}')">Edit Plan</button>` : ''}`
             : r.status === 'pending' && r.invite_token
               ? `<button class="btn-icon" onclick="showInviteLink('${r.invite_token}', '${escAttr(r.invited_email)}')">View Link</button>`
               : ''
@@ -2266,18 +2308,19 @@ function renderTable() {
 }
 
 async function reassignClient(rowId, providerId) {
-  if (!providerId) return;
+  // providerId can be empty string to unassign
+  const newProviderId = providerId || null;
   const { error } = await sb
     .from('birth_worker_clients')
-    .update({ provider_id: providerId })
+    .update({ provider_id: newProviderId })
     .eq('id', rowId)
     .eq('birth_worker_id', currentUser.id);
   if (error) { showToast('Could not reassign client.'); return; }
   const row = allClients.find(r => r.id === rowId);
-  if (row) row.provider_id = providerId;
+  if (row) row.provider_id = newProviderId;
   renderTable(); updateStats();
-  const pName = allProviders.find(p => p.id === providerId)?.name || '';
-  showToast(`Client assigned to ${pName}.`);
+  const pName = newProviderId ? allProviders.find(p => p.id === newProviderId)?.name || '' : null;
+  showToast(pName ? `Client assigned to ${pName}.` : 'Client unassigned.');
 }
 
 function openViewPlanModal(rowId) {
