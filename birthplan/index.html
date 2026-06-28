@@ -1715,7 +1715,7 @@ function flashSaved() {
 
 function scheduleAutoSave(targetUserId) {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => savePlan(targetUserId), 1500);
+  saveTimer = setTimeout(() => savePlan(targetUserId), 400);
 }
 
 function attachAutoSave(targetUserId) {
