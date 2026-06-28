@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In — Blümi</title>
+<link rel="icon" type="image/png" href="/img/flavicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --olive:       #4A5746;
+  --olive-mid:   #6B8F71;
+  --olive-light: #8BB891;
+  --olive-pale:  #EEF3EE;
+  --sage:        #A8B99E;
+  --sage-light:  #EAF1EB;
+  --blush:       #EBC4BE;
+  --cream:       #F7F3EE;
+  --rose:        #7B4040;
+  --rose-light:  #F5EDED;
+  --text:        #2C2C2C;
+  --muted:       #7A8591;
+  --border:      #D4DDCE;
+  --navy-light:  #4A6B4A;
+  --shadow:      0 4px 24px rgba(74,87,70,0.10), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg:   0 12px 40px rgba(74,87,70,0.15), 0 2px 8px rgba(0,0,0,0.06);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 10% 20%, rgba(107,143,113,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(168,185,158,0.07) 0%, transparent 50%),
+    linear-gradient(160deg, #EEF3EE 0%, #FAF7F2 50%, #F5EDE8 100%);
+  z-index: -1;
+}
+
+/* ── SCREEN WRAPPER ── */
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+/* ── CARD ── */
+.auth-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255,255,255,0.9);
+  max-width: 460px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── CARD HEAD ── */
+.auth-card-head {
+  background: linear-gradient(135deg, var(--olive-pale) 0%, white 100%);
+  padding: 2.2rem 2rem 1.6rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.auth-logo { margin-bottom: 0.8rem; }
+.auth-logo img { height: 40px; width: auto; object-fit: contain; }
+.auth-brand-tag {
+  font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--olive-mid); font-weight: 600; margin-bottom: 0.5rem;
+}
+.auth-sub {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 0.88rem; color: var(--muted); line-height: 1.6;
+}
+
+/* ── TAB SWITCHER ── */
+.tab-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+  background: white;
+}
+.tab-btn {
+  background: none; border: none; cursor: pointer;
+  padding: 0.85rem 0.5rem;
+  font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 500;
+  color: var(--muted); letter-spacing: 0.04em;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  line-height: 1.3;
+}
+.tab-btn:hover { color: var(--olive); background: var(--olive-pale); }
+.tab-btn.active {
+  color: var(--olive); font-weight: 600;
+  border-bottom-color: var(--olive);
+  background: var(--olive-pale);
+}
+.tab-btn .tab-icon {
+  display: block; font-size: 1rem; margin-bottom: 0.2rem;
+}
+
+/* ── TAB PANELS ── */
+.auth-body { padding: 1.8rem 2rem 2rem; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── FORM FIELDS ── */
+.auth-field { margin-bottom: 1rem; }
+.auth-label {
+  display: block; font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--olive); margin-bottom: 0.4rem;
+}
+.auth-input {
+  width: 100%; padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 0.88rem;
+  color: var(--text); background: var(--cream); outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.auth-input:focus {
+  border-color: var(--olive-mid);
+  box-shadow: 0 0 0 3px rgba(107,143,113,0.14);
+  background: white;
+}
+.auth-input.error { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(123,64,64,0.1); }
+
+/* ── PASSWORD WRAP ── */
+.pw-wrap { position: relative; }
+.pw-wrap .auth-input { padding-right: 2.8rem; }
+.pw-toggle {
+  position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; padding: 0;
+  color: var(--muted); display: flex; align-items: center; transition: color 0.2s;
+}
+.pw-toggle:hover { color: var(--olive); }
+.pw-toggle svg { width: 16px; height: 16px; }
+
+/* ── HANDLE INPUT ── */
+.handle-wrap {
+  display: flex; align-items: center; gap: 0;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  overflow: hidden; background: var(--cream);
+  transition: border-color 0.2s;
+}
+.handle-wrap:focus-within {
+  border-color: var(--olive-mid);
+  box-shadow: 0 0 0 3px rgba(107,143,113,0.14);
+}
+.handle-prefix {
+  padding: 0.75rem 0.8rem 0.75rem 1rem;
+  font-size: 0.88rem; color: var(--muted);
+  white-space: nowrap; border-right: 1px solid var(--border);
+  background: white; user-select: none;
+}
+.handle-input {
+  flex: 1; padding: 0.75rem 1rem;
+  border: none; background: transparent;
+  font-family: 'Jost', sans-serif; font-size: 0.88rem;
+  color: var(--text); outline: none;
+}
+.field-hint {
+  font-size: 0.72rem; color: var(--muted); margin-top: 0.35rem; line-height: 1.5;
+}
+
+/* ── PIN ROW ── */
+.pin-input-row { display: flex; gap: 0.5rem; }
+.pin-digit {
+  width: 52px; height: 52px; text-align: center;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Jost', sans-serif; font-size: 1.4rem; font-weight: 600;
+  color: var(--olive); background: white; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.pin-digit:focus { border-color: var(--olive-mid); box-shadow: 0 0 0 3px rgba(107,143,113,0.14); }
+.pin-digit.error { border-color: var(--rose); }
+
+/* ── TAB ICONS ── */
+
+.tab-icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  margin: 0 auto 0.2rem;
+  opacity: 1;
+}
+.tab-btn.active .tab-icon {
+  opacity: 1;
+}
+
+.tab-icon-pair {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 0.2rem;
+}
+.tab-icon-pair img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  opacity: 1;
+}
+.tab-btn.active .tab-icon-pair img {
+  opacity: 1;
+}
+
+/* ── AUTH BUTTON ── */
+.auth-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--olive) 0%, var(--olive-mid) 100%);
+  color: white; border: none; border-radius: 50px;
+  padding: 0.85rem 2rem;
+  font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 600;
+  letter-spacing: 0.04em; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(74,87,70,0.28);
+  transition: all 0.2s; margin-top: 0.5rem;
+}
+.auth-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(74,87,70,0.35); }
+.auth-btn:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
+
+/* ── GUEST BUTTON ── */
+.guest-btn {
+  width: 100%; background: none;
+  color: var(--muted); border: 1.5px dashed var(--border); border-radius: 50px;
+  padding: 0.75rem 2rem;
+  font-family: 'Jost', sans-serif; font-size: 0.85rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+}
+.guest-btn:hover { border-color: var(--olive-mid); color: var(--olive); }
+
+/* ── DIVIDER ── */
+.auth-divider {
+  display: flex; align-items: center; gap: 0.8rem; margin: 1.2rem 0;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.auth-divider span { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+
+/* ── MESSAGES ── */
+.auth-msg {
+  margin-top: 1rem; padding: 0.8rem 1rem;
+  border-radius: 10px; font-size: 0.82rem; line-height: 1.5; display: none;
+}
+.auth-msg.success { background: var(--sage-light); color: #2D5A30; border: 1px solid #B5D4B8; }
+.auth-msg.error   { background: var(--rose-light); color: var(--rose); border: 1px solid #E8C4C4; }
+
+/* ── SWITCH LINK ── */
+.auth-switch {
+  text-align: center; margin-top: 1rem;
+  font-size: 0.78rem; color: var(--muted);
+}
+.auth-switch a { color: var(--olive); font-weight: 600; cursor: pointer; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+
+/* ── HOME LINK ── */
+.home-link {
+  position: absolute; bottom: 1rem; right: 1.2rem;
+  color: var(--muted); font-size: 0.75rem; text-decoration: none;
+  display: flex; align-items: center; gap: 0.4rem; opacity: 0.7;
+}
+.home-link:hover { opacity: 1; }
+
+/* ── PANEL DESCRIPTION ── */
+.panel-desc {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.6;
+  margin-bottom: 1.4rem; font-family: 'Cormorant Garamond', serif;
+  font-style: italic; padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<div class="auth-screen">
+  <div class="auth-card">
+
+    <!-- HEAD -->
+    <div class="auth-card-head">
+      <div class="auth-logo">
+        <a href="/"><img src="/img/logo.png" alt="Blümi"></a>
+      </div>
+      <div class="auth-brand-tag">Birth Planning, Thoughtfully</div>
+      <p class="auth-sub">Welcome back. Choose who you are to get started.</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-row" role="tablist">
+    <button class="tab-btn active" role="tab" aria-selected="true"
+        onclick="switchTab('individuals', this)">
+        <img class="tab-icon" src="../img/violet.png" alt="">Bud
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false"
+        onclick="switchTab('professionals', this)">
+        <img class="tab-icon" src="../img/poppy.png" alt="">Sprout
+    </button>
+<button class="tab-btn" role="tab" aria-selected="false"
+  onclick="switchTab('collectives', this)">
+  <span class="tab-icon-pair">
+    <img src="../img/daisy.png" alt=""><img src="../img/peony.png" alt="">
+  </span>Petal / Bloom
+</button>
+    </div>
+
+    <div class="auth-body">
+
+      <!-- ── TAB 1: INDIVIDUALS ── -->
+      <div class="tab-panel active" id="panel-individuals">
+        <p class="panel-desc">Sign in to create, collaborate, and share your birth plan.</p>
+        <div class="auth-field">
+          <label class="auth-label">Email Address</label>
+          <input type="email" class="auth-input" id="ind-email"
+            placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <div class="pw-wrap">
+            <input type="password" class="auth-input" id="ind-password"
+              placeholder="Your password" autocomplete="current-password"
+              onkeydown="if(event.key==='Enter') signInIndividual()">
+            <button type="button" class="pw-toggle"
+              onclick="togglePw('ind-password', this)" aria-label="Show password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <button class="auth-btn" id="ind-btn" onclick="signInIndividual()">Sign In</button>
+        <div class="auth-msg" id="ind-msg"></div>
+        <div class="auth-switch">
+          Don't have an account? <a href="/pricing/">Create one</a>
+        </div>
+    </div>
+
+
+      <!-- ── TAB 2: PROFESSIONALS ── -->
+      <div class="tab-panel" id="panel-professionals">
+        <p class="panel-desc">Sign in to collaborate with patients and stay connected throughout their care.</p>
+        <div class="auth-field">
+          <label class="auth-label">Email Address</label>
+          <input type="email" class="auth-input" id="pro-email"
+            placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <div class="pw-wrap">
+            <input type="password" class="auth-input" id="pro-password"
+              placeholder="Your password" autocomplete="current-password"
+              onkeydown="if(event.key==='Enter') signInProfessional()">
+            <button type="button" class="pw-toggle"
+              onclick="togglePw('pro-password', this)" aria-label="Show password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <button class="auth-btn" id="pro-btn" onclick="signInProfessional()">Sign In to Portal</button>
+        <div class="auth-msg" id="pro-msg"></div>
+        <div class="auth-switch">
+          Don't have an account? <a href="/pricing/">Get started</a>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: COLLECTIVES ── -->
+      <div class="tab-panel" id="panel-collectives">
+        <p class="panel-desc">Sign in to collaborate with patients and coordinate care across your team. </p>
+        <div class="auth-field">
+          <label class="auth-label">Practice Handle</label>
+          <div class="handle-wrap" id="col-handle-wrap">
+            <span class="handle-prefix">blumi.</span>
+            <input type="text" class="handle-input" id="col-handle"
+              placeholder="YourPracticeName"
+              onkeydown="if(event.key==='Enter') signInCollective()"
+              oninput="this.value=this.value.replace(/\s/g,'')">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Account PIN</label>
+          <div class="pin-input-row">
+            <input class="pin-digit" id="col-p0" maxlength="1" inputmode="numeric"
+              pattern="[0-9]" type="password"
+              onkeyup="pinNext(this,'col-p1')" oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="col-p1" maxlength="1" inputmode="numeric"
+              pattern="[0-9]" type="password"
+              onkeyup="pinNext(this,'col-p2')" onkeydown="pinBack(event,this,'col-p0')"
+              oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="col-p2" maxlength="1" inputmode="numeric"
+              pattern="[0-9]" type="password"
+              onkeyup="pinNext(this,'col-p3')" onkeydown="pinBack(event,this,'col-p1')"
+              oninput="pinOnlyNum(this)">
+            <input class="pin-digit" id="col-p3" maxlength="1" inputmode="numeric"
+              pattern="[0-9]" type="password"
+              onkeydown="pinBack(event,this,'col-p2')"
+              oninput="pinOnlyNum(this); if(this.value) signInCollective()">
+          </div>
+          <div class="field-hint">This is the admin account PIN, not your personal provider PIN.</div>
+        </div>
+        <button class="auth-btn" id="col-btn" onclick="signInCollective()">Sign In to Portal</button>
+        <div class="auth-msg" id="col-msg"></div>
+        <div class="auth-switch">
+          Don't have a practice account? <a href="/pricing/">Get started</a>
+        </div>
+      </div>
+
+    </div><!-- /auth-body -->
+
+    <a href="/" class="home-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </a>
+
+  </div><!-- /auth-card -->
+</div><!-- /auth-screen -->
+
+<script>
+// ── SUPABASE CLIENTS ─────────────────────────────────────────────────────
+// Two separate clients with different storageKeys to keep sessions isolated,
+// matching the existing separation in birthplan and portal pages.
+const SUPABASE_URL = 'https://wxnaokhwqlltwdwscfib.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4bmFva2h3cWxsdHdkd3NjZmliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyNzksImV4cCI6MjA5MzQzNTI3OX0.MHdx_sdvZCtzwMJHcmbsBEvKn1eP9xtWuX9PrFx4AW8';
+const { createClient } = supabase;
+
+// Individual sessions go to the birthplan storageKey
+const sbApp = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { storageKey: 'bluumi-app-auth', persistSession: true, detectSessionInUrl: false }
+});
+
+// Provider sessions go to the portal storageKey
+const sbPortal = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { storageKey: 'bluumi-portal-auth', persistSession: true, detectSessionInUrl: false }
+});
+
+// ── TAB SWITCHING ────────────────────────────────────────────────────────
+function switchTab(name, btnEl) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btnEl.classList.add('active');
+  btnEl.setAttribute('aria-selected', 'true');
+  document.getElementById('panel-' + name).classList.add('active');
+  // Clear all messages when switching tabs
+  ['ind-msg','pro-msg','col-msg'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none'; el.textContent = '';
+  });
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────
+var EYE_OPEN   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYE_CLOSED = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+function togglePw(inputId, btn) {
+  var input = document.getElementById(inputId);
+  var showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+  btn.innerHTML = showing ? EYE_CLOSED : EYE_OPEN;
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = 'auth-msg ' + type; el.style.display = 'block';
+}
+
+function pinOnlyNum(el) { el.value = el.value.replace(/\D/g, ''); }
+function pinNext(el, nextId) {
+  if (el.value.length === 1) {
+    const next = document.getElementById(nextId);
+    if (next) next.focus();
+  }
+}
+function pinBack(e, el, prevId) {
+  if (e.key === 'Backspace' && !el.value) {
+    const prev = document.getElementById(prevId);
+    if (prev) { prev.focus(); prev.value = ''; }
+  }
+}
+
+// ── INDIVIDUALS SIGN IN ──────────────────────────────────────────────────
+async function signInIndividual() {
+  const email    = document.getElementById('ind-email').value.trim();
+  const password = document.getElementById('ind-password').value;
+  if (!email || !password) return showMsg('ind-msg', 'Please enter your email and password.', 'error');
+  const btn = document.getElementById('ind-btn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const { error } = await sbApp.auth.signInWithPassword({ email, password });
+  if (error) {
+    btn.disabled = false; btn.textContent = 'Sign In';
+    return showMsg('ind-msg', error.message, 'error');
+  }
+  await sbApp.auth.getSession();
+  window.location.replace('/birthplan/');
+}
+
+
+
+// ── PROFESSIONALS SIGN IN ────────────────────────────────────────────────
+async function signInProfessional() {
+  const email    = document.getElementById('pro-email').value.trim();
+  const password = document.getElementById('pro-password').value;
+  if (!email || !password) return showMsg('pro-msg', 'Please enter your email and password.', 'error');
+  const btn = document.getElementById('pro-btn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const { error } = await sbPortal.auth.signInWithPassword({ email, password });
+  if (error) {
+    btn.disabled = false; btn.textContent = 'Sign In to Portal';
+    return showMsg('pro-msg', error.message, 'error');
+  }
+  await sbPortal.auth.getSession();
+  window.location.replace('/portal/');
+}
+
+// ── COLLECTIVES SIGN IN ──────────────────────────────────────────────────
+async function signInCollective() {
+  const handle = document.getElementById('col-handle').value.trim();
+  const pin    = ['col-p0','col-p1','col-p2','col-p3']
+    .map(id => document.getElementById(id).value).join('');
+  if (!handle) return showMsg('col-msg', 'Please enter your practice handle.', 'error');
+  if (pin.length !== 4) return showMsg('col-msg', 'Please enter the 4-digit account PIN.', 'error');
+  const btn = document.getElementById('col-btn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const email    = handle.toLowerCase() + '@blumi.app';
+  const password = pin + pin + 'bx';
+  const { error } = await sbPortal.auth.signInWithPassword({ email, password });
+  if (error) {
+    btn.disabled = false; btn.textContent = 'Sign In to Portal';
+    return showMsg('col-msg', 'Handle or PIN not recognised. Please check and try again.', 'error');
+  }
+  await sbPortal.auth.getSession();
+  window.location.replace('/portal/');
+}
+
+// ── CHECK FOR EXISTING SESSIONS ──────────────────────────────────────────
+// If a user is already signed in, skip straight to the right destination
+// so they don't see the login page unnecessarily.
+(async () => {
+  const urlParams = new URLSearchParams(location.search);
+  const tab = urlParams.get('tab'); // allow ?tab=professionals etc. from nav links
+
+  // Check individual session
+  const { data: { session: appSession } } = await sbApp.auth.getSession();
+  if (appSession?.user) {
+    window.location.replace('/birthplan/');
+    return;
+  }
+
+  // Check portal session
+  const { data: { session: portalSession } } = await sbPortal.auth.getSession();
+  if (portalSession?.user) {
+    window.location.replace('/portal/');
+    return;
+  }
+
+  // Open a specific tab if passed via query param
+  if (tab === 'professionals') {
+    const btn = document.querySelectorAll('.tab-btn')[1];
+    switchTab('professionals', btn);
+  } else if (tab === 'collectives') {
+    const btn = document.querySelectorAll('.tab-btn')[2];
+    switchTab('collectives', btn);
+  }
+})();
+</script>
+</body>
+</html>

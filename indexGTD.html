@@ -1432,14 +1432,6 @@ function getAllData() {
   };
 }
 
-function guestMode() {
-  resetForm();
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display  = 'block';
-  document.getElementById('user-email-display').textContent = 'Guest';
-  document.getElementById('save-indicator').textContent = '⚠ Not saved';
-  attachAutoSave();
-}
 
 function resetForm() {
   ['name','due-date','support-person','care-team','health-other','story','pronouns-other'].forEach(id => {

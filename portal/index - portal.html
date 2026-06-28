@@ -1011,10 +1011,10 @@ body::before {
     <div class="upgrade-banner-left">
       <div class="upgrade-banner-tier-pill">
         <span class="tier-dot"></span>
-        <span id="upgrade-banner-tier-name">Sprout</span>
+        <span id="upgrade-banner-tier-name">Solo</span>
       </div>
       <div class="upgrade-banner-msg" id="upgrade-banner-msg">
-        You're on the <strong id="upgrade-banner-tier-strong">Sprout</strong> plan.
+        You're on the <strong id="upgrade-banner-tier-strong">Solo</strong> plan.
         Upgrade to invite more clients — <strong>your existing clients and plans are always kept.</strong>
       </div>
     </div>
@@ -1318,9 +1318,9 @@ let _upgradeBannerDismissed = false;
 let currentProvider   = null;
 let allProviders      = [];
 
-const TIER_LIMITS  = { solo: 18, practice: 50, collective: 100 };
+const TIER_LIMITS  = { solo: 10, practice: 50, collective: Infinity };
 const TIER_PRICES  = { solo: '$29/mo', practice: '$59/mo', collective: '$99/mo' };
-const TIER_SLOTS   = { solo: '18 client slots', practice: '50 client slots', collective: '100 client slots' };
+const TIER_SLOTS   = { solo: '10 client slots', practice: '50 client slots', collective: 'Unlimited' };
 const TIER_ORDER   = ['solo', 'practice', 'collective'];
 const TEAM_TIERS   = ['practice', 'collective'];
 
@@ -1638,8 +1638,8 @@ window.addEventListener('DOMContentLoaded', async () => {
       console.error('_enterPortal failed:', err);
       showScreen('signin');
     }
-} else {
-    window.location.replace('/login/?tab=professionals');
+  } else {
+    showScreen('signin');
   }
 
   sb.auth.onAuthStateChange(async (event, session) => {
@@ -1648,8 +1648,12 @@ window.addEventListener('DOMContentLoaded', async () => {
       if (_realtimeChannel) { sb.removeChannel(_realtimeChannel); _realtimeChannel = null; }
       currentUser = null; currentProfile = null; allClients = [];
       currentProvider = null; allProviders = [];
-localStorage.removeItem('bluumi_current_provider_id');
-      window.location.replace('/login/?tab=professionals');
+      localStorage.removeItem('bluumi_current_provider_id');
+document.getElementById('si-email').value    = '';
+document.getElementById('si-password').value = '';
+document.getElementById('si-handle').value   = '';
+['si-p0','si-p1','si-p2','si-p3'].forEach(id => document.getElementById(id).value = '');
+      showScreen('signin');
       return;
     }
 
@@ -1874,7 +1878,7 @@ function syncMobileDrawerIdentity() {
 
 function renderTierBadge() {
   const tier   = currentProfile?.tier || null;
-  const labels = { solo: 'Sprout', practice: 'Petal', collective: 'Bloom' };
+  const labels = { solo: 'Solo', practice: 'Practice', collective: 'Collective' };
   const el     = document.getElementById('topbar-tier-badge');
   el.className = tier ? `tier-badge tier-${tier} tier-badge-clickable` : 'tier-badge tier-none tier-badge-clickable';
   el.textContent = tier ? labels[tier] : 'No plan';
@@ -1896,7 +1900,7 @@ function renderUpgradeBanner() {
   if (!tier || tier === 'collective' || _upgradeBannerDismissed) { banner.classList.remove('visible'); return; }
   if (isTeamTier() && !isAdmin()) { banner.classList.remove('visible'); return; }
 
-  const tierNames = { solo: 'Sprout', practice: 'Petal', collective: 'Bloom' };
+  const tierNames = { solo: 'Solo', practice: 'Practice' };
   document.getElementById('upgrade-banner-tier-name').textContent   = tierNames[tier] || tier;
   document.getElementById('upgrade-banner-tier-strong').textContent = tierNames[tier] || tier;
   const currentIdx = TIER_ORDER.indexOf(tier);
@@ -1904,7 +1908,7 @@ function renderUpgradeBanner() {
   options.innerHTML = TIER_ORDER.slice(currentIdx + 1).map(t => {
     const isPrimary = TIER_ORDER.indexOf(t) === currentIdx + 1;
     return `<button class="upgrade-tier-btn${isPrimary ? ' primary' : ''}" onclick="openUpgradeModal()">
-Upgrade to ${tierNames[t]}
+      Upgrade to ${t.charAt(0).toUpperCase() + t.slice(1)}
       <span class="tier-price">${TIER_PRICES[t]}</span>
     </button>`;
   }).join('');
@@ -1929,7 +1933,6 @@ function openUpgradeModal() {
 function renderUpgradeModalTiers(currentTier) {
   const container = document.getElementById('upgrade-modal-tiers');
   const hasPaidSub = currentProfile?.stripe_subscription || currentProfile?.paid;
-  const TIER_NAMES = { solo: 'Sprout', practice: 'Petal', collective: 'Bloom' };
 
   container.innerHTML = TIER_ORDER.map(t => {
     const isCurrent    = t === currentTier;
@@ -1944,19 +1947,19 @@ function renderUpgradeModalTiers(currentTier) {
     if (isCurrent) {
       ctaLabel = 'Current plan'; ctaClass = 'umt-cta disabled'; onclickAttr = '';
     } else if (isDowngrade) {
-      ctaLabel = `Downgrade to ${TIER_NAMES[t]}`;
+      ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`;
       ctaClass = 'umt-cta downgrade-btn';
       onclickAttr = `onclick="openBillingPortal()"`;
     } else {
-      ctaLabel = `Upgrade to ${TIER_NAMES[t]} →`;
+      ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)} →`;
       ctaClass = 'umt-cta active';
       onclickAttr = `onclick="selectTierPaid('${t}')"`;
     }
 
     return `<div class="${cardClass}">
-      <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '<img src="../img/pinkflower.png" alt="" style="width:15px;height:auto;opacity:0.65;object-fit:contain;" aria-hidden="true"> Best value' : 'Professional'}</div>
-      <div class="umt-name">${TIER_NAMES[t]}</div>
-      <div class="umt-price"><strong>${t==='collective'?'$99':t==='practice'?'$59':'$29'}</strong> /mo</div>
+      <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '🌿 Best value' : 'Professional'}</div>
+      <div class="umt-name">${t.charAt(0).toUpperCase()+t.slice(1)}</div>
+      <div class="umt-price"><strong>${t==='collective'?'$149':t==='practice'?'$59':'$29'}</strong> /mo</div>
       <div class="umt-slots">${TIER_SLOTS[t]}</div>
       ${isCurrent ? '<div class="umt-current-badge">✓ Your current plan</div>' : ''}
       <button class="${ctaClass}" ${onclickAttr}>${ctaLabel}</button>
