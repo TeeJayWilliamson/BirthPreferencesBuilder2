@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service — Blümi</title>
+<link rel="icon" type="image/png" href="../img/flavicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sage:        #A8B99E;
+  --sage-dark:   #4A5746;
+  --sage-light:  #EAF1EB;
+  --blush:       #EBC4BE;
+  --cream:       #F7F3EE;
+  --cream-dark:  #EDE9E1;
+  --olive:       #4A5746;
+  --navy:        #2F3E2F;
+  --navy-light:  #4A6B4A;
+  --text:        #2C2C2C;
+  --muted:       #7A8591;
+  --white:       #FFFFFF;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 3rem;
+  background: rgba(247,243,238,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(168,185,158,0.2);
+  transition: all 0.3s;
+}
+.nav-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; flex-shrink: 0; }
+.nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+.nav-links a { font-size: 0.82rem; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--olive); }
+.nav-cta {
+  background: var(--olive) !important; color: white !important;
+  padding: 0.55rem 1.4rem; border-radius: 50px;
+  font-weight: 600 !important; letter-spacing: 0.05em !important;
+  white-space: nowrap; transition: background 0.2s, transform 0.2s !important;
+  box-shadow: 0 4px 14px rgba(74,87,70,0.25);
+}
+.nav-cta:hover { background: var(--navy-light) !important; transform: translateY(-1px) !important; }
+.nav-hamburger {
+  display: none; flex-direction: column; justify-content: center; gap: 5px;
+  width: 36px; height: 36px; cursor: pointer; background: none; border: none; padding: 4px;
+}
+.nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--sage-dark); border-radius: 2px; transition: all 0.25s; }
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-menu {
+  display: none; position: fixed; top: 65px; left: 0; right: 0; z-index: 99;
+  background: rgba(247,243,238,0.98); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(168,185,158,0.2);
+  padding: 1rem 1.5rem 1.5rem; flex-direction: column; gap: 0.2rem;
+  box-shadow: 0 8px 24px rgba(74,87,70,0.08);
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  display: block; padding: 0.75rem 0.5rem;
+  font-family: 'Jost', sans-serif; font-size: 0.95rem; font-weight: 400;
+  color: var(--text); text-decoration: none;
+  border-bottom: 1px solid rgba(168,185,158,0.15); transition: color 0.2s;
+}
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu a:hover { color: var(--sage-dark); }
+.mobile-menu .mobile-cta {
+  margin-top: 0.5rem; display: block; text-align: center;
+  background: var(--sage-dark); color: white !important;
+  padding: 0.85rem !important; border-radius: 50px;
+  font-weight: 500 !important; font-size: 0.9rem !important;
+  border-bottom: none !important;
+}
+.mobile-menu .mobile-provider { color: var(--muted) !important; font-size: 0.82rem !important; }
+@media (max-width: 700px) {
+  nav { padding: 1rem 1.2rem; gap: 0.5rem; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+}
+
+/* ── PAGE HEADER ─── */
+.page-header {
+  background: linear-gradient(160deg, #EEF3EE 0%, #FAF7F2 50%, #F5EDE8 100%);
+  padding: 9rem 1.5rem 4.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(168,185,158,0.25);
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute; top: -80px; right: -80px;
+  width: min(420px, 60vw); height: min(420px, 60vw);
+  background: radial-gradient(circle, rgba(168,185,158,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.page-header::after {
+  content: '';
+  position: absolute; bottom: -40px; left: -60px;
+  width: min(320px, 50vw); height: min(320px, 50vw);
+  background: radial-gradient(circle, rgba(235,196,190,0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+.page-eyebrow {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--sage-dark);
+  margin-bottom: 1rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+}
+.page-eyebrow::before, .page-eyebrow::after {
+  content: ''; display: inline-block;
+  width: 20px; height: 1.5px; background: var(--sage-dark);
+}
+.page-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 600; line-height: 1.1;
+  color: var(--olive);
+  margin-bottom: 1rem;
+}
+.page-header-sub {
+  font-size: 0.85rem; font-weight: 300;
+  color: var(--muted); font-style: italic;
+}
+
+/* ── CONTENT LAYOUT ─── */
+.content-outer {
+  max-width: 1100px; margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0 4rem;
+  align-items: start;
+}
+@media (max-width: 820px) {
+  .content-outer {
+    grid-template-columns: 1fr;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+}
+
+/* ── STICKY TOC ─── */
+.toc-sidebar {
+  position: sticky;
+  top: 6rem;
+}
+@media (max-width: 820px) {
+  .toc-sidebar {
+    position: static;
+    margin-bottom: 2.5rem;
+    background: var(--sage-light);
+    border: 1px solid rgba(168,185,158,0.35);
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+  }
+}
+.toc-label {
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--sage-dark);
+  margin-bottom: 1rem;
+}
+.toc-list { list-style: none; }
+.toc-list li { margin-bottom: 0; }
+.toc-list a {
+  display: block; padding: 0.38rem 0;
+  font-size: 0.8rem; font-weight: 400; color: var(--muted);
+  text-decoration: none; line-height: 1.4;
+  border-left: 2px solid transparent;
+  padding-left: 0.75rem;
+  transition: color 0.2s, border-color 0.2s;
+}
+.toc-list a:hover { color: var(--olive); border-left-color: var(--sage); }
+.toc-list a.active { color: var(--olive); font-weight: 500; border-left-color: var(--sage-dark); }
+@media (max-width: 820px) {
+  .toc-list a { border-left: none; padding-left: 0; font-size: 0.85rem; padding: 0.3rem 0; }
+}
+
+/* ── ARTICLE ─── */
+.article { min-width: 0; }
+
+.article-intro {
+  font-size: 0.95rem; line-height: 1.85;
+  color: var(--muted); font-style: italic; font-weight: 300;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(168,185,158,0.3);
+}
+
+.article h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 600; color: var(--olive);
+  margin: 3rem 0 0.8rem;
+  line-height: 1.2;
+  scroll-margin-top: 6rem;
+}
+.article h2:first-child { margin-top: 0; }
+
+.article h3 {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+  color: var(--olive);
+  margin: 1.8rem 0 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.article p {
+  font-size: 0.9rem; line-height: 1.85;
+  color: var(--text); font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+.article ul {
+  margin: 0.25rem 0 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+.article ul li {
+  font-size: 0.9rem; line-height: 1.75;
+  color: var(--text); font-weight: 300;
+  padding: 0.3rem 0 0.3rem 1.4rem;
+  position: relative;
+}
+.article ul li::before {
+  content: '';
+  position: absolute; left: 0; top: 0.7rem;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--sage);
+}
+
+.section-rule {
+  border: none;
+  border-top: 1px solid rgba(168,185,158,0.3);
+  margin: 0.5rem 0 0;
+}
+
+/* callout / note box */
+.callout {
+  background: var(--sage-light);
+  border-left: 3px solid var(--sage-dark);
+  border-radius: 0 12px 12px 0;
+  padding: 1.1rem 1.3rem;
+  margin: 1.5rem 0;
+}
+.callout-label {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--sage-dark);
+  margin-bottom: 0.4rem;
+}
+.callout p {
+  font-size: 0.86rem; margin-bottom: 0;
+  color: var(--text);
+}
+
+/* contact block */
+.contact-block {
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #EEF3EE 0%, #FAF7F2 100%);
+  border: 1px solid rgba(168,185,158,0.35);
+  border-radius: 16px;
+  padding: 1.6rem 1.8rem;
+}
+.contact-block p { margin-bottom: 0.4rem; }
+.contact-block a { color: var(--sage-dark); font-weight: 500; text-decoration: none; }
+.contact-block a:hover { text-decoration: underline; }
+
+.article a { color: var(--sage-dark); font-weight: 500; text-decoration: none; }
+.article a:hover { text-decoration: underline; }
+
+/* ── FOOTER ─── */
+footer {
+  background: var(--olive);
+  color: rgba(255,255,255,0.82);
+  text-align: center;
+  padding: 2rem 1.5rem;
+  font-size: 0.78rem; font-weight: 400; letter-spacing: 0.04em;
+  line-height: 1.8;
+}
+footer a { color: rgba(255,255,255,0.82); text-decoration: none; }
+footer a:hover { color: rgba(255,255,255,1); }
+footer span { color: rgba(235,196,190,1); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-eyebrow { animation: fadeUp 0.5s 0.1s ease both; }
+.page-header h1 { animation: fadeUp 0.5s 0.2s ease both; }
+.page-header-sub { animation: fadeUp 0.5s 0.3s ease both; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <img src="../img/logo.png" alt="Blümi" style="height:36px;width:auto;object-fit:contain;">
+  </a>
+  <ul class="nav-links">
+    <li><a href="/portal/">For Care Providers</a></li>
+    <li><a href="/pricing/">Pricing</a></li>
+    <li><a href="/faq/">FAQ</a></li>
+    <li><a href="/birthplan/">Log in</a></li>
+    <li><a href="/birthplan/" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="/birthplan/">Log in</a>
+  <a href="/portal/" class="mobile-provider">Care Provider Portal</a>
+  <a href="/pricing/" class="mobile-provider">Pricing</a>
+</div>
+
+<div class="page-header">
+  <div class="page-eyebrow">Legal</div>
+  <h1>Terms of Service</h1>
+  <p class="page-header-sub">Last updated: June 27, 2026</p>
+</div>
+
+<div class="content-outer">
+  <aside class="toc-sidebar" aria-label="Page contents">
+    <div class="toc-label">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#about">About Blümi</a></li>
+      <li><a href="#accounts">Accounts &amp; Eligibility</a></li>
+      <li><a href="#billing">Subscriptions &amp; Billing</a></li>
+      <li><a href="#beta">Beta Testing Program</a></li>
+      <li><a href="#medical">Medical Disclaimer</a></li>
+      <li><a href="#inclusion">Inclusion Statement</a></li>
+      <li><a href="#use">Acceptable Use</a></li>
+      <li><a href="#ip">Intellectual Property</a></li>
+      <li><a href="#liability">Limitation of Liability</a></li>
+      <li><a href="#indemnification">Indemnification</a></li>
+      <li><a href="#termination">Termination</a></li>
+      <li><a href="#governing">Governing Law &amp; Disputes</a></li>
+      <li><a href="#changes">Changes to These Terms</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </aside>
+
+  <article class="article">
+
+<p class="article-intro">Welcome to Blümi. By creating an account or using our services, you agree to these Terms of Service. Please read them carefully. If you do not agree, do not use Blümi.</p>
+
+<h2 id="about">1. About Blümi</h2>
+<hr class="section-rule">
+<p>Blümi is operated by Blümi Inc., a corporation incorporated in Ontario, Canada. We operate the Blümi web application at blumi.ca, helping individuals prepare personalized birth preferences and enabling care providers to support their clients.</p>
+
+<h2 id="accounts">2. User Accounts &amp; Eligibility</h2>
+<hr class="section-rule">
+<p>You must be at least 18 years old to create a Blümi account. By creating an account, you represent that you meet this requirement and that the information you provide is accurate, current, and complete.</p>
+<p>You are responsible for maintaining the confidentiality of your password and for all activity that occurs under your account. Notify us immediately at <a href="mailto:hello@blumi.ca">hello@blumi.ca</a> if you suspect unauthorized access.</p>
+
+<h3>Invited client accounts</h3>
+<p>If you create your account through an invitation from a care provider, your access is covered by that provider's subscription — you do not need to pay. By accepting the invitation and creating an account, you acknowledge that your associated care provider will have access to your full birth plan, including health-related preferences and personal notes you enter. Your birth plan remains yours and continues to be accessible to you regardless of any changes to your provider's account.</p>
+
+<h3>Provider and practice accounts</h3>
+<p>Practice and collective plan accounts operate under a shared login model: all practitioners sign in using the shared account credentials and identify themselves with their name and a personal 4-digit PIN. The PIN is a workflow tool — it is not a security barrier between practitioners. All practitioners in a practice account may have access to all clients within that account, subject to assignment settings.</p>
+<p>Practice administrators are responsible for managing practitioner access, including adding and removing practitioners as staffing changes. We are not responsible for disputes between practitioners and their employing practice regarding account access.</p>
+
+<h2 id="billing">3. Subscriptions, Billing &amp; Cancellation</h2>
+<hr class="section-rule">
+
+<h3>The personal (individual) plan</h3>
+<p>The Blümi personal plan is a one-time purchase. There are no recurring charges for this plan.</p>
+
+<h3>Subscription plans</h3>
+<p>Provider subscription plans (Solo, Practice, Collective) automatically renew at the end of each billing period (monthly or annually, as selected at sign-up) unless you cancel before the renewal date. By subscribing, you consent to recurring charges to your payment method for each renewal term.</p>
+
+<h3>Pricing and billing</h3>
+<p>Current subscription plans and pricing are listed at <a href="/pricing/">blumi.ca/pricing</a> and shown at checkout before you complete your purchase. Prices are displayed and charged in the currency shown at checkout (CAD or USD, depending on your billing region). Your first charge occurs at the time of purchase, and subsequent charges occur on the same date each billing period.</p>
+
+<h3>Cancellation</h3>
+<p>You may cancel your subscription at any time through the billing management portal, accessible within your Blümi account settings. Cancelling stops future renewals. You retain access to Blümi for the remainder of your current paid billing period. We do not provide prorated refunds for unused time in a current billing period, except where required by law.</p>
+
+<h3>Renewal notifications</h3>
+<p>Renewal receipts and payment notifications are sent by our payment processor, Stripe. For annual subscriptions, we aim to notify you before your renewal date. You can review and manage your billing preferences within your account settings.</p>
+
+<h3>Failed payments</h3>
+<p>If a renewal payment fails, your access to Blümi may be paused until payment is successfully processed. You will be notified by email of a failed payment.</p>
+
+<h3>Price changes</h3>
+<p>If we change subscription pricing, we will notify you at least 30 days in advance. Continuing your subscription after the change takes effect constitutes acceptance of the new price.</p>
+
+<h3>Refunds</h3>
+<p>Except as required by law, subscription fees are non-refundable once a billing period has begun. If you believe you were charged in error, contact us at <a href="mailto:hello@blumi.ca">hello@blumi.ca</a> and we will review your request.</p>
+<p>Your rights may vary by location. Depending on where you live, you may have additional rights under local consumer protection law regarding automatic renewals, notice periods, or cancellation methods. Nothing in these Terms limits rights you have under applicable law.</p>
+
+<div class="callout">
+  <div class="callout-label">Checkout consent</div>
+  <p>The following text appears as a checkbox at checkout: "I agree to be charged $[X] every [month / year] until I cancel, and I have read the Cancellation &amp; Subscription Policy."</p>
+</div>
+
+<h2 id="beta">4. Beta Testing Program</h2>
+<hr class="section-rule">
+
+<h3>Eligibility and duration</h3>
+<p>Certain provider accounts may be invited to participate in Blümi's Beta Testing Program. Beta access allows you to use the provider platform, including with your own clients, for a period of six (6) months from the date your beta access begins ("Beta Period").</p>
+
+<h3>Beta software notice</h3>
+<p>Features available during the Beta Period are still in active development and testing. Blümi may contain bugs, errors, or incomplete functionality. We do not guarantee uninterrupted access, complete accuracy of evidence-based content, or that all features will function as intended throughout the Beta Period.</p>
+
+<h3>Cost and transition to paid subscription</h3>
+<p>Access during the Beta Period is provided free of charge. At the end of the Beta Period, your account will not be automatically charged. You will receive notice with instructions for choosing a paid plan if you wish to continue. If you do not subscribe, your provider access will lapse. Your clients' birth plan data is retained for 60 days after lapse, during which time individual clients retain access to their own plans.</p>
+
+<h3>Feedback</h3>
+<p>We encourage beta testers to share feedback and bug reports, though doing so is optional. Any feedback you provide may be used by us to improve Blümi without obligation or compensation to you.</p>
+
+<h3>Use with clients</h3>
+<p>As a beta provider, you may use Blümi with your own clients during the Beta Period. You remain solely responsible for your clinical judgment, your relationship with your clients, and compliance with applicable healthcare and privacy laws, regardless of the beta status of the platform.</p>
+
+<h3>Changes or termination of beta access</h3>
+<p>We may modify, suspend, or discontinue any beta feature, or end the Beta Program entirely, at any time. We will provide reasonable notice where possible.</p>
+
+<h3>No warranty during beta</h3>
+<p>Beta features are provided "as is" with no warranty of fitness for a particular purpose, in addition to the general disclaimers elsewhere in these Terms.</p>
+
+<h2 id="medical">5. Medical Disclaimer</h2>
+<hr class="section-rule">
+<p>Blümi is an educational and preparation tool. It is designed to help you understand birth-related topics, reflect on your preferences, and prepare for conversations with your care team. Blümi is not a medical device, and it does not provide medical advice, diagnosis, or treatment.</p>
+<p>Nothing in Blümi should be used as a substitute for professional medical advice, evaluation, or care from a qualified, licensed healthcare provider. The information provided through Blümi — including evidence-based summaries, comfort measure suggestions, topic explanations, and generated narrative text — is intended for general educational purposes only and may not apply to your specific situation.</p>
+<p>Always consult your physician, midwife, doula, or other qualified healthcare provider with any questions about your pregnancy, labor, delivery, or medical condition. Never disregard professional medical advice, or delay seeking it, because of something you read or generated using Blümi.</p>
+<p>Decisions about your care, including any preferences documented through Blümi, are made between you and your care team. Blümi does not guarantee that any preference or birth plan will be implemented, honored, or appropriate for your individual circumstances.</p>
+<p>If you are experiencing a medical emergency, contact emergency services immediately. Do not rely on Blümi for emergency guidance.</p>
+
+<div class="callout">
+  <div class="callout-label">For providers</div>
+  <p>Blümi is intended to support — not replace — your clinical judgment, documentation systems, or direct communication with patients. Preferences generated by patients through Blümi are not a substitute for your own clinical assessment, charting, or informed consent processes.</p>
+</div>
+
+<h2 id="inclusion">6. Inclusion Statement</h2>
+<hr class="section-rule">
+<p>Blümi is built to support all birthing people, regardless of gender identity, sexual orientation, relationship structure, or background. We strive to use inclusive language throughout the platform.</p>
+<p>Some referenced resources, clinical sources, or evidence-based materials may use clinical or gendered terminology that does not fully align with this commitment, as we do not control the original language of external sources. If you encounter language within Blümi that needs improvement, we welcome your feedback at <a href="mailto:hello@blumi.ca">hello@blumi.ca</a>.</p>
+
+<h2 id="use">7. Acceptable Use</h2>
+<hr class="section-rule">
+<p>By using Blümi, you agree not to:</p>
+<ul>
+  <li>Share your account credentials with anyone, or allow another person to access Blümi using your account</li>
+  <li>Misrepresent your identity or your role (for example, falsely claiming to be a licensed provider)</li>
+  <li>Use Blümi for any unlawful purpose, or in a way that violates the rights of others</li>
+  <li>Attempt to reverse-engineer, decompile, scrape, or extract Blümi's underlying code, content database, or evidence-based materials for commercial or competitive purposes</li>
+  <li>Use Blümi to harass, threaten, or abuse another user, provider, or member of the Blümi team</li>
+  <li>Input false, harmful, or misleading information, including impersonating another person's preferences or medical information</li>
+  <li>Use Blümi as a substitute for a regulated medical record system, official clinical documentation, or an informed consent process required by law or your professional obligations</li>
+  <li>Interfere with or disrupt the security or functioning of Blümi, including attempting unauthorized access or introducing malicious code</li>
+</ul>
+<p>For provider and practice accounts specifically:</p>
+<ul>
+  <li>Practitioners and administrators are responsible for ensuring that only authorized staff access client information through their account</li>
+  <li>Providers must comply with applicable healthcare privacy laws — including HIPAA in the United States and provincial health information laws in Canada — in how they use and share information obtained through Blümi</li>
+  <li>Provider notes recorded within Blümi are for internal care coordination and should not replace documentation required by your professional or legal obligations</li>
+</ul>
+<p>We reserve the right to suspend or terminate access for any user who violates this policy.</p>
+
+<h2 id="ip">8. Intellectual Property</h2>
+<hr class="section-rule">
+<p>Blümi, including its design, branding, evidence-based content library, and all related materials, is owned by us and protected by copyright, trademark, and other intellectual property laws. Using Blümi does not grant you any ownership rights in this content.</p>
+<p>We grant you a limited, non-exclusive, non-transferable license to access and use Blümi for your personal use (if an individual) or for use within your practice (if a provider or team), solely as permitted by these Terms.</p>
+<p>You retain ownership of the personal information and preferences you input into Blümi. By submitting this content, you grant us a limited license to store, process, and display it to provide the Blümi service, including generating your exportable PDF. The PDF export is generated locally on your device and is not stored on our servers.</p>
+<p>If you provide feedback or suggestions about Blümi, we may use that feedback without obligation to you.</p>
+
+<h2 id="liability">9. Limitation of Liability</h2>
+<hr class="section-rule">
+
+<h3>No warranty</h3>
+<p>Blümi is provided "as is" and "as available," without warranties of any kind — express or implied — including warranties of merchantability, fitness for a particular purpose, accuracy, or non-infringement. We do not warrant that Blümi will be uninterrupted or error-free.</p>
+
+<h3>No guarantee of outcomes</h3>
+<p>Blümi is an educational and preparation tool. We make no representations regarding birth outcomes, the conduct of any healthcare provider, or whether any preference or birth plan generated through Blümi will be implemented or honored. Birth is inherently unpredictable.</p>
+
+<h3>Limitation of liability</h3>
+<p>To the fullest extent permitted by applicable law, Blümi, its founders, employees, and affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of — or inability to use — Blümi, including damages arising from medical decisions informed by content from the app, errors in evidence-based content, or unauthorized access to your data.</p>
+<p>Our total liability to you for any claim shall not exceed the greater of: (a) the amount you paid us in the 12 months before the event giving rise to the claim, or (b) one hundred dollars ($100 CAD).</p>
+<p>Nothing in this section limits liability for gross negligence, willful misconduct, or death or personal injury caused by our negligence, where such limitation is prohibited by applicable law.</p>
+
+<h2 id="indemnification">10. Indemnification</h2>
+<hr class="section-rule">
+<p>You agree to indemnify and hold harmless Blümi, its founders, employees, and affiliates from any claims, damages, losses, or expenses (including reasonable legal fees) arising from: (a) your violation of these Terms; (b) your misuse of Blümi; or (c) your violation of any law or the rights of a third party, including any patient privacy obligations applicable to your provider account.</p>
+
+<h2 id="termination">11. Termination</h2>
+<hr class="section-rule">
+<p>You may stop using Blümi and cancel your account at any time in accordance with the Cancellation section of these Terms.</p>
+<p>We may suspend or terminate your access, with or without notice, if we believe you have violated these Terms, engaged in unlawful conduct, or posed a risk to other users or to Blümi.</p>
+<p>Upon termination, your right to access Blümi ends immediately. You may export your birth plan using the in-app PDF export before closing your account, or request a copy by contacting <a href="mailto:hello@blumi.ca">hello@blumi.ca</a>. Provisions that by their nature should survive termination — including Limitation of Liability, Indemnification, and Intellectual Property — will continue to apply.</p>
+
+<h2 id="governing">12. Governing Law &amp; Disputes</h2>
+<hr class="section-rule">
+<p>These Terms are governed by the laws of [Province, Canada], without regard to conflict-of-law principles. Any dispute arising from these Terms or your use of Blümi will first be addressed through good-faith informal negotiation by contacting us at <a href="mailto:hello@blumi.ca">hello@blumi.ca</a>.</p>
+<p>If a dispute is not resolved informally within 30 days, it will be submitted to the courts of [Province, Canada], except where prohibited by applicable consumer protection law in your jurisdiction.</p>
+<p>Nothing in these Terms prevents you from asserting rights you have under applicable consumer protection law in your jurisdiction.</p>
+
+<h2 id="changes">13. Changes to These Terms</h2>
+<hr class="section-rule">
+<p>We may update these Terms from time to time. If we make material changes, we will notify you by email or through a notice within the app at least 30 days before the changes take effect. Your continued use of Blümi after the effective date constitutes your acceptance of the updated Terms.</p>
+
+<h2 id="contact">14. Contact</h2>
+<hr class="section-rule">
+<div class="contact-block">
+  <p>Blümi Inc.</p>
+  <p>111 - 1975 Rosefield Rd, Pickering, ON - L1V3E3</p>
+  <p><a href="mailto:hello@blumi.ca">hello@blumi.ca</a></p>
+</div>
+
+  </article>
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div style="margin-bottom:0.5rem;">
+    <a href="/"><img src="img/logo.png" alt="Blümi" style="height:22px;width:auto;object-fit:contain;vertical-align:middle;margin-right:8px;opacity:0.75;filter:brightness(0) invert(1)"></a>
+    &nbsp;·&nbsp;
+    <a href="/privacy/">Privacy Policy</a>
+    &nbsp;·&nbsp;
+    <a href="/terms/">Terms of Service</a>
+    &nbsp;·&nbsp;
+    <a href="/portal/">For Care Providers</a>
+    &nbsp;·&nbsp;
+    <a href="/pricing/">Pricing</a>
+    &nbsp;·&nbsp;
+    <a href="/birthplan/">Log In</a>
+  </div>
+  <div>© 2026 Blümi. Built with <span>♥</span> for birthing families.</div>
+</footer>
+
+
+<script>
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const btn  = document.getElementById('nav-hamburger');
+  const open = menu.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+document.getElementById('mobile-menu').querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('nav-hamburger').classList.remove('open');
+  });
+});
+
+// Active TOC highlight on scroll
+const headings = document.querySelectorAll('.article h2[id]');
+const tocLinks = document.querySelectorAll('.toc-list a');
+const onScroll = () => {
+  let current = '';
+  headings.forEach(h => {
+    if (window.scrollY + 120 >= h.offsetTop) current = h.id;
+  });
+  tocLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+};
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+</script>
+</body>
+</html>
