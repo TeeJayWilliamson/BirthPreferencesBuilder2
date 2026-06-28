@@ -541,25 +541,11 @@ async function signInCollective() {
 // ── CHECK FOR EXISTING SESSIONS ──────────────────────────────────────────
 // If a user is already signed in, skip straight to the right destination
 // so they don't see the login page unnecessarily.
+// ── LOGIN PAGE INITIALIZATION ────────────────────────────────────────────
 (async () => {
   const urlParams = new URLSearchParams(location.search);
-  const tab = urlParams.get('tab'); // allow ?tab=professionals etc. from nav links
+  const tab = urlParams.get('tab');
 
-  // Check individual session
-  const { data: { session: appSession } } = await sbApp.auth.getSession();
-  if (appSession?.user) {
-    window.location.replace('/birthplan/');
-    return;
-  }
-
-  // Check portal session
-  const { data: { session: portalSession } } = await sbPortal.auth.getSession();
-  if (portalSession?.user) {
-    window.location.replace('/portal/');
-    return;
-  }
-
-  // Open a specific tab if passed via query param
   if (tab === 'professionals') {
     const btn = document.querySelectorAll('.tab-btn')[1];
     switchTab('professionals', btn);
