@@ -1011,10 +1011,10 @@ body::before {
     <div class="upgrade-banner-left">
       <div class="upgrade-banner-tier-pill">
         <span class="tier-dot"></span>
-        <span id="upgrade-banner-tier-name">Solo</span>
+        <span id="upgrade-banner-tier-name">Sprout</span>
       </div>
       <div class="upgrade-banner-msg" id="upgrade-banner-msg">
-        You're on the <strong id="upgrade-banner-tier-strong">Solo</strong> plan.
+        You're on the <strong id="upgrade-banner-tier-strong">Sprout</strong> plan.
         Upgrade to invite more clients — <strong>your existing clients and plans are always kept.</strong>
       </div>
     </div>
@@ -1038,20 +1038,20 @@ body::before {
       <div class="stat-card">
         <div class="stat-label">Active Clients</div>
         <div class="stat-value" id="stat-active">—</div>
-        <div class="stat-sub">Currently working together</div>
+        <div class="stat-sub">Currently in your care</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Pending Invites</div>
         <div class="stat-value" id="stat-pending">—</div>
-        <div class="stat-sub">Awaiting sign-up</div>
+        <div class="stat-sub">Waiting to join</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Archived</div>
         <div class="stat-value" id="stat-archived">—</div>
-        <div class="stat-sub">Post-birth or inactive</div>
+        <div class="stat-sub">No longer active</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Slots Used</div>
+        <div class="stat-label">Active Clients</div>
         <div class="stat-value" id="stat-slots">—</div>
         <div class="stat-sub" id="stat-slots-sub">of your plan limit</div>
         <div class="slot-bar-wrap"><div class="slot-bar-track"><div class="slot-bar-fill" id="slot-bar" style="width:0%"></div></div></div>
@@ -1110,7 +1110,7 @@ body::before {
       </p>
       <div class="upgrade-modal-tiers" id="upgrade-modal-tiers"></div>
       <div class="upgrade-assurance">
-        <strong>🌿 No data is ever lost when upgrading.</strong>
+          <img src="../img/pinkflower.png" alt="" style="width:15px;height:auto;opacity:0.65;object-fit:contain;" aria-hidden="true"> <strong>No data is ever lost when upgrading.</strong>
         Your existing clients, birth plans, notes, and invite history are fully preserved. Upgrading simply unlocks more slots so you can keep inviting.
       </div>
     </div>
@@ -1183,11 +1183,11 @@ body::before {
 <div class="modal-overlay" id="unsure-modal">
   <div class="modal" style="max-width:500px;">
     <div class="modal-head">
-      <h3>Talking Points — Client Unsure</h3>
+      <h3>Talking Points — Flagged for Discussion</h3>
       <button class="modal-close" onclick="closeModal('unsure-modal')">×</button>
     </div>
     <div class="modal-body">
-      <p class="unsure-modal-intro">These are the items your client flagged as uncertain. Use these as discussion starters in your next appointment.</p>
+      <p class="unsure-modal-intro">These are the topics your client felt unsure about. Bring these up at your next appointment to ensure they feel informed and confident before their big day.</p>
       <div class="unsure-item-list" id="unsure-item-list">
         <div class="unsure-empty">Loading…</div>
       </div>
@@ -1263,9 +1263,8 @@ body::before {
           <button class="btn-add-provider" onclick="addProvider()">Add</button>
         </div>
       </div>
-      <div class="providers-pool-note">
-        🌿 All care providers share the same invite pool. Each provider only sees their own clients unless you (the admin) view unassigned clients.
-      </div>
+<div class="providers-pool-note">
+  <img src="../img/pinkflower.png" alt="" style="width:15px;height:auto;opacity:0.65;object-fit:contain;" aria-hidden="true"> Each provider can only see clients assigned to them. Unassigned clients are visible only to you, the admin.</div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('providers-modal')">Done</button>
@@ -1318,9 +1317,9 @@ let _upgradeBannerDismissed = false;
 let currentProvider   = null;
 let allProviders      = [];
 
-const TIER_LIMITS  = { solo: 10, practice: 50, collective: Infinity };
+const TIER_LIMITS  = { solo: 18, practice: 50, collective: 100 };
 const TIER_PRICES  = { solo: '$29/mo', practice: '$59/mo', collective: '$99/mo' };
-const TIER_SLOTS   = { solo: '10 client slots', practice: '50 client slots', collective: 'Unlimited' };
+const TIER_SLOTS   = { solo: '18 client slots', practice: '50 client slots', collective: '100 client slots' };
 const TIER_ORDER   = ['solo', 'practice', 'collective'];
 const TEAM_TIERS   = ['practice', 'collective'];
 
@@ -1878,7 +1877,7 @@ function syncMobileDrawerIdentity() {
 
 function renderTierBadge() {
   const tier   = currentProfile?.tier || null;
-  const labels = { solo: 'Solo', practice: 'Practice', collective: 'Collective' };
+  const labels = { solo: 'Sprout', practice: 'Petal', collective: 'Bloom' };
   const el     = document.getElementById('topbar-tier-badge');
   el.className = tier ? `tier-badge tier-${tier} tier-badge-clickable` : 'tier-badge tier-none tier-badge-clickable';
   el.textContent = tier ? labels[tier] : 'No plan';
@@ -1900,7 +1899,7 @@ function renderUpgradeBanner() {
   if (!tier || tier === 'collective' || _upgradeBannerDismissed) { banner.classList.remove('visible'); return; }
   if (isTeamTier() && !isAdmin()) { banner.classList.remove('visible'); return; }
 
-  const tierNames = { solo: 'Solo', practice: 'Practice' };
+  const tierNames = { solo: 'Sprout', practice: 'Petal', collective: 'Bloom' };
   document.getElementById('upgrade-banner-tier-name').textContent   = tierNames[tier] || tier;
   document.getElementById('upgrade-banner-tier-strong').textContent = tierNames[tier] || tier;
   const currentIdx = TIER_ORDER.indexOf(tier);
@@ -1908,7 +1907,7 @@ function renderUpgradeBanner() {
   options.innerHTML = TIER_ORDER.slice(currentIdx + 1).map(t => {
     const isPrimary = TIER_ORDER.indexOf(t) === currentIdx + 1;
     return `<button class="upgrade-tier-btn${isPrimary ? ' primary' : ''}" onclick="openUpgradeModal()">
-      Upgrade to ${t.charAt(0).toUpperCase() + t.slice(1)}
+      Upgrade to ${tierNames[t]}
       <span class="tier-price">${TIER_PRICES[t]}</span>
     </button>`;
   }).join('');
@@ -1933,6 +1932,7 @@ function openUpgradeModal() {
 function renderUpgradeModalTiers(currentTier) {
   const container = document.getElementById('upgrade-modal-tiers');
   const hasPaidSub = currentProfile?.stripe_subscription || currentProfile?.paid;
+  const TIER_NAMES = { solo: 'Sprout', practice: 'Petal', collective: 'Bloom' };
 
   container.innerHTML = TIER_ORDER.map(t => {
     const isCurrent    = t === currentTier;
@@ -1947,19 +1947,19 @@ function renderUpgradeModalTiers(currentTier) {
     if (isCurrent) {
       ctaLabel = 'Current plan'; ctaClass = 'umt-cta disabled'; onclickAttr = '';
     } else if (isDowngrade) {
-      ctaLabel = `Downgrade to ${t.charAt(0).toUpperCase()+t.slice(1)}`;
+      ctaLabel = `Downgrade to ${TIER_NAMES[t]}`;
       ctaClass = 'umt-cta downgrade-btn';
       onclickAttr = `onclick="openBillingPortal()"`;
     } else {
-      ctaLabel = `Upgrade to ${t.charAt(0).toUpperCase()+t.slice(1)} →`;
+      ctaLabel = `Upgrade to ${TIER_NAMES[t]} →`;
       ctaClass = 'umt-cta active';
       onclickAttr = `onclick="selectTierPaid('${t}')"`;
     }
 
     return `<div class="${cardClass}">
-      <div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '🌿 Best value' : 'Professional'}</div>
-      <div class="umt-name">${t.charAt(0).toUpperCase()+t.slice(1)}</div>
-      <div class="umt-price"><strong>${t==='collective'?'$149':t==='practice'?'$59':'$29'}</strong> /mo</div>
+<div class="umt-label">${isRecommended ? '⭐ Recommended' : t === 'collective' ? '<img src="../img/pinkflower.png" alt="" style="width:15px;height:auto;opacity:0.65;object-fit:contain;" aria-hidden="true"> Best value' : 'Professional'}</div>
+      <div class="umt-name">${TIER_NAMES[t]}</div>
+      <div class="umt-price"><strong>${t==='collective'?'$99':t==='practice'?'$59':'$29'}</strong> /mo</div>
       <div class="umt-slots">${TIER_SLOTS[t]}</div>
       ${isCurrent ? '<div class="umt-current-badge">✓ Your current plan</div>' : ''}
       <button class="${ctaClass}" ${onclickAttr}>${ctaLabel}</button>
@@ -2158,21 +2158,20 @@ function updateStats() {
 
   const usedTotal = accountActive + accountPending;
   const limit     = getSlotLimit();
-  const limitStr  = limit === Infinity ? '∞' : limit;
 
   document.getElementById('stat-active').textContent   = active;
   document.getElementById('stat-pending').textContent  = pending;
   document.getElementById('stat-archived').textContent = archived;
-  document.getElementById('stat-slots').textContent    = usedTotal + ' / ' + limitStr;
+  document.getElementById('stat-slots').textContent    = usedTotal + ' / ' + limit;
   document.getElementById('stat-slots-sub').textContent = isTeamTier()
-    ? (limit === Infinity ? 'shared pool — unlimited' : 'shared pool of ' + limit)
-    : (limit === Infinity ? 'unlimited on your plan' : 'of ' + limit + ' on your plan');
+    ? 'Practice total of ' + limit
+    : 'of ' + limit + ' on your plan';
 
-  const pct = limit === Infinity ? 0 : Math.min(100, Math.round((usedTotal / limit) * 100));
+  const pct = Math.min(100, Math.round((usedTotal / limit) * 100));
   document.getElementById('slot-bar').style.width = pct + '%';
 
   const nudge    = document.getElementById('upgrade-nudge');
-  const showNudge = limit !== Infinity && pct >= 80;
+  const showNudge = pct >= 80;
   nudge.classList.toggle('visible', showNudge);
   if (showNudge) {
     const atLimit = usedTotal >= limit;
@@ -2182,7 +2181,7 @@ function updateStats() {
       : ' Upgrade to add more clients without losing any data.';
   }
 
-  const atLimit = limit !== Infinity && usedTotal >= limit;
+  const atLimit = usedTotal >= limit;
   const btn = document.getElementById('btn-invite-main');
   btn.disabled = atLimit;
   btn.title    = atLimit ? "You've reached your plan's client limit." : '';
@@ -2228,7 +2227,7 @@ function renderTable() {
   if (!rows.length) {
     const cols = (isTeamTier() && isAdmin()) ? 6 : 5;
     tbody.innerHTML = `<tr><td colspan="${cols}"><div class="empty-state">
-      <div class="empty-state-icon">🌿</div>
+<div class="empty-state-icon"><img src="../img/pinkflower.png" alt="" style="width:45px;height:auto;opacity:0.75;object-fit:contain;" aria-hidden="true"></div>
       <h3>${activeFilter === 'all' && !query ? 'No clients yet' : 'No clients found'}</h3>
       <p>${activeFilter === 'all' && !query ? 'Invite your first client to get started.' : 'Try adjusting your search or filter.'}</p>
     </div></td></tr>`;
@@ -2416,7 +2415,7 @@ async function submitInvite() {
   if (!email) return showToast('Please enter a client email.');
   const used  = allClients.filter(r => r.status !== 'archived').length;
   const limit = getSlotLimit();
-  if (limit !== Infinity && used >= limit) return showToast("You've reached your plan's client limit.");
+  if (used >= limit) return showToast("You've reached your plan's client limit.");
   const btn = document.getElementById('invite-submit-btn');
   btn.disabled = true; btn.textContent = 'Creating…';
   const insertData = {
