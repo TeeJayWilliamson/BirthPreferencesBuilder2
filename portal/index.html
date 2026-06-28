@@ -317,8 +317,18 @@ body::before {
   cursor: pointer; transition: all 0.2s; white-space: nowrap;
 }
 .btn-refresh:hover { border-color: var(--olive-mid); color: var(--olive); }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.btn-refresh.spinning { animation: spin 0.7s linear; }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.btn-refresh .refresh-icon {
+  display: inline-block;
+}
+
+.btn-refresh.spinning .refresh-icon {
+  animation: spin 0.7s linear;
+}
 
 /* ── STATS ── */
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
@@ -1029,8 +1039,9 @@ body::before {
         <p id="portal-header-sub">Invite, support, and co-create birth plans alongside your clients.</p>
       </div>
       <div style="display:flex;gap:0.7rem;align-items:center;flex-wrap:wrap;">
-        <button class="btn-refresh" id="btn-refresh" onclick="refreshClients()">↻ Refresh</button>
-        <button class="btn-invite" id="btn-invite-main" onclick="openInviteModal()">+ Invite Client</button>
+        <button class="btn-refresh" id="btn-refresh" onclick="refreshClients()">
+          <span class="refresh-icon">↻</span> Refresh
+        </button>        <button class="btn-invite" id="btn-invite-main" onclick="openInviteModal()">+ Invite Client</button>
       </div>
     </div>
 
