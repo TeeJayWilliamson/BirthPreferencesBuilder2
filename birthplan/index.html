@@ -1268,7 +1268,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
             <label class="field-label">Your Story &amp; Intentions</label>
             <div class="field-hint">Write your own, or click Generate to have us draft a personalised message based on your selections.</div>
             <div style="display:flex;gap:0.6rem;margin-bottom:0.7rem;align-items:center;flex-wrap:wrap;">
-              <button id="generate-story-btn" onclick="generateStory()" style="display:flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,var(--olive) 0%,var(--olive-mid) 100%);color:white;border:none;border-radius:8px;padding:0.55rem 1.2rem;font-family:Jost,sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 3px 12px rgba(74,87,70,0.25);transition:all 0.2s;"><span>✶</span><span id="generate-label">&nbsp;Generate from my selections</span></button>
+              <button id="generate-story-btn" onclick="generateStory()" style="display:flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,var(--olive) 0%,var(--olive-mid) 100%);color:white;border:none;border-radius:8px;padding:0.55rem 1.2rem;font-family:Jost,sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 3px 12px rgba(74,87,70,0.25);transition:all 0.2s;"><span id="generate-label">Generate from my selections</span></button>
             </div>
             <textarea id="story" rows="6" placeholder="e.g. Thank you for being here during these deeply important moments..."></textarea>
             <div id="story-generated-note" style="display:none;margin-top:0.5rem;font-size:0.74rem;color:var(--olive-mid);font-weight:500;">✓ Generated — feel free to edit this to make it your own.</div>
@@ -2032,34 +2032,34 @@ async function downloadPDF() {
   const healthPillsHTML = d.healthConsiderations.map(h=>`<span style="display:inline-block;background:white;color:#4A5746;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:50px;border:1px solid #D4DDCE;margin:2px 3px;">${h}</span>`).join('');
   const storyHtmlPdf = d.story ? d.story.split(/\n\n+/).map(p=>`<p style="margin:0 0 7px 0;">${p.replace(/\n/g,'<br>')}</p>`).join('') : '';
   const secBg = f.sectionBg || '#4A5746';
-  function pdfList(arr,color='#4A5746'){return arr.map(i=>`<div style="display:flex;gap:5px;margin-bottom:4px;font-size:9px;line-height:1.5;align-items:flex-start;"><span style="color:${color};flex-shrink:0;">✓</span><span>${i}</span></div>`).join('');}
-  function pdfSec(title,items,bg){if(!items.length)return '';var b=bg||secBg;return `<div style="background:${b};color:white;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin:9px 0 5px;">${title}</div>${pdfList(items,b==='#A07070'?'#A07070':'#4A5746')}`;}
+  function pdfList(arr,color='#4A5746'){return arr.map(i=>`<div style="display:flex;gap:6px;margin-bottom:5px;font-size:10px;line-height:1.6;align-items:flex-start;"><span style="color:${color};flex-shrink:0;">✓</span><span>${i}</span></div>`).join('');}
+  function pdfSec(title,items,bg){if(!items.length)return '';var b=bg||secBg;return `<div style="background:${b};color:#2C2C2C;font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:6px 11px;border-radius:5px;margin:11px 0 6px;">${title}</div>${pdfList(items,'#4A5746')}`;}
   const flowerOpacity = (f.key === 'daisy') ? 0.35 : 0.22;
   const flowerTag = f.src ? `<img src="${f.src}" style="position:absolute;top:-40px;left:-40px;width:260px;height:260px;object-fit:contain;opacity:${flowerOpacity};rotate:-10deg;pointer-events:none;">` : '';
-  const printHTML = `<div id="pp" style="width:794px;min-height:1123px;background:white;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;">
-    <div style="background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);padding:26px 40px 20px;text-align:center;position:relative;overflow:hidden;">
+  const printHTML = `<div id="pp" style="width:794px;background:white;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;">
+    <div style="background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);padding:30px 40px 24px;text-align:center;position:relative;overflow:hidden;">
       ${flowerTag}
-      <div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:5px;color:#6B8F71;text-transform:uppercase;font-weight:600;margin-bottom:10px;position:relative;z-index:1;">Birth Preferences For</div>
-      <div style="font-family:${nameFont};font-size:${Math.max(22,Math.min(36,Math.floor(280/(d.name.length*0.5))))}px;color:${f.nameColor};font-weight:600;line-height:1.1;position:relative;z-index:1;">${d.name}</div>
-      ${subLine?`<div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:2px;margin-top:8px;position:relative;z-index:1;">${subLine}</div>`:''}
-      ${healthPillsHTML?`<div style="margin-top:10px;position:relative;z-index:1;">${healthPillsHTML}</div>`:''}
+      <div style="font-family:Arial,sans-serif;font-size:8.5px;letter-spacing:5px;color:#6B8F71;text-transform:uppercase;font-weight:600;margin-bottom:12px;position:relative;z-index:1;">Birth Preferences For</div>
+      <div style="font-family:${nameFont};font-size:${Math.max(26,Math.min(40,Math.floor(310/(d.name.length*0.5))))}px;color:${f.nameColor};font-weight:600;line-height:1.1;position:relative;z-index:1;">${d.name}</div>
+      ${subLine?`<div style="font-family:Arial,sans-serif;font-size:9.5px;color:#7A8591;letter-spacing:2px;margin-top:9px;position:relative;z-index:1;">${subLine}</div>`:''}
+      ${healthPillsHTML?`<div style="margin-top:11px;position:relative;z-index:1;">${healthPillsHTML}</div>`:''}
     </div>
-    <div style="display:flex;gap:18px;padding:18px 40px 0;align-items:flex-start;">
-      <div style="flex:1;font-size:10px;line-height:1.75;color:#333;">
-        ${d.careTeam?`<div style="display:inline-block;background:#EEF3EE;color:#4A5746;font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 10px;border-radius:5px;margin-bottom:10px;">Dear ${d.careTeam}</div>`:''}
+    <div style="display:flex;gap:20px;padding:20px 40px 0;align-items:flex-start;">
+      <div style="flex:1;font-size:11px;line-height:1.8;color:#333;">
+        ${d.careTeam?`<div style="display:inline-block;background:#EEF3EE;color:#4A5746;font-family:Arial,sans-serif;font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:6px 11px;border-radius:5px;margin-bottom:11px;">Dear ${d.careTeam}</div>`:''}
         ${storyHtmlPdf}
-        ${d.decisionMaking.length?pdfSec('Decision-Making',d.decisionMaking):''}
-        ${d.traumaCare.length||d.emotionalCare.length?pdfSec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#A07070'):''}
+        ${d.decisionMaking.length?pdfSec('Decision-Making',d.decisionMaking,'#f4e2e0'):''}
+        ${d.traumaCare.length||d.emotionalCare.length?pdfSec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#faeaea'):''}
       </div>
-      <div style="flex:1;font-size:10px;">
-        ${d.naturalComfort.length||d.medicalComfort.length?pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort]):''}
-        ${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection]):''}
-        ${d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length?pdfSec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions]):''}
-        ${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn]):''}
-        ${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length?pdfSec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication],'#A07070'):''}
+      <div style="flex:1;font-size:11px;">
+        ${d.naturalComfort.length||d.medicalComfort.length?pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort],'#f4e2e0'):''}
+        ${d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length?pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection],'#e7e1eb'):''}
+        ${d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length?pdfSec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions],'#faeaea'):''}
+        ${d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length?pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#edddc4'):''}
+        ${d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length?pdfSec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication],'#e7e1eb'):''}
       </div>
     </div>
-    <div style="margin:18px 0 0;padding:12px 40px 20px;border-top:1px solid #D4DDCE;font-size:10px;color:#2C2C2C;line-height:1.75;font-style:italic;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);">Thank you for welcoming my baby into the world with respect, skill and kindness while also protecting my mental and emotional wellbeing.<div style="margin-top:10px;font-style:normal;">With gratitude,</div><div style="font-family:${nameFont};font-size:24px;color:${f.nameColor};line-height:1.4;">${d.name}</div></div>
+    <div style="margin:20px 0 0;padding:14px 40px 24px;border-top:1px solid #D4DDCE;font-size:11px;color:#2C2C2C;line-height:1.8;font-style:italic;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);">Thank you for welcoming my baby into the world with respect, skill and kindness while also protecting my mental and emotional wellbeing.<div style="margin-top:11px;font-style:normal;">With gratitude,</div><div style="font-family:${nameFont};font-size:26px;color:${f.nameColor};line-height:1.4;">${d.name}</div></div>
   </div>`;
   let container = document.getElementById('pdf-render-container');
   if (!container) { container = document.createElement('div'); container.id = 'pdf-render-container'; container.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1;'; document.body.appendChild(container); }
@@ -2125,48 +2125,48 @@ async function downloadQuestionsPDF() {
   let sectionsHTML = '';
   Object.entries(grouped).forEach(([sectionName, items]) => {
     const itemsHTML = items.map(({ label, description }) =>
-      `<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 14px;background:white;border-radius:9px;border:1px solid #EDE8DF;margin-bottom:7px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
-        <span style="color:${goldColor};font-size:14px;flex-shrink:0;margin-top:1px;">?</span>
+      `<div style="display:flex;gap:11px;align-items:flex-start;padding:10px 16px;background:white;border-radius:9px;border:1px solid #EDE8DF;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+        <span style="color:${goldColor};font-size:15px;flex-shrink:0;margin-top:1px;">?</span>
         <div>
-          <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:700;color:#2C2C2C;line-height:1.5;">${label}</div>
-          ${description ? `<div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;line-height:1.55;margin-top:2px;">${description}</div>` : ''}
+          <div style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;color:#2C2C2C;line-height:1.55;">${label}</div>
+          ${description ? `<div style="font-family:Arial,sans-serif;font-size:9.5px;color:#7A8591;line-height:1.6;margin-top:3px;">${description}</div>` : ''}
         </div>
       </div>`
     ).join('');
     sectionsHTML += `
-      <div style="margin-bottom:18px;">
-        <div style="font-family:Arial,sans-serif;font-size:7px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:white;background:${accentColor};padding:5px 12px;border-radius:5px;display:inline-block;margin-bottom:9px;">${sectionName}</div>
+      <div style="margin-bottom:20px;">
+        <div style="font-family:Arial,sans-serif;font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:white;background:${accentColor};padding:6px 13px;border-radius:5px;display:inline-block;margin-bottom:10px;">${sectionName}</div>
         ${itemsHTML}
       </div>`;
   });
 
   const totalCount = unsureItems.length;
   const printHTML = `
-  <div id="qp" style="width:794px;min-height:1123px;background:white;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;">
+  <div id="qp" style="width:794px;min-height:1123px;background:white;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;">
 
     <!-- Header -->
-    <div style="background:linear-gradient(150deg,#FFFCF0 0%,#FEF9EC 100%);padding:32px 48px 24px;border-bottom:3px solid ${goldBorder};position:relative;overflow:hidden;">
+    <div style="flex-shrink:0;background:linear-gradient(150deg,#FFFCF0 0%,#FEF9EC 100%);padding:36px 48px 28px;border-bottom:3px solid ${goldBorder};position:relative;overflow:hidden;">
       ${flowerTag}
       <div style="position:relative;z-index:1;">
-        <div style="font-family:Arial,sans-serif;font-size:7px;letter-spacing:5px;color:${goldColor};text-transform:uppercase;font-weight:700;margin-bottom:10px;">Questions to Explore</div>
-        <div style="font-family:${nameFont};font-size:32px;color:${f.nameColor};font-weight:600;line-height:1.1;margin-bottom:6px;">${d.name || 'Talking Points'}</div>
+        <div style="font-family:Arial,sans-serif;font-size:8px;letter-spacing:5px;color:${goldColor};text-transform:uppercase;font-weight:700;margin-bottom:11px;">Questions to Explore</div>
+        <div style="font-family:${nameFont};font-size:36px;color:${f.nameColor};font-weight:600;line-height:1.1;margin-bottom:7px;">${d.name || 'Talking Points'}</div>
 
-        <div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:1.5px;margin-bottom:14px;">${d.name || 'This user'} would like to explore ${totalCount} topic${totalCount !== 1 ? 's' : ''} with you.</div>
+        <div style="font-family:Arial,sans-serif;font-size:9.5px;color:#7A8591;letter-spacing:1.5px;margin-bottom:16px;">${d.name || 'This user'} would like to explore ${totalCount} topic${totalCount !== 1 ? 's' : ''} with you.</div>
 
-        <div style="background:white;border:1px solid ${goldBorder};border-radius:10px;padding:11px 16px;font-family:Arial,sans-serif;font-size:9.5px;line-height:1.7;color:#4A3800;max-width:560px;">
+        <div style="background:white;border:1px solid ${goldBorder};border-radius:10px;padding:13px 18px;font-family:Arial,sans-serif;font-size:10.5px;line-height:1.75;color:#4A3800;max-width:560px;">
           These are the topics I've flagged while building my birth plan on Blumi. These are things I'd like to understand better or talk through before the big day. I'm sharing this so we can explore them together. 
         </div>
       </div>
     </div>
 
     <!-- Questions body -->
-    <div style="padding:24px 48px 32px;">
+    <div style="flex:1;padding:26px 48px 34px;">
       ${sectionsHTML}
     </div>
 
     <!-- Footer -->
-    <div style="padding:16px 48px 24px;border-top:1px solid #D4DDCE;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:0.5px;">
-      <span style="font-family:${nameFont};font-size:15px;color:${f.nameColor};font-style:italic;">${d.name || ''}</span>
+    <div style="flex-shrink:0;padding:18px 48px 26px;border-top:1px solid #D4DDCE;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);font-family:Arial,sans-serif;font-size:9.5px;color:#7A8591;letter-spacing:0.5px;">
+      <span style="font-family:${nameFont};font-size:16px;color:${f.nameColor};font-style:italic;">${d.name || ''}</span>
       &nbsp;·&nbsp; Created with Blümi
     </div>
 
