@@ -1289,13 +1289,13 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-header">
-      <h3>Your Birth Preferences</h3>
+      <h3>Preview your design</h3>
       <button class="close-btn" onclick="closeModal()">×</button>
     </div>
 
     <!-- FLOWER PICKER -->
     <div class="flower-picker-wrap">
-      <div class="flower-picker-label">Choose your flower</div>
+      <div class="flower-picker-label">Pick your flower</div>
       <div class="flower-picker-options">
         <div class="flower-opt selected" data-flower="violet"   data-accent="#CFC4E8" onclick="pickFlower(this)" title="Violet">
           <img src="../img/violet.png" alt="Violet">
@@ -1315,9 +1315,9 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 
     <div id="pdf-preview"></div>
     <div class="modal-actions">
-      <button class="btn-modal-secondary" onclick="closeModal()">← Edit</button>
-      <button class="btn-modal-secondary" id="dl-questions-btn" onclick="downloadQuestionsPDF()" style="border-color:#D4A017;color:#7A5800;" title="Export a clean list of everything you've marked with ? to share with anyone">My Questions</button>
-      <button class="btn-modal-primary" id="dl-btn" onclick="downloadPDF()">Download PDF</button>
+      <button class="btn-modal-secondary" onclick="closeModal()" style="margin-right: auto";>Back</button>
+      <button class="btn-modal-secondary" id="dl-questions-btn" onclick="downloadQuestionsPDF()" style="border-color:#D4A017;color:#7A5800;margin-right: inherit;">Talking Points (PDF)</button>
+      <button class="btn-modal-primary" id="dl-btn" onclick="downloadPDF()">Birth Plan PDF (PDF)</button>
     </div>
   </div>
 </div>
@@ -2081,8 +2081,8 @@ async function downloadQuestionsPDF() {
   const btn = document.getElementById('dl-questions-btn');
 
   if (!unsureItems.length) {
-    btn.textContent = 'No questions yet';
-    setTimeout(() => { btn.innerHTML = 'My Questions'; }, 2200);
+    btn.textContent = 'No talking points selected yet';
+    setTimeout(() => { btn.innerHTML = 'Talking Points'; }, 2200);
     return;
   }
 
@@ -2144,18 +2144,20 @@ async function downloadQuestionsPDF() {
   const printHTML = `
   <div id="qp" style="width:794px;min-height:1123px;background:white;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;">
 
-    <!-- Header -->
-    <div style="background:linear-gradient(150deg,#FFFCF0 0%,#FEF9EC 100%);padding:32px 48px 24px;border-bottom:3px solid ${goldBorder};position:relative;overflow:hidden;">
-      ${flowerTag}
-      <div style="position:relative;z-index:1;">
-        <div style="font-family:Arial,sans-serif;font-size:7px;letter-spacing:5px;color:${goldColor};text-transform:uppercase;font-weight:700;margin-bottom:10px;">Questions to Explore</div>
-        <div style="font-family:${nameFont};font-size:32px;color:${f.nameColor};font-weight:600;line-height:1.1;margin-bottom:6px;">${d.name || 'My Questions'}</div>
-        <div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:1.5px;margin-bottom:14px;">${totalCount} question${totalCount !== 1 ? 's' : ''} to talk through</div>
-        <div style="background:white;border:1px solid ${goldBorder};border-radius:10px;padding:11px 16px;font-family:Arial,sans-serif;font-size:9.5px;line-height:1.7;color:#4A3800;max-width:560px;">
-          These are the topics I've flagged while building my birth preferences. They are things I'd like to understand better or talk through before the big day. I'm sharing this so we can explore them together.
-        </div>
-      </div>
+<!-- Header -->
+<div style="background:linear-gradient(150deg,#FFFCF0 0%,#FEF9EC 100%);padding:32px 48px 24px;border-bottom:3px solid ${goldBorder};position:relative;overflow:hidden;">
+  ${flowerTag}
+  <div style="position:relative;z-index:1;">
+    <div style="font-family:Arial,sans-serif;font-size:7px;letter-spacing:5px;color:${goldColor};text-transform:uppercase;font-weight:700;margin-bottom:10px;">Questions to Explore</div>
+    <div style="font-family:${nameFont};font-size:32px;color:${f.nameColor};font-weight:600;line-height:1.1;margin-bottom:6px;">${d.name || 'Talking Points'}</div>
+
+    <div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:1.5px;margin-bottom:14px;">${d.name || 'This user'} would like to explore ${totalCount} topic${totalCount !== 1 ? 's' : ''} with you.</div>
+
+    <div style="background:white;border:1px solid ${goldBorder};border-radius:10px;padding:11px 16px;font-family:Arial,sans-serif;font-size:9.5px;line-height:1.7;color:#4A3800;max-width:560px;">
+      These are the topics I've flagged while building my birth plan on Blumi. These are things I'd like to understand better or talk through before the big day. I'm sharing this so we can explore them together. 
     </div>
+  </div>
+</div>
 
     <!-- Questions body -->
     <div style="padding:24px 48px 32px;">
@@ -2188,8 +2190,8 @@ async function downloadQuestionsPDF() {
     const pw = pdf.internal.pageSize.getWidth();
     const ph = pdf.internal.pageSize.getHeight();
     pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
-    pdf.save(`My Questions — ${d.name || 'Birth Plan'}.pdf`);
-    btn.innerHTML = 'My Questions';
+    pdf.save(`Talking Points — ${d.name || 'Birth Plan'}.pdf`);
+    btn.innerHTML = 'Talking Points';
     btn.disabled = false;
   });
 }
