@@ -582,7 +582,7 @@ footer span { color: #EBC4BE; }
 
 <p class="custom-note">
   Need something custom for a hospital or large network?
-  <a href="mailto:hello@blumibirth.com">Let's talk →</a>
+  <a href="mailto:hello@blumibirth.com">Let's talk</a>
 </p>
 
 <!-- HOW THE PORTAL WORKS -->
@@ -767,13 +767,13 @@ footer span { color: #EBC4BE; }
 </div>
 
       <button class="checkout-btn" id="checkout-btn" onclick="startCheckout()">
-        Continue to Payment →
+        Continue to Payment
       </button>
 
       <div class="checkout-msg" id="checkout-msg"></div>
 
       <div class="checkout-divider"><span>already have an account?</span></div>
-      <a class="checkout-signin-link" id="checkout-signin-link" href="/portal/">Sign in →</a>
+      <a class="checkout-signin-link" id="checkout-signin-link" href="/portal/">Sign in</a>
 
       <div class="checkout-note">
         🔒 Secure checkout via Stripe. Your card details never touch our servers.
@@ -816,10 +816,10 @@ function openCheckout(plan) {
   document.getElementById('checkout-msg').className     = 'checkout-msg';
   document.getElementById('checkout-msg').textContent   = '';
   document.getElementById('checkout-btn').disabled      = false;
-  document.getElementById('checkout-btn').textContent   = 'Continue to Payment →';
+  document.getElementById('checkout-btn').textContent   = 'Continue to Payment';
   document.getElementById('checkout-signin-link').href  = meta.signinHref;
   document.getElementById('checkout-signin-link').textContent =
-    meta.signinHref === '/portal/' ? 'Sign in to the Portal →' : 'Sign in to birth plan builder →';
+    meta.signinHref === '/portal/' ? 'Sign in to the Portal' : 'Sign in to birth plan builder';
   ['checkout-email','checkout-password','checkout-confirm',
    'checkout-practice-name','checkout-admin-name'].forEach(id => {
     const el = document.getElementById(id);
@@ -927,12 +927,12 @@ const authPassword = meta.isTeam ? adminPin + adminPin + 'bx' : password;
 const { data: signInData, error: signInError } = await sb.auth.signInWithPassword({ email: authEmail, password: authPassword });
 
       if (signInError) {
-        btn.disabled = false; btn.textContent = 'Continue to Payment →';
+        btn.disabled = false; btn.textContent = 'Continue to Payment';
         return showCheckoutMsg('An account exists, but the password was incorrect. Please sign in via the portal.', 'error');
       }
       userId = signInData.user.id;
     } else {
-      btn.disabled = false; btn.textContent = 'Continue to Payment →';
+      btn.disabled = false; btn.textContent = 'Continue to Payment';
       return showCheckoutMsg(signUpError.message, 'error');
     }
   } else {
@@ -940,7 +940,7 @@ const { data: signInData, error: signInError } = await sb.auth.signInWithPasswor
   }
 
   if (!userId) {
-    btn.disabled = false; btn.textContent = 'Continue to Payment →';
+    btn.disabled = false; btn.textContent = 'Continue to Payment';
     return showCheckoutMsg('Could not create account. Please try again.', 'error');
   }
 
@@ -963,14 +963,14 @@ const { data: signInData, error: signInError } = await sb.auth.signInWithPasswor
 
     const { url, error } = await resp.json();
     if (error || !url) {
-      btn.disabled = false; btn.textContent = 'Continue to Payment →';
+      btn.disabled = false; btn.textContent = 'Continue to Payment';
       return showCheckoutMsg('Could not start checkout. Please try again.', 'error');
     }
 
     window.location.href = url;
 
   } catch (err) {
-    btn.disabled = false; btn.textContent = 'Continue to Payment →';
+    btn.disabled = false; btn.textContent = 'Continue to Payment';
     showCheckoutMsg('Network error. Please try again.', 'error');
   }
 }

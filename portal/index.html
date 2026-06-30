@@ -816,7 +816,7 @@ body::before {
         <button class="auth-btn" onclick="signInWithHandle()">Sign In</button>
         <div class="auth-msg" id="si-msg"></div>
         <div class="auth-switch" style="margin-top:0.8rem;">
-          Solo provider? <a onclick="toggleSiMode(true)">Sign in with email →</a>
+          Solo provider? <a onclick="toggleSiMode(true)">Sign in with email</a>
         </div>
       </div>
 
@@ -834,7 +834,7 @@ body::before {
         <button class="auth-btn" onclick="signIn()">Sign In</button>
         <div class="auth-msg" id="si-email-msg"></div>
         <div class="auth-switch" style="margin-top:0.8rem;">
-          Practice or Collective? <a onclick="toggleSiMode(false)">Sign in with handle →</a>
+          Practice or Collective? <a onclick="toggleSiMode(false)">Sign in with handle</a>
         </div>
       </div>
 
@@ -1071,7 +1071,7 @@ body::before {
             <strong>Running low on slots</strong>
             Upgrade to add more clients without losing any data.
           </div>
-          <button class="btn-upgrade" onclick="openUpgradeModal()">Upgrade →</button>
+          <button class="btn-upgrade" onclick="openUpgradeModal()">Upgrade</button>
         </div>
       </div>
     </div>
@@ -1464,7 +1464,7 @@ async function openBillingPortal() {
   } catch (err) {
     showToast('Network error. Please try again.');
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Manage Billing →'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Manage Billing'; }
   }
 }
 
@@ -1959,7 +1959,7 @@ function renderUpgradeModalTiers(currentTier) {
       ctaClass = 'umt-cta downgrade-btn';
       onclickAttr = `onclick="openBillingPortal()"`;
     } else {
-      ctaLabel = `Upgrade to ${TIER_NAMES[t]} →`;
+      ctaLabel = `Upgrade to ${TIER_NAMES[t]}`;
       ctaClass = 'umt-cta active';
       onclickAttr = `onclick="selectTierPaid('${t}')"`;
     }
@@ -1982,7 +1982,7 @@ function renderUpgradeModalTiers(currentTier) {
           <div style="font-size:0.72rem;color:var(--muted);line-height:1.4;">Update payment details, download invoices, or cancel your subscription.</div>
         </div>
         <button onclick="openBillingPortal()" style="background:white;border:1.5px solid var(--border);color:var(--olive);border-radius:50px;padding:0.5rem 1.2rem;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--olive-mid)'" onmouseout="this.style.borderColor='var(--border)'">
-          Manage Billing →
+          Manage Billing
         </button>
       </div>`);
   }
@@ -2036,7 +2036,7 @@ function showTeamSetupStepPaid(newTier) {
       </div>
       <div class="downgrade-confirm-actions">
         <button class="btn-secondary" onclick="renderUpgradeModalTiers('${currentProfile?.tier}')">← Go back</button>
-        <button class="btn-primary" onclick="proceedTeamUpgradePaid('${newTier}')">Continue to Payment →</button>
+        <button class="btn-primary" onclick="proceedTeamUpgradePaid('${newTier}')">Continue to Payment</button>
       </div>
     </div>`;
   setTimeout(() => document.getElementById('team-setup-admin-name')?.focus(), 80);
