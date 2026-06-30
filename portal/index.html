@@ -944,7 +944,7 @@ body::before {
         </div>
         <div class="pin-msg" id="pin-msg"></div>
       </div>
-      <a class="pin-signout-link" onclick="signOut()">← Sign out of this account</a>
+      <a class="pin-signout-link" onclick="signOut()">Sign out of this account</a>
     </div>
   </div>
 </div>
@@ -1362,7 +1362,7 @@ function onTierChange() {
 
   document.getElementById('admin-setup-box').style.display    = isTeam ? 'block' : 'none';
   document.getElementById('practice-name-hint').style.display = isTeam ? 'none'  : '';
-  document.getElementById('su-handle-wrap').style.display     = isTeam ? 'block' : 'none'; // ← ADD THIS
+  document.getElementById('su-handle-wrap').style.display     = isTeam ? 'block' : 'none';
 }
 
 function checkPwStrength(pw) {
@@ -2035,7 +2035,7 @@ function showTeamSetupStepPaid(newTier) {
         <div id="team-setup-msg" style="font-size:0.78rem;color:var(--rose);min-height:1rem;"></div>
       </div>
       <div class="downgrade-confirm-actions">
-        <button class="btn-secondary" onclick="renderUpgradeModalTiers('${currentProfile?.tier}')">← Go back</button>
+        <button class="btn-secondary" onclick="renderUpgradeModalTiers('${currentProfile?.tier}')">Go back</button>
         <button class="btn-primary" onclick="proceedTeamUpgradePaid('${newTier}')">Continue to Payment</button>
       </div>
     </div>`;

@@ -689,7 +689,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 <!-- PORTAL MODE BANNER -->
 <div id="portal-banner">
   You are viewing a client's birth plan in your portal.
-  <a href="#" id="portal-back-link">← Back to Portal</a>
+  <a href="#" id="portal-back-link">Back to Portal</a>
   <a href="#" id="portal-save-btn" onclick="portalSave(); return false;" style="margin-left:1.5rem;">💾 Save Changes</a>
   <span id="portal-save-msg" style="margin-left:1rem;font-size:0.75rem;opacity:0.85;"></span>
 </div>
@@ -1276,7 +1276,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
         </div>
       </div>
       <div class="wizard-nav">
-        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-back" onclick="prevStep()">Back</button>
         <span class="step-counter">Step 8 of 8</span>
         <button class="btn-next" onclick="showPreview()" style="background:linear-gradient(135deg,var(--olive-mid) 0%,var(--olive-light) 100%)">Download</button>
       </div>
@@ -1425,7 +1425,7 @@ async function _enterApp(user, isPortalMode) {
       document.getElementById('portal-banner').style.display = 'block';
       document.getElementById('user-email-display').textContent = 'Viewing client plan';
       const soBtn = document.getElementById('sign-out-btn');
-      soBtn.textContent = '← Back to Portal';
+      soBtn.textContent = 'Back to Portal';
       soBtn.onclick = () => {
         window.close();
         setTimeout(() => { window.location.href = sessionStorage.getItem('portalReturnUrl') || '/portal/'; }, 200);
@@ -2144,20 +2144,20 @@ async function downloadQuestionsPDF() {
   const printHTML = `
   <div id="qp" style="width:794px;min-height:1123px;background:white;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;">
 
-<!-- Header -->
-<div style="background:linear-gradient(150deg,#FFFCF0 0%,#FEF9EC 100%);padding:32px 48px 24px;border-bottom:3px solid ${goldBorder};position:relative;overflow:hidden;">
-  ${flowerTag}
-  <div style="position:relative;z-index:1;">
-    <div style="font-family:Arial,sans-serif;font-size:7px;letter-spacing:5px;color:${goldColor};text-transform:uppercase;font-weight:700;margin-bottom:10px;">Questions to Explore</div>
-    <div style="font-family:${nameFont};font-size:32px;color:${f.nameColor};font-weight:600;line-height:1.1;margin-bottom:6px;">${d.name || 'Talking Points'}</div>
+    <!-- Header -->
+    <div style="background:linear-gradient(150deg,#FFFCF0 0%,#FEF9EC 100%);padding:32px 48px 24px;border-bottom:3px solid ${goldBorder};position:relative;overflow:hidden;">
+      ${flowerTag}
+      <div style="position:relative;z-index:1;">
+        <div style="font-family:Arial,sans-serif;font-size:7px;letter-spacing:5px;color:${goldColor};text-transform:uppercase;font-weight:700;margin-bottom:10px;">Questions to Explore</div>
+        <div style="font-family:${nameFont};font-size:32px;color:${f.nameColor};font-weight:600;line-height:1.1;margin-bottom:6px;">${d.name || 'Talking Points'}</div>
 
-    <div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:1.5px;margin-bottom:14px;">${d.name || 'This user'} would like to explore ${totalCount} topic${totalCount !== 1 ? 's' : ''} with you.</div>
+        <div style="font-family:Arial,sans-serif;font-size:8.5px;color:#7A8591;letter-spacing:1.5px;margin-bottom:14px;">${d.name || 'This user'} would like to explore ${totalCount} topic${totalCount !== 1 ? 's' : ''} with you.</div>
 
-    <div style="background:white;border:1px solid ${goldBorder};border-radius:10px;padding:11px 16px;font-family:Arial,sans-serif;font-size:9.5px;line-height:1.7;color:#4A3800;max-width:560px;">
-      These are the topics I've flagged while building my birth plan on Blumi. These are things I'd like to understand better or talk through before the big day. I'm sharing this so we can explore them together. 
+        <div style="background:white;border:1px solid ${goldBorder};border-radius:10px;padding:11px 16px;font-family:Arial,sans-serif;font-size:9.5px;line-height:1.7;color:#4A3800;max-width:560px;">
+          These are the topics I've flagged while building my birth plan on Blumi. These are things I'd like to understand better or talk through before the big day. I'm sharing this so we can explore them together. 
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
     <!-- Questions body -->
     <div style="padding:24px 48px 32px;">
