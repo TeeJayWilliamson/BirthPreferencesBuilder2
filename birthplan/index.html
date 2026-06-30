@@ -1317,7 +1317,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
     <div class="modal-actions">
       <button class="btn-modal-secondary" onclick="closeModal()" style="margin-right: auto";>Back</button>
       <button class="btn-modal-secondary" id="dl-questions-btn" onclick="downloadQuestionsPDF()" style="border-color:#D4A017;color:#7A5800;margin-right: inherit;">Talking Points (PDF)</button>
-      <button class="btn-modal-primary" id="dl-btn" onclick="downloadPDF()">Birth Plan PDF (PDF)</button>
+      <button class="btn-modal-primary" id="dl-btn" onclick="downloadPDF()">Birth Plan (PDF)</button>
     </div>
   </div>
 </div>
@@ -2072,7 +2072,7 @@ async function downloadPDF() {
     const pw=pdf.internal.pageSize.getWidth();const ph=pdf.internal.pageSize.getHeight();
     pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,pw,ph);
     pdf.save(`Birth Preferences — ${d.name}.pdf`);
-    btn.textContent='Download PDF';btn.disabled=false;
+    btn.textContent='Birth Plan (PDF)';btn.disabled=false;
   });
 }
 
@@ -2191,7 +2191,7 @@ async function downloadQuestionsPDF() {
     const ph = pdf.internal.pageSize.getHeight();
     pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pw, ph);
     pdf.save(`Talking Points — ${d.name || 'Birth Plan'}.pdf`);
-    btn.innerHTML = 'Talking Points';
+    btn.innerHTML = 'Talking Points (PDF)';
     btn.disabled = false;
   });
 }
