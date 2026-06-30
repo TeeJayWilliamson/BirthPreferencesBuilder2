@@ -2102,7 +2102,8 @@ function buildPdfPieces(d, f, nameFont, scale) {
   const storyHtmlPdf = d.story ? d.story.split(/\n\n+/).map(p=>`<p style="margin:0 0 ${px(7)}px 0;">${p.replace(/\n/g,'<br>')}</p>`).join('') : '';
   const secBg = f.sectionBg || '#4A5746';
   function pdfList(arr,color='#4A5746'){return arr.map(i=>`<div style="display:flex;gap:6px;margin-bottom:${px(5)}px;font-size:${px(10)}px;line-height:1.6;align-items:flex-start;"><span style="color:${color};flex-shrink:0;">✓</span><span>${i}</span></div>`).join('');}
-  function pdfSec(title,items,bg){if(!items.length)return '';var b=bg||secBg;return `<div style="background:${b};color:#2C2C2C;font-family:Arial,sans-serif;font-size:${px(10)}px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:${px(6)}px ${px(11)}px;border-radius:5px;margin:${px(11)}px 0 ${px(6)}px;">${title}</div>${pdfList(items,'#4A5746')}`;}
+  function pdfListGrid(arr,color='#4A5746'){return `<div style="display:grid;grid-template-columns:1fr 1fr;column-gap:${px(14)}px;">${arr.map(i=>`<div style="display:flex;gap:6px;margin-bottom:${px(5)}px;font-size:${px(10)}px;line-height:1.6;align-items:flex-start;"><span style="color:${color};flex-shrink:0;">✓</span><span>${i}</span></div>`).join('')}</div>`;}
+  function pdfSec(title,items,bg,cols){if(!items.length)return '';var b=bg||secBg;var avgLen=items.reduce((a,i)=>a+i.length,0)/items.length;var maxLen=Math.max(...items.map(i=>i.length));var useGrid=cols===2&&items.length>4&&avgLen<=30&&maxLen<=46;var list=useGrid?pdfListGrid(items,'#4A5746'):pdfList(items,'#4A5746');return `<div style="background:${b};color:#2C2C2C;font-family:Arial,sans-serif;font-size:${px(10)}px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:${px(6)}px ${px(11)}px;border-radius:5px;margin:${px(11)}px 0 ${px(6)}px;">${title}</div>${list}`;}
   const flowerOpacity = (f.key === 'daisy') ? 0.35 : 0.22;
   const flowerTag = f.src ? `<img src="${f.src}" style="position:absolute;top:-40px;left:-40px;width:260px;height:260px;object-fit:contain;opacity:${flowerOpacity};rotate:-10deg;pointer-events:none;">` : '';
 
@@ -2113,7 +2114,7 @@ function buildPdfPieces(d, f, nameFont, scale) {
       ${subLine?`<div style="font-family:Arial,sans-serif;font-size:${px(9.5)}px;color:#7A8591;letter-spacing:2px;margin-top:${px(9)}px;position:relative;z-index:1;">${subLine}</div>`:''}
       ${healthPillsHTML?`<div style="margin-top:${px(11)}px;position:relative;z-index:1;">${healthPillsHTML}</div>`:''}
     </div>`;
-  const footerHTML = `<div style="padding:${px(20)}px 40px ${px(24)}px 40px;border-top:1px solid #D4DDCE;font-size:${px(11)}px;color:#2C2C2C;line-height:1.8;font-style:italic;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);">Thank you for welcoming my baby into the world with respect, skill and kindness while also protecting my mental and emotional wellbeing.<div style="margin-top:${px(11)}px;font-style:normal;">With gratitude,</div><div style="font-family:${nameFont};font-size:${px(26)}px;color:${f.nameColor};line-height:1.4;">${d.name}</div></div>`;
+  const footerHTML = `<div style="padding:${px(20)}px 40px ${px(24)}px 40px;border-top:1px solid #D4DDCE;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);display:flex;align-items:flex-end;justify-content:space-between;gap:${px(16)}px;"><div style="font-size:${px(11)}px;color:#2C2C2C;line-height:1.8;font-style:italic;">Thank you for welcoming my baby into the world with respect, skill and kindness while also protecting my mental and emotional wellbeing.<div style="margin-top:${px(11)}px;font-style:normal;">With gratitude,</div><div style="font-family:${nameFont};font-size:${px(26)}px;color:${f.nameColor};line-height:1.4;">${d.name}</div></div><img src="../img/logo.png" alt="Blümi" style="height:${px(34)}px;width:auto;object-fit:contain;flex-shrink:0;"></div>`;
 
   const leftBlocksHTML = [];
   const introHTML = `${d.careTeam?`<div style="display:inline-block;background:#EEF3EE;color:#4A5746;font-family:Arial,sans-serif;font-size:${px(8)}px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:${px(6)}px ${px(11)}px;border-radius:5px;margin-bottom:${px(11)}px;">Dear ${d.careTeam}</div>`:''}${storyHtmlPdf}`;
@@ -2122,10 +2123,10 @@ function buildPdfPieces(d, f, nameFont, scale) {
   if (d.traumaCare.length||d.emotionalCare.length) leftBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Personal Care',[...d.traumaCare,...d.emotionalCare],'#faeaea')}</div>`);
 
   const rightBlocksHTML = [];
-  if (d.naturalComfort.length||d.medicalComfort.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort],'#f4e2e0')}</div>`);
+  if (d.naturalComfort.length||d.medicalComfort.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort],'#f4e2e0',2)}</div>`);
   if (d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection],'#e7e1eb')}</div>`);
   if (d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions],'#faeaea')}</div>`);
-  if (d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#edddc4')}</div>`);
+  if (d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#edddc4',2)}</div>`);
   if (d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication],'#e7e1eb')}</div>`);
 
   return { headerHTML, footerHTML, leftBlocksHTML, rightBlocksHTML };
