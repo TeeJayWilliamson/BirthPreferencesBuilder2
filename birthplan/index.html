@@ -2291,46 +2291,52 @@ async function downloadQuestionsPDF() {
     ? `<img src="${f.src}" style="position:absolute;top:-30px;right:-30px;width:220px;height:220px;object-fit:contain;opacity:${flowerOpacity};rotate:12deg;pointer-events:none;">`
     : '';
 
-  // Group questions by section for nicer layout
-  const sectionLabels = {
-    values: 'Core Values', comfortPref: 'Comfort Approach',
-    naturalComfort: 'Natural Comfort', medicalComfort: 'Medical Comfort',
-    induction: 'Induction', vaginal: 'Vaginal Birth', csection: 'Surgical Birth',
-    otherInterventions: 'Other Interventions', pushingGuidance: 'Pushing Guidance',
-    pushingPace: 'Pushing Pace', pushingOptions: 'Pushing Options',
-    cord: 'Umbilical Cord', placenta: 'Placenta', bonding: 'Bonding',
-    newborn: 'Newborn Care', emotional: 'Emotional Support', decision: 'Decision-Making',
-    trauma: 'Personal Care', emergencyDelivery: 'Emergency Delivery',
-    nicuSeparation: 'NICU — Separation', nicuFeeding: 'NICU — Feeding',
-    nicuCommunication: 'NICU — Communication',
+  // Group questions by section for nicer layout — labels + pill colors mirror
+  // the category colors used in the birth plan PDF (buildPdfPieces/pdfSec)
+  // so the two documents read as a matched set.
+  const sectionMeta = {
+    values:              { label: 'Core Values',          bg: '#EEF3EE' },
+    comfortPref:         { label: 'Comfort Approach',      bg: '#f4e2e0' },
+    naturalComfort:       { label: 'Natural Comfort',       bg: '#f4e2e0' },
+    medicalComfort:       { label: 'Medical Comfort',       bg: '#f4e2e0' },
+    induction:            { label: 'Induction',             bg: '#e7e1eb' },
+    vaginal:              { label: 'Vaginal Birth',         bg: '#e7e1eb' },
+    csection:             { label: 'Surgical Birth',        bg: '#e7e1eb' },
+    otherInterventions:   { label: 'Other Interventions',   bg: '#e7e1eb' },
+    pushingGuidance:      { label: 'Pushing Guidance',      bg: '#faeaea' },
+    pushingPace:          { label: 'Pushing Pace',          bg: '#faeaea' },
+    pushingOptions:       { label: 'Pushing Options',       bg: '#faeaea' },
+    cord:                 { label: 'Umbilical Cord',        bg: '#edddc4' },
+    placenta:             { label: 'Placenta',              bg: '#edddc4' },
+    bonding:              { label: 'Bonding',               bg: '#edddc4' },
+    newborn:              { label: 'Newborn Care',          bg: '#edddc4' },
+    emotional:            { label: 'Emotional Support',     bg: '#faeaea' },
+    decision:             { label: 'Decision-Making',       bg: '#f4e2e0' },
+    trauma:               { label: 'Personal Care',         bg: '#faeaea' },
+    emergencyDelivery:    { label: 'Emergency Delivery',    bg: '#e7e1eb' },
+    nicuSeparation:       { label: 'NICU — Separation',     bg: '#e7e1eb' },
+    nicuFeeding:          { label: 'NICU — Feeding',        bg: '#e7e1eb' },
+    nicuCommunication:    { label: 'NICU — Communication',  bg: '#e7e1eb' },
   };
 
   const grouped = {};
   unsureItems.forEach(({ section, label, description }) => {
-    const key = sectionLabels[section] || section;
-    if (!grouped[key]) grouped[key] = [];
-    grouped[key].push({ label, description: description || '' });
+    const meta = sectionMeta[section] || { label: section, bg: '#EEF3EE' };
+    if (!grouped[meta.label]) grouped[meta.label] = { bg: meta.bg, items: [] };
+    grouped[meta.label].items.push({ label, description: description || '' });
   });
 
-  const accentColor = f.sectionBg || '#4A5746';
-  const goldColor = '#7A5800';
-  const goldLight = '#FEF9EC';
-  const goldBorder = '#D4A017';
-
   let sectionsHTML = '';
-  Object.entries(grouped).forEach(([sectionName, items]) => {
-    const itemsHTML = items.map(({ label, description }) =>
-      `<div style="display:flex;gap:11px;align-items:flex-start;padding:10px 16px;background:white;border-radius:9px;border:1px solid #EDE8DF;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
-        <span style="color:${goldColor};font-size:15px;flex-shrink:0;margin-top:1px;">?</span>
-        <div>
-          <div style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;color:#2C2C2C;line-height:1.55;">${label}</div>
-          ${description ? `<div style="font-family:Arial,sans-serif;font-size:9.5px;color:#7A8591;line-height:1.6;margin-top:3px;">${description}</div>` : ''}
-        </div>
+  Object.entries(grouped).forEach(([sectionName, { bg, items }]) => {
+    const itemsHTML = items.map(({ label }) =>
+      `<div style="padding:10px 16px;background:white;border-radius:9px;border:1px solid #D4DDCE;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+        <div style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;color:#2C2C2C;line-height:1.55;margin-bottom:8px;">${label}</div>
+        <div style="border:1px solid #D4DDCE;border-radius:6px;height:32px;background:#FBFAF7;"></div>
       </div>`
     ).join('');
     sectionsHTML += `
       <div style="margin-bottom:20px;">
-        <div style="font-family:Arial,sans-serif;font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:white;background:${accentColor};padding:6px 13px;border-radius:5px;display:inline-block;margin-bottom:10px;">${sectionName}</div>
+        <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#2C2C2C;background:${bg};padding:6px 11px;border-radius:5px;display:inline-block;margin-bottom:10px;">${sectionName}</div>
         ${itemsHTML}
       </div>`;
   });
@@ -2340,16 +2346,16 @@ async function downloadQuestionsPDF() {
   <div id="qp" style="width:794px;min-height:1123px;background:white;font-family:Georgia,serif;color:#2C2C2C;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;">
 
     <!-- Header -->
-    <div style="flex-shrink:0;background:linear-gradient(150deg,#FFFCF0 0%,#FEF9EC 100%);padding:36px 48px 28px;border-bottom:3px solid ${goldBorder};position:relative;overflow:hidden;">
+    <div style="flex-shrink:0;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);padding:36px 48px 28px;border-bottom:1px solid #D4DDCE;position:relative;overflow:hidden;">
       ${flowerTag}
       <div style="position:relative;z-index:1;">
-        <div style="font-family:Arial,sans-serif;font-size:8px;letter-spacing:5px;color:${goldColor};text-transform:uppercase;font-weight:700;margin-bottom:11px;">Questions to Explore</div>
-        <div style="font-family:${nameFont};font-size:36px;color:${f.nameColor};font-weight:600;line-height:1.1;margin-bottom:7px;">${d.name || 'Talking Points'}</div>
+        <div style="font-family:Arial,sans-serif;font-size:8.5px;letter-spacing:5px;color:#6B8F71;text-transform:uppercase;font-weight:600;margin-bottom:12px;">Questions to Explore</div>
+        <div style="font-family:${nameFont};font-size:36px;color:${f.nameColor};font-weight:600;line-height:1.1;margin-bottom:9px;">${d.name || 'Talking Points'}</div>
 
         <div style="font-family:Arial,sans-serif;font-size:9.5px;color:#7A8591;letter-spacing:1.5px;margin-bottom:16px;">${d.name || 'This user'} would like to explore ${totalCount} topic${totalCount !== 1 ? 's' : ''} with you.</div>
 
-        <div style="background:white;border:1px solid ${goldBorder};border-radius:10px;padding:13px 18px;font-family:Arial,sans-serif;font-size:10.5px;line-height:1.75;color:#4A3800;max-width:560px;">
-          These are the topics I've flagged while building my birth plan on Blumi. These are things I'd like to understand better or talk through before the big day. I'm sharing this so we can explore them together. 
+        <div style="background:white;border:1px solid #D4DDCE;border-radius:10px;padding:13px 18px;font-family:Arial,sans-serif;font-size:10.5px;line-height:1.75;color:#2C2C2C;max-width:560px;">
+          These are the topics I've flagged while building my birth plan on Blümi. These are things I'd like to understand better or talk through before the big day. I'm sharing this so we can explore them together. 
         </div>
       </div>
     </div>
@@ -2360,9 +2366,13 @@ async function downloadQuestionsPDF() {
     </div>
 
     <!-- Footer -->
-    <div style="flex-shrink:0;padding:18px 48px 26px;border-top:1px solid #D4DDCE;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);font-family:Arial,sans-serif;font-size:9.5px;color:#7A8591;letter-spacing:0.5px;">
-      <span style="font-family:${nameFont};font-size:16px;color:${f.nameColor};font-style:italic;">${d.name || ''}</span>
-      &nbsp;·&nbsp; Created with Blümi
+    <div style="flex-shrink:0;padding:20px 48px 24px 48px;border-top:1px solid #D4DDCE;background:linear-gradient(150deg,#F8F4EF 0%,#F2EDE6 100%);display:flex;align-items:flex-end;justify-content:space-between;gap:16px;">
+      <div style="font-size:11px;color:#2C2C2C;line-height:1.8;font-style:italic;">
+        Thank you for taking the time to talk through these with me.
+        <div style="margin-top:11px;font-style:normal;">With gratitude,</div>
+        <div style="font-family:${nameFont};font-size:26px;color:${f.nameColor};line-height:1.4;">${d.name || ''}</div>
+      </div>
+      <img src="../img/logo.png" alt="Blümi" style="height:34px;width:auto;object-fit:contain;flex-shrink:0;">
     </div>
 
   </div>`;
