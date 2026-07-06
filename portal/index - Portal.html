@@ -415,11 +415,8 @@ body::before {
 .btn-icon.view-plan:hover { background: var(--olive-pale); border-color: var(--olive-mid); }
 .btn-icon.edit-plan { background: var(--olive-pale); border-color: var(--olive-mid); color: var(--olive); }
 .btn-icon.edit-plan:hover { background: var(--olive); color: white; border-color: var(--olive); }
-.btn-icon.notes { background: var(--amber-light); border-color: var(--amber-border); color: var(--amber); }
-.btn-icon.notes:hover { background: var(--amber); color: white; border-color: var(--amber); }
-.btn-icon.has-notes { border-color: var(--amber); color: var(--amber); font-weight: 600; }
-.btn-icon.danger { background: var(--rose-light); border-color: var(--rose); color: var(--rose); }
-.btn-icon.danger:hover { border-color: var(--rose); color: white; background: var(--rose); }
+.btn-icon.has-notes { border-color: var(--olive-mid); color: var(--olive); }
+.btn-icon.danger:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-light); }
 .empty-state { padding: 4rem 2rem; text-align: center; }
 .empty-state-icon { font-size: 2rem; margin-bottom: 1rem; opacity: 0.4; }
 .empty-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--olive); margin-bottom: 0.5rem; }
@@ -1087,7 +1084,7 @@ body::before {
       <div class="filter-chip" data-filter="unassigned" id="filter-unassigned" onclick="setFilter('unassigned', this)" style="display:none;">Unassigned</div>
       <div id="provider-filter-wrap" style="display:none;margin-left:auto;"></div>
       <div class="search-wrap">
-        <span class="search-icon"><img src="../img/magnifier.png" alt="" style="width:14px;height:14px;display:block;object-fit:contain;"></span>
+        <span class="search-icon">🔍</span>
         <input type="text" class="search-input" id="search-input" placeholder="Search clients…" oninput="renderTable()">
       </div>
     </div>
@@ -2219,18 +2216,6 @@ function setFilter(f, el) {
   renderTable();
 }
 
-// Avatar colors cycle through the brand palette in table order: row 1 gets
-// color 0, row 2 gets color 1, ... row 5 wraps back to color 0, and so on.
-const AVATAR_PALETTE = [
-  { bg: 'var(--blush-light)', border: 'var(--blush)',        color: 'var(--rose)'  },
-  { bg: 'var(--sage-light)',  border: 'var(--sage)',         color: 'var(--olive)' },
-  { bg: 'var(--amber-light)', border: 'var(--amber-border)', color: 'var(--amber)' },
-  { bg: 'var(--olive-pale)',  border: 'var(--olive-light)',  color: 'var(--olive)' },
-];
-function avatarColorFor(index) {
-  return AVATAR_PALETTE[index % AVATAR_PALETTE.length];
-}
-
 function renderTable() {
   const query = document.getElementById('search-input').value.toLowerCase();
   const tbody = document.getElementById('clients-tbody');
@@ -2262,7 +2247,6 @@ function renderTable() {
     const name      = r.client?.display_name || r.invited_email;
     const initials  = name.slice(0,2).toUpperCase();
     const email     = r.invited_email;
-    const avatarClr = avatarColorFor(i);
     const statusCls = 'status-pill status-' + r.status;
     const statusLbl = r.status.charAt(0).toUpperCase() + r.status.slice(1);
     const dueDate   = r.plan_data?.dueDate || '';
@@ -2284,7 +2268,7 @@ function renderTable() {
     return `<tr style="animation-delay:${i * 0.04}s">
       <td>
         <div class="client-name-cell">
-          <div class="client-avatar" style="background:${avatarClr.bg};border-color:${avatarClr.border};color:${avatarClr.color};">${initials}</div>
+          <div class="client-avatar">${initials}</div>
           <div>
             <div class="client-name">${escHtml(name)}</div>
             <div class="client-email">${escHtml(email)}</div>
@@ -2321,7 +2305,7 @@ function renderTable() {
               ? `<button class="btn-icon" onclick="showInviteLink('${r.invite_token}', '${escAttr(r.invited_email)}')">View Link</button>`
               : ''
           }
-          <button class="btn-icon notes${hasNotes ? ' has-notes' : ''}" onclick="openNotesModal('${r.id}')">
+          <button class="btn-icon${hasNotes ? ' has-notes' : ''}" onclick="openNotesModal('${r.id}')">
             Notes${hasNotes ? ' (' + notesArr.length + ')' : ''}
           </button>
           ${canArchive ? `<button class="btn-icon danger" onclick="openArchiveModal('${r.id}', '${escAttr(name)}')">Archive</button>` : ''}
