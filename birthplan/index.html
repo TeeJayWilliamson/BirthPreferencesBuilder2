@@ -356,6 +356,8 @@ body::before {
 .field:last-child { margin-bottom: 0; }
 .field-label { display:block; font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--olive); margin-bottom:0.5rem; }
 .field-hint { font-size:0.78rem; color:var(--muted); font-family:'Jost',sans-serif; margin-bottom:0.5rem; line-height:1.55; }
+.add-link { font-size:0.78rem; color:var(--olive-mid); font-weight:500; cursor:pointer; margin-top:0.5rem; display:inline-block; }
+.add-link:hover { color:var(--olive); text-decoration:underline; }
 
 input[type="text"], input[type="date"], textarea, select {
   width: 100%; padding: 0.8rem 1rem;
@@ -511,6 +513,8 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
 .subsection-title.alt { background:var(--olive-mid); }
 .subsection-title.rose { background:var(--rose); }
 .subsection-intro { font-family:'Jost',sans-serif; font-size:0.78rem; color:var(--muted); line-height:1.65; margin-bottom:1rem; }
+.group-label { font-family:'Jost',sans-serif; font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--olive-mid); margin:0 0 0.6rem; }
+.group-label.spaced { margin-top:1.6rem; }
 
 .brain-box { background:linear-gradient(135deg, var(--olive-pale), #F5F8F5); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.4rem; margin-bottom:1.4rem; }
 .brain-box-title { font-size:0.7rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--olive); margin-bottom:0.7rem; }
@@ -848,7 +852,14 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
             </div>
           </div>
           <div class="input-row">
-            <div class="field"><label class="field-label">Support Person</label><input type="text" id="support-person" placeholder="e.g. Partner's name, Doula..."></div>
+            <div class="field">
+              <label class="field-label">Support Person</label>
+              <input type="text" id="support-person" placeholder="e.g. Partner's name, Doula...">
+              <div id="support-person-2-wrap" style="display:none;margin-top:0.5rem;">
+                <input type="text" id="support-person-2" placeholder="e.g. Additional support person...">
+              </div>
+              <div id="add-support-person-btn" class="add-link" onclick="showSecondSupportPerson()">+ Add another support person</div>
+            </div>
             <div class="field"><label class="field-label">Care Team Greeting <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="text" id="care-team" placeholder="e.g. Doctor, Midwife, Doula…"></div>
           </div>
           <div class="inner-divider"></div>
@@ -894,12 +905,12 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
           <div class="field">
             <label class="field-label">What do you value most in labor? <span style="font-weight:400;color:var(--muted)">(select all that apply)</span></label>
             <div class="options-grid" id="values-options">
-              <div class="option-card" data-val="Feeling Safe" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Safe</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Being in an environment where you trust the people caring for you and feel physically and emotionally secure.</div></div>
-              <div class="option-card" data-val="Feeling Heard" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Heard</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Your questions, concerns, and preferences are listened to and taken seriously.</div></div>
-              <div class="option-card" data-val="Choices Being Respected" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Choices Being Respected</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Your preferences are acknowledged and honored whenever possible.</div></div>
-              <div class="option-card" data-val="Feeling Informed" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Informed</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Understanding what is happening in your body and why certain options are offered.</div></div>
-              <div class="option-card" data-val="Provider Guidance" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Provider Guidance</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Recognizing and considering the knowledge, experience, and recommendations of your care team.</div></div>
-              <div class="option-card" data-val="Everyone Staying Healthy" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Everyone Staying Healthy</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Enter information about this subject here.</div></div></div></div><div class="option-desc">Focusing on the well-being of both the birthing person and the baby.</div></div>
+              <div class="option-card" data-val="Feeling Safe" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Safe</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button></div></div><div class="option-desc">Being in an environment where you trust the people caring for you and feel physically and emotionally secure.</div></div>
+              <div class="option-card" data-val="Feeling Heard" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Heard</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button></div></div><div class="option-desc">Your questions, concerns, and preferences are listened to and taken seriously.</div></div>
+              <div class="option-card" data-val="Choices Being Respected" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Choices Being Respected</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button></div></div><div class="option-desc">Your preferences are acknowledged and honored whenever possible.</div></div>
+              <div class="option-card" data-val="Feeling Informed" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Feeling Informed</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button></div></div><div class="option-desc">Understanding what is happening in your body and why certain options are offered.</div></div>
+              <div class="option-card" data-val="Provider Guidance" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Provider Guidance</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button></div></div><div class="option-desc">Recognizing and considering the knowledge, experience, and recommendations of your care team.</div></div>
+              <div class="option-card" data-val="Everyone Staying Healthy" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Everyone Staying Healthy</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button></div></div><div class="option-desc">Focusing on the well-being of both the birthing person and the baby.</div></div>
             </div>
           </div>
         </div>
@@ -996,6 +1007,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
           <div class="inner-divider"></div>
           <div class="subsection">
             <div class="subsection-title">Vaginal Birth</div>
+            <div class="subsection-intro">Every birth unfolds differently. Explore common preferences, assessments, and interventions that may be part of a vaginal birth.</div>
             <div class="options-grid" id="vaginal-options">
               <div class="option-card" data-val="Spontaneous Vaginal Delivery" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Spontaneous Vaginal Delivery</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Vaginal birth (when labor and delivery are uncomplicated) is associated in research with lower maternal risks compared with cesarean birth, including less blood loss, lower risk of infection, and faster physical recovery. For newborns, vaginal delivery is generally linked with better respiratory adaptation at birth. Overall outcomes are best when vaginal birth occurs without complications and when medical interventions are used only when clinically indicated.<a href="https://www.aafp.org/afp/2008/0801/p336" target="_blank" rel="noopener">🔗 AAFP — Vaginal Birth</a></div></div></div></div><div class="option-desc">Baby is delivered through the vagina without instruments or surgical procedures.</div></div>
               <div class="option-card" data-val="VBAC (Vaginal Birth After Caesarean)" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">VBAC</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">VBAC success rates range from 60–80%, and research shows it generally results in similar or better outcomes than a repeat cesarean — including lower maternal mortality, fewer infections, and shorter hospital stays. The risk of uterine rupture — the primary concern with VBAC — remains low at approximately 0.3–0.7% for people with one prior low transverse cesarean. This is an important conversation to have with your provider early, as eligibility depends on your individual history and circumstances.<a href="https://www.acog.org/womens-health/faqs/vaginal-birth-after-cesarean-delivery" target="_blank" rel="noopener">🔗 ACOG — Vaginal Birth After Cesarean Delivery</a></div></div></div></div><div class="option-desc">Planning a vaginal birth after a prior C-section.</div></div>
@@ -1009,6 +1021,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
           <div class="inner-divider"></div>
           <div class="subsection">
             <div class="subsection-title rose">Surgical Birth / C-Section</div>
+            <div class="subsection-intro">Whether planned or unexpected, a cesarean birth can still reflect your values and preferences.</div>
             <div class="options-grid" id="csection-options">
               <div class="option-card" data-val="Planned C-Section" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Planned C-Section</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">A planned cesarean may be recommended or chosen for a range of medical or personal reasons. ACOG acknowledges that evidence does not support recommending one mode of birth over the other — and that maternal request is a recognized factor in the decision. Recovery typically takes longer than vaginal birth, and future pregnancies may be affected by the uterine scar.<a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2019/01/cesarean-delivery-on-maternal-request" target="_blank" rel="noopener">🔗 ACOG — Cesarean Delivery on Maternal Request</a></div></div></div></div><div class="option-desc">Scheduled before labor begins, often for medical reasons or personal preference.</div></div>
               <div class="option-card" data-val="Repeat C-Section" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Repeat C-Section</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Research shows the absolute risk of complications with either a repeat cesarean or a trial of labor is small. For those planning future pregnancies, multiple cesareans can increase the risk of placental complications and other surgical risks — making it an important part of the conversation with your provider.<a href="https://www.acog.org/womens-health/faqs/vaginal-birth-after-cesarean-delivery" target="_blank" rel="noopener">🔗 ACOG — Vaginal Birth After Cesarean Delivery</a></div></div></div></div><div class="option-desc">A C-section for someone who has had a previous C-section.</div></div>
@@ -1019,6 +1032,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
           <div class="inner-divider"></div>
           <div class="subsection">
             <div class="subsection-title alt">Other Interventions</div>
+            <div class="subsection-intro">Throughout labor, your care team may recommend additional assessments, monitoring, or treatments based on how you and your baby are doing.</div>
             <div class="options-grid" id="other-interventions-options">
               <div class="option-card" data-val="IV Fluids" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">IV Fluids</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">ACOG notes that routine continuous IV fluids are not always necessary in spontaneously progressing labor. IVs can limit freedom of movement and some people find them uncomfortable.<a href="https://evidencebasedbirth.com/iv-fluids-during-labor/" target="_blank" rel="noopener">🔗 Evidence Based Birth — IV Fluids During Labor</a></div></div></div></div><div class="option-desc">Fluids through IV to support hydration or deliver medications.</div></div>
               <div class="option-card" data-val="Continuous Fetal Monitoring (CTG)" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Continuous Fetal Monitoring (CTG)</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Research suggests it may be associated with higher rates of cesarean and assisted delivery compared to intermittent monitoring, without a significant difference in most newborn outcomes for low-risk births.<a href="https://evidencebasedbirth.com/fetal-monitoring/" target="_blank" rel="noopener">🔗 Evidence Based Birth — Fetal Monitoring</a></div></div></div></div><div class="option-desc">Continuously records the baby's heart rate and contractions during labor.</div></div>
@@ -1045,7 +1059,7 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
         <div class="section-body">
           <div class="subsection">
             <div class="subsection-title">Guidance</div>
-            <div class="subsection-intro">How would you like to be supported during the pushing stage?</div>
+            <div class="subsection-intro">How would you like to be supported during the pushing stage? Different approaches to pushing guidance can support your body's natural process and help you feel prepared for this stage of birth.</div>
             <div class="options-grid" id="pushing-guidance-options">
               <div class="option-card" data-val="Spontaneous / instinctive pushing" onclick="toggleOptionSingle(this,'pushing-guidance-options')"><div class="option-header"><div class="option-check"></div><div class="option-name">Spontaneous / Instinctive Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">A meta-analysis of 10 studies involving 1,510 women found that spontaneous pushing reduced the rate of cesarean birth by 58% and the rate of extended episiotomy by 51% compared to directed pushing, with no difference in newborn outcomes. Research also shows spontaneous pushing is associated with lower rates of postpartum urinary incontinence — making it a meaningful preference to express ahead of time.<a href="https://www.cochrane.org/CD009124/PREG_pushing-methods-second-stage-labour" target="_blank" rel="noopener">🔗 Cochrane — Pushing Methods in the Second Stage of Labour</a></div></div></div></div><div class="option-desc">Pushing when and how your body tells you to.</div></div>
               <div class="option-card" data-val="Directed pushing" onclick="toggleOptionSingle(this,'pushing-guidance-options')"><div class="option-header"><div class="option-check"></div><div class="option-name">Directed Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Directed pushing — where your care team counts and guides each push — is widely practiced and can be helpful for people who feel uncertain about when or how to push, particularly with an epidural when natural urges may be reduced. ACOG supports each person using their preferred and most effective technique, and directed pushing remains a valid and well-supported option when it feels right for you.<a href="https://www.cochrane.org/CD009124/PREG_pushing-methods-second-stage-labour" target="_blank" rel="noopener">🔗 Cochrane — Pushing Methods in the Second Stage of Labour</a></div></div></div></div><div class="option-desc">Your care team counts and guides each push.</div></div>
@@ -1054,16 +1068,15 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
           </div>
           <div class="inner-divider"></div>
           <div class="subsection">
-            <div class="subsection-title alt">Duration &amp; Pace</div>
+            <div class="subsection-title alt">Pushing Options</div>
+            <div class="subsection-intro">There are different approaches to pushing that may help you work with your body and feel supported as your baby is born.</div>
+            <div class="group-label">Pace &amp; Breathing</div>
             <div class="options-grid" id="pushing-pace-options">
               <div class="option-card" data-val="Laboring down" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Laboring Down</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Laboring down — resting after full dilation and allowing the baby to descend naturally before active pushing. Clinical guidelines suggest passive descent for 1–2 hours after complete dilation when there is no strong urge to push — and research associates it with shorter active pushing time and a greater chance of spontaneous vaginal birth. It is most appropriate with an epidural when the natural urge to push is reduced.<a href="https://www.acog.org/clinical/clinical-guidance/clinical-practice-guideline/articles/2024/01/first-and-second-stage-labor-management" target="_blank" rel="noopener">🔗 ACOG — First and Second Stage Labor Management</a></div></div></div></div><div class="option-desc">If appropriate, I would like to wait and allow the baby to descend naturally before active pushing begins.</div></div>
               <div class="option-card" data-val="Open glottis pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Open Glottis Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Open glottis pushing — breathing out slowly while bearing down — has been associated with a significantly higher rate of intact perineum in first-time birthers, with 41% intact perineum compared to 19.3% with closed glottis pushing in one randomized controlled trial. WHO recommends encouraging people to follow their natural pushing urges and supports open glottis techniques to promote a positive childbirth experience.<a href="https://www.aafp.org/afp/2023/0800/fpin-ci-open-glottis-perineal-trauma" target="_blank" rel="noopener">🔗 AAFP — Open Glottis Pushing and Perineal Trauma</a></div></div></div></div><div class="option-desc">I would like to breathe through pushes rather than holding breath.</div></div>
               <div class="option-card" data-val="Closed glottis pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Closed Glottis Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">A randomized controlled trial found no significant difference in birth outcomes between open and closed glottis pushing in settings with high epidural rates — concluding that women should be able to choose the type of directed pushing they prefer, and that professionals should be trained in both.<a href="https://www.cochrane.org/CD009124/PREG_pushing-methods-second-stage-labour" target="_blank" rel="noopener">🔗 Cochrane — Pushing Methods in the Second Stage of Labour</a></div></div></div></div><div class="option-desc">Traditional breath-holding push.</div></div>
             </div>
-          </div>
-          <div class="inner-divider"></div>
-          <div class="subsection">
-            <div class="subsection-title">Pushing Options</div>
+            <div class="group-label spaced">Support During Pushing</div>
             <div class="options-grid" id="pushing-options-options">
               <div class="option-card" data-val="Mirror offered" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Mirror Offered</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">A randomized controlled trial found that real-time visual feedback during pushing led to a shorter active second stage of labor, with 76.5% of participants saying they would recommend it to a friend. Not everyone wants to look, and that is equally valid — but for those who do, it can increase motivation, improve pushing effectiveness, and create a greater sense of connection to the birth experience.<a href="https://www.contemporaryobgyn.net/view/biofeedback-improves-maternal-satisfaction-during-labor" target="_blank" rel="noopener">🔗 Contemporary OB/GYN — Biofeedback and Maternal Satisfaction</a></div></div></div></div><div class="option-desc">To see baby's progress.</div></div>
               <div class="option-card" data-val="I would like to feel my baby as they emerge" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Feel Baby Emerge</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">While this specific experience has not been formally studied in isolation, research consistently shows that a positive and participatory birth experience is a significant predictor of stronger mother-infant bonding.<a href="https://www.europeanjournalofmidwifery.eu/Birth-experience-and-early-postpartum-outcomes-A-cross-sectional-study-of-mother,217879,0,2.html" target="_blank" rel="noopener">🔗 European Journal of Midwifery — Birth Experience and Outcomes</a></div></div></div></div><div class="option-desc">I would like to feel my baby as they emerge.</div></div>
@@ -1073,6 +1086,18 @@ textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
               <div class="option-card" data-val="Perineal massage during pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Perineal Massage</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Evidence is mixed — it appears most effective at reducing the need for episiotomy, though its impact on tearing overall is less clear. It is low-risk, non-invasive, and works well alongside warm compresses.<a href="https://www.cochrane.org/evidence/CD006672_perineal-techniques-during-second-stage-labour-reducing-perineal-trauma" target="_blank" rel="noopener">🔗 Cochrane — Perineal Techniques During Second Stage Labour</a></div></div></div></div><div class="option-desc">Manual support to stretch and protect tissue.</div></div>
               <div class="option-card" data-val="Hands-on delivery" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Hands-On Delivery</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">A hands-on approach — where the provider actively supports and guides the perineum as the baby crowns. In this study, hands-on support combined with coached pushing was associated with a higher episiotomy rate, but there were no significant differences in severe perineal lacerations compared with the hands-poised approach.<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12180208/" target="_blank" rel="noopener">🔗 PMC — Hands-On vs Hands-Off Delivery</a></div></div></div></div><div class="option-desc">Provider actively supports the perineum as baby crowns.</div></div>
               <div class="option-card" data-val="Hands-off delivery" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Hands-Off Delivery</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">A hands-off or hands-poised approach — where the provider guides without direct contact unless needed — allows the baby to emerge at its own pace with minimal intervention. Researchers found that hands-poised management combined with uncoached pushing resulted in fewer episiotomies, although rates of severe perineal trauma were similar to those in the hands-on group.<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12180208/" target="_blank" rel="noopener">🔗 PMC — Hands-On vs Hands-Off Delivery</a></div></div></div></div><div class="option-desc">Provider offers guidance without direct contact.</div></div>
+            </div>
+          </div>
+          <div class="inner-divider"></div>
+          <div class="subsection">
+            <div class="subsection-title">Positions for Pushing</div>
+            <div class="options-grid" id="pushing-positions-options">
+              <div class="option-card" data-val="Upright positions during pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Upright Positions</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">An overview of three Cochrane reviews including nearly 19,000 women found that upright positions during labor reduced cesarean rates by 29%, lowered episiotomy rates, and reduced assisted vaginal births. They may be associated with a modest increase in perineal tears and blood loss — making them most effective when combined with other perineal support measures.<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8678923/" target="_blank" rel="noopener">🔗 PMC — Evaluating the Effects of Maternal Positions in Childbirth</a></div></div></div></div><div class="option-desc">Using gravity to support baby's descent and encourage natural progress during pushing.</div></div>
+              <div class="option-card" data-val="Side-lying pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Side-Lying Pushing</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Research found that side-lying pushing resulted in an episiotomy rate of just 21% compared to 51% in other positions — significantly increasing the likelihood of an intact perineum. It is restful, gentle on the perineum, and particularly well-suited to people with an epidural.<a href="https://evidencebasedbirth.com/evidence-birthing-positions/" target="_blank" rel="noopener">🔗 Evidence Based Birth — Birthing Positions</a></div></div></div></div><div class="option-desc">Lying on your side with support — a restful position that can reduce perineal trauma and is ideal with an epidural.</div></div>
+              <div class="option-card" data-val="Hands-and-knees pushing" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Hands-and-Knees</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Research consistently shows that hands-and-knees positioning meaningfully reduces back pain during labor — particularly for back labor or a posterior baby — and is well accepted by laboring people. Evidence on whether it reliably rotates a posterior baby is mixed, though many find it significantly more comfortable regardless.<a href="https://pubmed.ncbi.nlm.nih.gov/16336365/" target="_blank" rel="noopener">🔗 PubMed — Randomized Controlled Trial of Hands-and-Knees Positioning</a></div></div></div></div><div class="option-desc">On all fours to encourage baby to rotate and descend — particularly helpful for back labor or a posterior baby.</div></div>
+              <div class="option-card" data-val="Gravity-assisted positions" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Gravity-Assisted Positions</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Squatting and other gravity-assisted positions increase the pelvic outlet diameter and allow baby's head to progress more efficiently — and are associated with reduced episiotomy rates and shorter second stage labor in people without an epidural. Your care team can help identify which positions are safe and feasible for your individual circumstances.<a href="https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002006.pub4/full" target="_blank" rel="noopener">🔗 Cochrane — Position in the Second Stage of Labour Without Epidural</a></div></div></div></div><div class="option-desc">Positions like squatting or standing that use gravity to support baby's descent and may shorten the pushing stage.</div></div>
+              <div class="option-card" data-val="Semi-reclined positions" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Semi-Reclined Positions</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">One of the most widely used positions in hospital birth settings, semi-reclined positioning is associated with greater comfort compared to lying flat and is compatible with most epidural placements and continuous monitoring. A Cochrane review found no clear difference in operative birth rates between upright and semi-reclined positions for people with an epidural.<a href="https://www.cochrane.org/evidence/CD008070_maternal-position-second-stage-labour-women-epidural-anaesthesia" target="_blank" rel="noopener">🔗 Cochrane — Maternal Position in the Second Stage of Labour With Epidural</a></div></div></div></div><div class="option-desc">A supported reclined position — comfortable and widely used, particularly when mobility is limited with an epidural.</div></div>
+              <div class="option-card" data-val="Spinning Babies techniques" onclick="toggleOption(this)"><div class="option-header"><div class="option-check"></div><div class="option-name">Spinning Babies</div><div class="card-btn-group"><button class="unsure-btn" onclick="toggleUnsure(this,event)" title="Mark as a question to explore — add it to your questions list.">?</button><div class="info-btn" onclick="showInfoModal(this,event)">i<div class="info-tooltip">Developed by midwife Gail Tully, Spinning Babies uses balance, gravity, and movement to encourage optimal fetal positioning during labor. A 2025 observational study found that over 90% of women who used Spinning Babies techniques achieved optimal fetal positioning through rotation, compared to approximately 65% who did not — though larger randomized trials are still underway to confirm these findings.<a href="https://www.europeanjournalofmidwifery.eu/Spinning-Babies-approach-A-way-to-promote-fetal-head-rotation-during-labor-,206972,0,2.html" target="_blank" rel="noopener">🔗 European Journal of Midwifery — Spinning Babies Approach</a></div></div></div></div><div class="option-desc">Techniques focused on balance and movement to encourage optimal baby positioning before and during pushing.</div></div>
             </div>
           </div>
         </div>
@@ -1661,6 +1686,7 @@ function collectRawState() {
     dueDate: document.getElementById('due-date').value,
     pronounsOther: document.getElementById('pronouns-other').value,
     supportPerson: document.getElementById('support-person').value,
+    supportPerson2: document.getElementById('support-person-2').value,
     careTeam: document.getElementById('care-team').value,
     story: document.getElementById('story').value,
     pronounsChips: getChips('pronoun-chips'),
@@ -1677,6 +1703,7 @@ function collectRawState() {
     pushingGuidance: getSelected('pushing-guidance-options'),
     pushingPace: getSelected('pushing-pace-options'),
     pushingOptions: getSelected('pushing-options-options'),
+    pushingPositions: getSelected('pushing-positions-options'),
     cord: getSelected('cord-options'),
     placenta: getSelected('placenta-options'),
     bonding: getSelected('bonding-options'),
@@ -1720,7 +1747,7 @@ function scheduleAutoSave(targetUserId) {
 }
 
 function attachAutoSave(targetUserId) {
-  ['name','due-date','support-person','care-team','story','pronouns-other'].forEach(id => {
+  ['name','due-date','support-person','support-person-2','care-team','story','pronouns-other'].forEach(id => {
     document.getElementById(id)?.addEventListener('input', () => scheduleAutoSave(targetUserId));
   });
   document.querySelector('.wizard-outer').addEventListener('click', () => {
@@ -1738,6 +1765,7 @@ async function loadPlanForUser(userId) {
 function applyPlanToForm(d) {
   const fieldMap = {
     'name': 'name', 'due-date': 'dueDate', 'support-person': 'supportPerson',
+    'support-person-2': 'supportPerson2',
     'care-team': 'careTeam',
     'story': 'story', 'pronouns-other': 'pronounsOther'
   };
@@ -1745,6 +1773,10 @@ function applyPlanToForm(d) {
     const el = document.getElementById(id);
     if (el && d[key] !== undefined) el.value = d[key];
   });
+  if (d.supportPerson2) {
+    document.getElementById('support-person-2-wrap').style.display = 'block';
+    document.getElementById('add-support-person-btn').style.display = 'none';
+  }
   restoreChips('pronoun-chips', d.pronounsChips || []);
   restoreChips('health-chips', d.healthChips || []);
   restoreChipsSingle('birth-location-chips', d.birthLocation || []);
@@ -1759,6 +1791,7 @@ function applyPlanToForm(d) {
   restoreOptionSingle('pushing-guidance-options', d.pushingGuidance || []);
   restoreOptions('pushing-pace-options', d.pushingPace || []);
   restoreOptions('pushing-options-options', d.pushingOptions || []);
+  restoreOptions('pushing-positions-options', d.pushingPositions || []);
   restoreOptions('cord-options', d.cord || []);
   restoreOptions('placenta-options', d.placenta || []);
   restoreOptions('bonding-options', d.bonding || []);
@@ -1836,6 +1869,11 @@ function toggleChipSingle(chip, groupId) {
   document.querySelectorAll('#' + groupId + ' .chip').forEach(c => c.classList.remove('selected'));
   chip.classList.add('selected');
 }
+function showSecondSupportPerson() {
+  document.getElementById('support-person-2-wrap').style.display = 'block';
+  document.getElementById('add-support-person-btn').style.display = 'none';
+  document.getElementById('support-person-2').focus();
+}
 function getSelected(id) { return [...document.querySelectorAll('#' + id + ' .option-card.selected')].map(c => c.dataset.val); }
 function getChips(id)    { return [...document.querySelectorAll('#' + id + ' .chip.selected')].map(c => c.dataset.val); }
 
@@ -1844,9 +1882,11 @@ function resetForm() {
     document.getElementById('name').value = '';
     updateBirthSpaceTitle();
   }
-  ['name','due-date','support-person','care-team','story','pronouns-other'].forEach(id => {
+  ['name','due-date','support-person','support-person-2','care-team','story','pronouns-other'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
+  document.getElementById('support-person-2-wrap').style.display = 'none';
+  document.getElementById('add-support-person-btn').style.display = 'inline-block';
   document.querySelectorAll('.option-card.selected').forEach(c => {
     c.classList.remove('selected'); c.querySelector('.option-check').textContent = '';
   });
@@ -1901,6 +1941,7 @@ const _UNSURE_SECTION_MAP = {
   'pushing-guidance-options':    'pushingGuidance',
   'pushing-pace-options':        'pushingPace',
   'pushing-options-options':     'pushingOptions',
+  'pushing-positions-options':   'pushingPositions',
   'cord-options':                'cord',
   'placenta-options':            'placenta',
   'bonding-options':             'bonding',
@@ -2126,7 +2167,7 @@ function buildPdfPieces(d, f, nameFont, scale) {
   const rightBlocksHTML = [];
   if (d.naturalComfort.length||d.medicalComfort.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Comfort Measures',[...(d.comfortPref?[d.comfortPref]:[]),...d.naturalComfort,...d.medicalComfort],'#f4e2e0',2)}</div>`);
   if (d.induction.length||d.otherInterventions.length||d.vaginalBirth.length||d.csection.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Labor & Birth',[...d.induction,...d.otherInterventions,...d.vaginalBirth,...d.csection],'#e7e1eb')}</div>`);
-  if (d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions],'#faeaea')}</div>`);
+  if (d.pushingGuidance.length||d.pushingPace.length||d.pushingOptions.length||d.pushingPositions.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Pushing Preferences',[...d.pushingGuidance,...d.pushingPace,...d.pushingOptions,...d.pushingPositions],'#faeaea')}</div>`);
   if (d.bonding.length||d.placenta.length||d.cord.length||d.newborn.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('Golden Hour',[...d.bonding,...d.placenta,...d.cord,...d.newborn],'#edddc4',2)}</div>`);
   if (d.emergencyDelivery.length||d.nicuSeparation.length||d.nicuFeeding.length||d.nicuCommunication.length) rightBlocksHTML.push(`<div style="font-size:${px(11)}px;">${pdfSec('If Plans Change',[...d.emergencyDelivery,...d.nicuSeparation,...d.nicuFeeding,...d.nicuCommunication],'#e7e1eb')}</div>`);
 
@@ -2306,6 +2347,7 @@ async function downloadQuestionsPDF() {
     pushingGuidance:      { label: 'Pushing Guidance',      bg: '#faeaea' },
     pushingPace:          { label: 'Pushing Pace',          bg: '#faeaea' },
     pushingOptions:       { label: 'Pushing Options',       bg: '#faeaea' },
+    pushingPositions:     { label: 'Positions for Pushing', bg: '#faeaea' },
     cord:                 { label: 'Umbilical Cord',        bg: '#edddc4' },
     placenta:             { label: 'Placenta',              bg: '#edddc4' },
     bonding:              { label: 'Bonding',               bg: '#edddc4' },
@@ -2409,6 +2451,7 @@ function getAllData() {
     dueDate:           document.getElementById('due-date').value,
     pronouns, birthLocation: getChips('birth-location-chips')[0] || '',
     supportPerson:     document.getElementById('support-person').value.trim(),
+    supportPerson2:    document.getElementById('support-person-2').value.trim(),
     careTeam:          document.getElementById('care-team').value.trim() || 'Care Team',
     healthConsiderations: healthChips,
     coreValues:        getSelected('values-options'),
@@ -2421,6 +2464,7 @@ function getAllData() {
     pushingGuidance:   getSelected('pushing-guidance-options'),
     pushingPace:       getSelected('pushing-pace-options'),
     pushingOptions:    getSelected('pushing-options-options'),
+    pushingPositions:  getSelected('pushing-positions-options'),
     vaginalBirth:      getSelected('vaginal-options'),
     csection:          getSelected('csection-options'),
     decisionMaking:    getSelected('decision-options'),
@@ -2445,7 +2489,8 @@ function generateStory() {
   var textarea=document.getElementById('story');
   var careTeam=document.getElementById('care-team').value.trim();
   var support=document.getElementById('support-person').value.trim();
-  var sp=support||'my partner';
+  var support2=document.getElementById('support-person-2').value.trim();
+  var sp=support2?(support?support+' and '+support2:support2):(support||'my partner');
   var values=getSelected('values-options');
   var inductionList=getSelected('induction-options');
   var vaginalList=getSelected('vaginal-options');
